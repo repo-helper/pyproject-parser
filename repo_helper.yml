@@ -1,0 +1,50 @@
+# Configuration for 'repo_helper' (https://github.com/domdfcoding/repo_helper)
+---
+modname: 'pyproject-parser'
+copyright_years: '2021'
+author: 'Dominic Davis-Foster'
+email: 'dominic@davis-foster.co.uk'
+username: 'repo-helper'
+assignee: 'domdfcoding'
+primary_conda_channel: "domdfcoding"
+version: '0.0.0'
+license: 'MIT'
+short_desc: "Parser for 'pyproject.toml'"
+
+python_deploy_version: 3.6
+docs_fail_on_warning: true
+sphinx_html_theme: furo
+
+conda_channels:
+ - conda-forge
+
+# Versions to run tests for
+python_versions:
+ - '3.6'
+ - '3.7'
+ - '3.8'
+ - '3.9'
+ - 3.10-dev
+ - pypy3.6
+ - pypy3.7
+
+sphinx_conf_epilogue:
+ - nitpicky = True
+
+extra_sphinx_extensions:
+ - sphinx_click
+ - configconfig.autoconfig
+
+classifiers:
+ - 'Development Status :: 4 - Beta'
+ - 'Intended Audience :: Developers'
+ - 'Topic :: Software Development :: Libraries :: Python Modules'
+ - "Topic :: System :: Archiving :: Packaging"
+
+keywords:
+ - pep518
+ - pep621
+ - pyproject
+ - toml
+ - metadata
+ - packaging

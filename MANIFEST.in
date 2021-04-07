@@ -1,0 +1,6 @@
+include __pkginfo__.py
+include LICENSE
+include requirements.txt
+prune **/__pycache__
+recursive-include pyproject_parser *.pyi
+include pyproject_parser/py.typed

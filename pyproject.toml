@@ -1,0 +1,31 @@
+[build-system]
+requires = [ "setuptools>=40.6.0", "wheel>=0.34.2",]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyproject-parser"
+version = "0.0.0"
+description = "Parser for 'pyproject.toml'"
+readme = "README.rst"
+keywords = [ "pep518", "pep621", "pyproject", "toml", "metadata", "packaging",]
+dynamic = [ "requires-python", "classifiers", "dependencies",]
+
+[[project.authors]]
+email = "dominic@davis-foster.co.uk"
+name = "Dominic Davis-Foster"
+
+
+[project.license]
+file = "LICENSE"
+
+[project.urls]
+Homepage = "https://github.com/repo-helper/pyproject-parser"
+"Issue Tracker" = "https://github.com/repo-helper/pyproject-parser/issues"
+"Source Code" = "https://github.com/repo-helper/pyproject-parser"
+Documentation = "https://pyproject-parser.readthedocs.io/en/latest"
+
+[tool.mkrecipe]
+conda-channels = [ "conda-forge", "domdfcoding",]
+extras = "all"
+license-key = "MIT"
+package = "pyproject_parser"
