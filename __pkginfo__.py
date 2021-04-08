@@ -17,4 +17,4 @@ __all__ = [
 		]
 
 __version__ = "0.0.0"
-extras_require = {}
+extras_require = {"readme": ["readme-renderer[md]>=27.0"], "all": ["readme-renderer[md]>=27.0"]}

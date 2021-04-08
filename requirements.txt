@@ -1,0 +1,11 @@
+apeye>=0.7.0
+attr-utils>=0.5.6
+attrs>=20.3.0
+dom-toml>=0.3.0
+domdf-python-tools>=2.7.0
+email-validator>=1.1.2
+natsort>=7.1.1
+packaging>=20.9
+shippinglabel>=0.10.0
+toml>=0.10.2
+typing-extensions>=3.7.4.3

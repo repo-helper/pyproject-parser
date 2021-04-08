@@ -24,8 +24,15 @@ Homepage = "https://github.com/repo-helper/pyproject-parser"
 "Source Code" = "https://github.com/repo-helper/pyproject-parser"
 Documentation = "https://pyproject-parser.readthedocs.io/en/latest"
 
+[project.optional-dependencies]
+readme = [ "readme-renderer[md]>=27.0",]
+all = [ "readme-renderer[md]>=27.0",]
+
 [tool.mkrecipe]
 conda-channels = [ "conda-forge", "domdfcoding",]
 extras = "all"
 license-key = "MIT"
 package = "pyproject_parser"
+
+[tool.dep_checker.name_mapping]
+attrs = "attr"
