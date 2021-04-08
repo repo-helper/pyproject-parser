@@ -58,23 +58,29 @@ __all__ = [
 		]
 
 try:
-
 	# 3rd party
+	import cmarkgfm
 	import readme_renderer.markdown  # type: ignore
-	import readme_renderer.rst  # type: ignore
-
-	def render_rst(content: str):
-		readme_renderer.rst.render(content)
 
 	def render_markdown(content: str):
 		readme_renderer.markdown.render(content)
 
 except ImportError:  # pragma: no cover
 
-	def render_rst(content: str):
+	def render_markdown(content: str):
 		pass
 
-	def render_markdown(content: str):
+
+try:
+	# 3rd party
+	import readme_renderer.rst  # type: ignore
+
+	def render_rst(content: str):
+		readme_renderer.rst.render(content)
+
+except ImportError:  # pragma: no cover
+
+	def render_rst(content: str):
 		pass
 
 
