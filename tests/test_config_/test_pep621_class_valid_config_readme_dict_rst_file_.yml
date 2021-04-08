@@ -1,0 +1,6 @@
+dynamic: []
+name: spam
+readme:
+  content-type: text/x-rst
+  text: This is the reStructuredText README.
+version: 2020.0.0
