@@ -38,7 +38,8 @@ extensions = [
 		"sphinx_debuginfo",
 		"seed_intersphinx_mapping",
 		"sphinx_click",
-		"configconfig.autoconfig",
+		"attr_utils.autoattrs",
+		"sphinx_toolbox.wikipedia",
 		]
 sphinxemoji_style = "twemoji"
 gitstamp_fmt = "%d %b %Y"

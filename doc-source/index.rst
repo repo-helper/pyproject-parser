@@ -145,6 +145,7 @@ Installation
 	:caption: API Reference
 	:glob:
 
+	api/pyproject-parser
 	api/*
 
 .. toctree::

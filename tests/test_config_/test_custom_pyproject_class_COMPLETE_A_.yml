@@ -32,19 +32,7 @@ project:
   version: 2021.0.0
 tool:
   whey:
-    base-classifiers:
-    - 'Development Status :: 4 - Beta'
-    license-key: MIT
     platforms:
     - Windows
     - macOS
     - Linux
-    python-implementations:
-    - CPython
-    - PyPy
-    python-versions:
-    - '3.6'
-    - '3.7'
-    - '3.8'
-    - '3.9'
-    - '3.10'

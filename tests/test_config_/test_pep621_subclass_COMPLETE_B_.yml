@@ -1,0 +1,10 @@
+dependencies:
+- django>2.1; os_name != "nt"
+- django>2.0; os_name == "nt"
+- gidgethub[httpx]>4.0.0
+- httpx
+dynamic:
+- classifiers
+- requires-python
+name: whey
+version: 2021.0.0

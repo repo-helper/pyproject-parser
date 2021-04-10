@@ -15,6 +15,10 @@ python_deploy_version: 3.6
 docs_fail_on_warning: true
 sphinx_html_theme: furo
 tox_testenv_extras: readme
+min_coverage: 97.5
+
+mypy_plugins:
+ - attr_utils.mypy_plugin
 
 conda_channels:
  - conda-forge
@@ -34,7 +38,8 @@ sphinx_conf_epilogue:
 
 extra_sphinx_extensions:
  - sphinx_click
- - configconfig.autoconfig
+ - attr_utils.autoattrs
+ - sphinx_toolbox.wikipedia
 
 classifiers:
  - 'Development Status :: 4 - Beta'

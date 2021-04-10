@@ -1,5 +1,5 @@
 # stdlib
-from typing import Callable, Type, TypeVar
+from typing import Callable, Type, TypeVar, Union
 
 # 3rd party
 from packaging.markers import Marker
@@ -7,6 +7,9 @@ from packaging.requirements import Requirement
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from pytest_regressions.data_regression import RegressionYamlDumper
+
+# this package
+from pyproject_parser import License, Readme
 
 _C = TypeVar("_C", bound=Callable)
 
@@ -25,5 +28,16 @@ def _representer_for(*data_type: Type):
 
 
 @_representer_for(Version, Requirement, Marker, SpecifierSet)
-def represent_packaging_types(dumper: RegressionYamlDumper, data):
+def represent_packaging_types(
+		dumper: RegressionYamlDumper,
+		data: Union[Version, Requirement, Marker, SpecifierSet],
+		):
 	return dumper.represent_str(str(data))
+
+
+@_representer_for(Readme, License)
+def represent_readme_or_license(
+		dumper: RegressionYamlDumper,
+		data: Union[Readme, License],
+		):
+	return dumper.represent_dict(data.to_dict())

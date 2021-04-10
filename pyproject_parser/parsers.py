@@ -27,10 +27,11 @@ TOML configuration parsers.
 #
 
 # stdlib
+import os
 import re
 from abc import ABCMeta
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, List, Sequence, Tuple, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, List, Sequence, Union
 
 # 3rd party
 from apeye import URL
@@ -46,69 +47,17 @@ from shippinglabel.classifiers import validate_classifiers
 from shippinglabel.requirements import ComparableRequirement, combine_requirements
 
 # this package
+from pyproject_parser.classes import License, Readme
 from pyproject_parser.type_hints import Author, BuildSystemDict, ProjectDict
+from pyproject_parser.utils import content_type_from_filename, render_readme
 
 __all__ = [
 		"BuildSystemParser",
 		"PEP621Parser",
 		"RequiredKeysConfigParser",
-		"read_readme",
-		"render_markdown",
-		"render_rst"
 		]
 
-try:
-	# 3rd party
-	import cmarkgfm
-	import readme_renderer.markdown  # type: ignore
-
-	def render_markdown(content: str):
-		readme_renderer.markdown.render(content)
-
-except ImportError:  # pragma: no cover
-
-	def render_markdown(content: str):
-		pass
-
-
-try:
-	# 3rd party
-	import readme_renderer.rst  # type: ignore
-
-	def render_rst(content: str):
-		readme_renderer.rst.render(content)
-
-except ImportError:  # pragma: no cover
-
-	def render_rst(content: str):
-		pass
-
-
 name_re = re.compile("^([A-Z0-9]|[A-Z0-9][A-Z0-9._-]*[A-Z0-9])$", flags=re.IGNORECASE)
-
-
-def read_readme(readme_file: PathLike, encoding="UTF-8") -> Tuple[str, str]:
-	"""
-	Reads the readme file and returns the content of the file and its content type.
-
-	:param readme_file:
-	:param encoding:
-	"""
-
-	readme_file = PathPlus(readme_file)
-
-	if readme_file.suffix.lower() == ".md":
-		content = readme_file.read_text(encoding=encoding)
-		render_markdown(content)
-		return content, "text/markdown"
-	elif readme_file.suffix.lower() == ".rst":
-		content = readme_file.read_text(encoding=encoding)
-		render_rst(content)
-		return content, "text/x-rst"
-	elif readme_file.suffix.lower() == ".txt":
-		return readme_file.read_text(encoding=encoding), "text/plain"
-	else:
-		raise BadConfigError(f"Unrecognised filetype for '{readme_file!s}'")
 
 
 class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
@@ -326,7 +275,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		return description
 
 	@staticmethod
-	def parse_readme(config: Dict[str, TOML_TYPES]) -> Dict[str, str]:
+	def parse_readme(config: Dict[str, TOML_TYPES]) -> Readme:
 		"""
 		Parse the `readme <https://www.python.org/dev/peps/pep-0621/#readme>`_ key.
 
@@ -337,8 +286,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		if isinstance(readme, str):
 			# path to readme_file
-			readme_text, readme_content_type = read_readme(readme)
-			return {"text": readme_text, "content-type": readme_content_type}
+			readme_content_type = content_type_from_filename(readme)
+			render_readme(readme, readme_content_type)
+			return Readme(file=readme, content_type=readme_content_type)
 
 		elif isinstance(readme, dict):
 			if not readme:
@@ -350,10 +300,16 @@ class PEP621Parser(RequiredKeysConfigParser):
 						"are mutually exclusive."
 						)
 
-			elif set(readme.keys()) == {"file"}:
+			elif set(readme.keys()) in ({"file"}, {"file", "charset"}):
 				readme_encoding = readme.get("charset", "UTF-8")
-				readme_text, readme_content_type = read_readme(readme["file"], readme_encoding)
-				return {"text": readme_text, "content-type": readme_content_type}
+				render_readme(readme["file"], encoding=readme_encoding)
+				readme_content_type = content_type_from_filename(readme["file"])
+				return Readme(file=readme["file"], content_type=readme_content_type, charset=readme_encoding)
+
+			elif set(readme.keys()) in ({"file", "content-type"}, {"file", "charset", "content-type"}):
+				readme_encoding = readme.get("charset", "UTF-8")
+				render_readme(readme["file"], encoding=readme_encoding)
+				return Readme(file=readme["file"], content_type=readme["content-type"], charset=readme_encoding)
 
 			elif "content-type" in readme and "text" not in readme:
 				raise BadConfigError(
@@ -378,16 +334,41 @@ class PEP621Parser(RequiredKeysConfigParser):
 							f"Unrecognised value for 'project.readme.content-type': {readme['content-type']!r}"
 							)
 
-				readme_encoding = readme.get("charset", "UTF-8")
-				return {
-						"text": readme["text"].encode(readme_encoding).decode("UTF-8"),
-						"content-type": readme["content-type"]
-						}
+				if "charset" in readme:
+					raise BadConfigError(
+							"The 'project.readme.charset' key cannot be provided "
+							"when 'project.readme.text' is given."
+							)
+
+				return Readme(text=readme["text"], content_type=readme["content-type"])
 
 			else:
 				raise BadConfigError(f"Unknown format for 'project.readme': {readme!r}")
 
 		raise TypeError(f"Unsupported type for 'project.readme': {type(readme)!r}")
+
+	@staticmethod
+	def parse_license(config: Dict[str, TOML_TYPES]) -> License:
+		"""
+		Parse the `license <https://www.python.org/dev/peps/pep-0621/#license>`_ key.
+
+		:param config: The unparsed TOML config for the ``[project]`` table.
+		"""
+
+		license = config["license"]  # noqa: A001  # pylint: disable=redefined-builtin
+
+		if "text" in license and "file" in license:
+			raise BadConfigError(
+					"The 'project.license.file' and 'project.license.text' keys "
+					"are mutually exclusive."
+					)
+		elif "text" in license:
+			return License(text=str(license["text"]))
+		elif "file" in license:
+			os.stat(license["file"])
+			return License(license["file"])
+		else:
+			raise BadConfigError("The 'project.license' table should contain one of 'text' or 'file'.")
 
 	@staticmethod
 	def parse_requires_python(config: Dict[str, TOML_TYPES]) -> Specifier:
@@ -403,28 +384,6 @@ class PEP621Parser(RequiredKeysConfigParser):
 			return SpecifierSet(str(version))
 		except InvalidSpecifier as e:
 			raise BadConfigError(str(e))
-
-	@staticmethod
-	def parse_license(config: Dict[str, TOML_TYPES]) -> str:
-		"""
-		Parse the `license <https://www.python.org/dev/peps/pep-0621/#license>`_ key.
-
-		:param config: The unparsed TOML config for the ``[project]`` table.
-		"""
-
-		license = config["license"]  # noqa: A001  # pylint: disable=redefined-builtin
-
-		if "text" in license and "file" in license:
-			raise BadConfigError(
-					"The 'project.license.file' and 'project.license.text' keys "
-					"are mutually exclusive."
-					)
-		elif "text" in license:
-			return str(license["text"])
-		elif "file" in license:
-			return PathPlus(license["file"]).read_text()
-		else:
-			raise BadConfigError("The 'project.license' table should contain one of 'text' or 'file'.")
 
 	@staticmethod
 	def _parse_authors(config: Dict[str, TOML_TYPES], key_name: str = "authors") -> List[Author]:
@@ -625,6 +584,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return {e: sorted(combine_requirements(d)) for e, d in parsed_optional_dependencies.items()}
 
+
 	def parse(  # type: ignore [override]
 		self,
 		config: Dict[str, TOML_TYPES],
@@ -646,6 +606,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 			raise BadConfigError("The 'project.name' field may not be dynamic.")
 
 		return {
-				"dynamic": dynamic_fields,
 				**super().parse(config, set_defaults=set_defaults),  # type: ignore [misc]
+				"dynamic":
+						dynamic_fields,
 				}

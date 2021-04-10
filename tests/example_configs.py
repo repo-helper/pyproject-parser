@@ -1,3 +1,10 @@
+# stdlib
+import re
+
+# 3rd party
+import pytest
+from dom_toml.parser import BadConfigError
+
 MINIMAL_CONFIG = '[project]\nname = "spam"\nversion = "2020.0.0"'
 
 KEYWORDS = f"""\
@@ -270,4 +277,190 @@ name = "Dominic Davis-Foster"
 base-classifiers = [ "Development Status :: 4 - Beta",]
 license-key = "MIT"
 package = "whey"
+"""
+
+valid_pep621_config = [
+		pytest.param(MINIMAL_CONFIG, id="minimal"),
+		pytest.param(f'{MINIMAL_CONFIG}\ndescription = "Lovely Spam! Wonderful Spam!"', id="description"),
+		pytest.param(f'{MINIMAL_CONFIG}\nrequires-python = ">=3.8"', id="requires-python"),
+		pytest.param(f'{MINIMAL_CONFIG}\nrequires-python = ">=2.7,!=3.0.*,!=3.2.*"', id="requires-python_complex"),
+		pytest.param(KEYWORDS, id="keywords"),
+		pytest.param(AUTHORS, id="authors"),
+		pytest.param(MAINTAINERS, id="maintainers"),
+		pytest.param(CLASSIFIERS, id="classifiers"),
+		pytest.param(DEPENDENCIES, id="dependencies"),
+		pytest.param(OPTIONAL_DEPENDENCIES, id="optional-dependencies"),
+		pytest.param(URLS, id="urls"),
+		pytest.param(ENTRY_POINTS, id="entry_points"),
+		pytest.param(UNICODE, id="unicode"),
+		pytest.param(COMPLETE_PROJECT_A, id="COMPLETE_PROJECT_A"),
+		pytest.param(COMPLETE_A, id="COMPLETE_A"),
+		pytest.param(COMPLETE_B, id="COMPLETE_B"),
+		]
+
+bad_pep621_config = [
+		# pytest.param(
+		# 		'[project]\nname = "spam"',
+		# 		BadConfigError,
+		# 		"The 'project.version' field must be provided.",
+		# 		id="no_version"
+		# 		),
+		pytest.param(
+				'[project]\n\nversion = "2020.0.0"',
+				BadConfigError,
+				"The 'project.name' field must be provided.",
+				id="no_name"
+				),
+		pytest.param(
+				'[project]\ndynamic = ["name"]',
+				BadConfigError,
+				"The 'project.name' field may not be dynamic.",
+				id="dynamic_name"
+				),
+		pytest.param(
+				'[project]\nname = "???????12345=============☃"\nversion = "2020.0.0"',
+				BadConfigError,
+				"The value for 'project.name' is invalid.",
+				id="bad_name"
+				),
+		pytest.param(
+				'[project]\nname = "spam"\nversion = "???????12345=============☃"',
+				BadConfigError,
+				re.escape("Invalid version: '???????12345=============☃'"),
+				id="bad_version"
+				),
+		pytest.param(
+				f'{MINIMAL_CONFIG}\nrequires-python = "???????12345=============☃"',
+				BadConfigError,
+				re.escape("Invalid specifier: '???????12345=============☃'"),
+				id="bad_requires_python"
+				),
+		pytest.param(
+				f'{MINIMAL_CONFIG}\nauthors = [{{name = "Bob, Alice"}}]',
+				BadConfigError,
+				r"The 'project.authors\[0\].name' key cannot contain commas.",
+				id="author_comma"
+				),
+		pytest.param(
+				f'{MINIMAL_CONFIG}\nmaintainers = [{{name = "Bob, Alice"}}]',
+				BadConfigError,
+				r"The 'project.maintainers\[0\].name' key cannot contain commas.",
+				id="maintainer_comma"
+				),
+		pytest.param(
+				f'{MINIMAL_CONFIG}\nkeywords = [1, 2, 3, 4, 5]',
+				TypeError,
+				r"Invalid type for 'project.keywords\[0\]': expected <class 'str'>, got <class 'int'>",
+				id="keywords_wrong_type"
+				),
+		pytest.param(
+				f'{MINIMAL_CONFIG}\nclassifiers = [1, 2, 3, 4, 5]',
+				TypeError,
+				r"Invalid type for 'project.classifiers\[0\]': expected <class 'str'>, got <class 'int'>",
+				id="classifiers_wrong_type"
+				),
+		pytest.param(
+				f'{MINIMAL_CONFIG}\ndependencies = [1, 2, 3, 4, 5]',
+				TypeError,
+				r"Invalid type for 'project.dependencies\[0\]': expected <class 'str'>, got <class 'int'>",
+				id="dependencies_wrong_type"
+				),
+		pytest.param(
+				f'{MINIMAL_CONFIG}\nreadme = "README.rst"',
+				FileNotFoundError,
+				"No such file or directory: 'README.rst'",
+				id="missing_readme_file",
+				),
+		pytest.param(
+				f'{MINIMAL_CONFIG}\nlicense = {{file = "LICENSE.txt"}}',
+				FileNotFoundError,
+				"No such file or directory: 'LICENSE.txt'",
+				id="missing_license_file",
+				),
+		]
+
+valid_buildsystem_config = [
+		pytest.param('[build-system]\nrequires = []', id="requires_nothing"),
+		pytest.param('[build-system]\nrequires = ["whey"]', id="requires_whey"),
+		pytest.param('[build-system]\nrequires = ["setuptools", "wheel"]', id="requires_setuptools"),
+		pytest.param('[build-system]\nrequires = ["whey"]\nbuild-backend = "whey"', id="complete"),
+		pytest.param(
+				'[build-system]\nrequires = ["whey"]\nbuild-backend = "whey"\nbackend-path = ["../foo"]',
+				id="backend_path"
+				),
+		pytest.param(
+				'[build-system]\nrequires = ["whey"]\nbuild-backend = "whey"\nbackend-path = ["../foo", "./bar"]',
+				id="backend_paths"
+				),
+		]
+
+bad_buildsystem_config = [
+		pytest.param(
+				'[build-system]\nbackend-path = ["./foo"]',
+				BadConfigError,
+				"The 'build-system.requires' field must be provided.",
+				id="no_requires"
+				),
+		pytest.param(
+				'[build-system]\nrequires = [1234]',
+				TypeError,
+				r"Invalid type for 'build-system.requires\[0\]': expected <class 'str'>, got <class 'int'>",
+				id="requires_list_int"
+				),
+		pytest.param(
+				'[build-system]\nrequires = "whey"',
+				TypeError,
+				"Invalid type type for 'build-system.requires': expected <class 'collections.abc.Sequence'>, got <class 'str'>",
+				id="requires_str"
+				),
+		pytest.param(
+				'[build-system]\nrequires = ["whey"]\nbackend-path = [1234]',
+				TypeError,
+				r"Invalid type for 'build-system.backend-path\[0\]': expected <class 'str'>, got <class 'int'>",
+				id="backend_path_list_int"
+				),
+		pytest.param(
+				'[build-system]\nrequires = ["whey"]\nbackend-path = "whey"',
+				TypeError,
+				"Invalid type type for 'build-system.backend-path': expected <class 'collections.abc.Sequence'>, got <class 'str'>",
+				id="backend_path_str"
+				),
+		]
+
+COMPLETE_A_WITH_FILES = """\
+[build-system]
+requires = [ "whey",]
+build-backend = "whey"
+
+[project]
+name = "whey"
+version = "2021.0.0"
+description = "A simple Python wheel builder for simple projects."
+keywords = [ "pep517", "pep621", "build", "sdist", "wheel", "packaging", "distribution",]
+dynamic = [ "classifiers", "requires-python",]
+dependencies = [
+  "httpx",
+  "gidgethub[httpx]>4.0.0",
+  "django>2.1; os_name != 'nt'",
+  "django>2.0; os_name == 'nt'"
+]
+license = { file = "LICENSE" }
+readme = "README.rst"
+
+[[project.authors]]
+email = "dominic@davis-foster.co.uk"
+name = "Dominic Davis-Foster"
+
+[project.urls]
+Homepage = "https://whey.readthedocs.io/en/latest"
+Documentation = "https://whey.readthedocs.io/en/latest"
+"Issue Tracker" = "https://github.com/repo-helper/whey/issues"
+"Source Code" = "https://github.com/repo-helper/whey"
+
+[tool.whey]
+base-classifiers = [ "Development Status :: 4 - Beta",]
+python-versions = [ "3.6", "3.7", "3.8", "3.9", "3.10",]
+python-implementations = [ "CPython", "PyPy",]
+platforms = [ "Windows", "macOS", "Linux",]
+license-key = "MIT"
 """

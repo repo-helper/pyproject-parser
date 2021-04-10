@@ -1,6 +1,6 @@
 dynamic: []
 name: spam
 readme:
-  content-type: text/x-rst
-  text: This is the readme.
+  content_type: text/x-rst
+  file: README.rst
 version: 2020.0.0

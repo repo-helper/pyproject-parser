@@ -2,7 +2,7 @@
 #
 #  __init__.py
 """
-Type hints for :mod:`pyproject_parer`.
+Type hints for :mod:`pyproject_parser`.
 """
 #
 #  Copyright © 2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
@@ -35,8 +35,12 @@ from packaging.version import Version
 from shippinglabel.requirements import ComparableRequirement
 from typing_extensions import Literal, TypedDict
 
-__all__ = ["BuildSystemDict", "Dynamic", "ProjectDict", "Author"]
+# this package
+from pyproject_parser.classes import License, Readme
 
+__all__ = ["BuildSystemDict", "Dynamic", "ProjectDict", "Author", "ContentTypes"]
+
+#: :class:`typing.TypedDict` representing the output from the :class:`~.BuildSystemParser` class.
 BuildSystemDict = TypedDict(
 		"BuildSystemDict",
 		{
@@ -46,6 +50,7 @@ BuildSystemDict = TypedDict(
 				}
 		)
 
+#: Type hint for the `dynamic <https://www.python.org/dev/peps/pep-0621/#dynamic>`_ field defined in :pep:`621`.
 Dynamic = Literal[
 	"name",
 	"version",
@@ -65,15 +70,16 @@ Dynamic = Literal[
 	"optional-dependencies"
 	]
 
+#: :class:`typing.TypedDict` representing the output from the :class:`~.PEP621Parser` class.
 ProjectDict = TypedDict(
 		"ProjectDict",
 		{
 				"name": str,
 				"version": Optional[Version],
 				"description": Optional[str],
-				"readme": Optional[Dict[str, str]],
+				"readme": Optional[Readme],
 				"requires-python": Optional[Marker],
-				"license": Optional[str],
+				"license": Optional[License],
 				"authors": List["Author"],
 				"maintainers": List["Author"],
 				"keywords": List[str],
@@ -90,5 +96,19 @@ ProjectDict = TypedDict(
 
 
 class Author(TypedDict, total=False):
+	"""
+	:class:`typing.TypedDict` representing the items in the
+	`authors/maintainers <https://www.python.org/dev/peps/pep-0621/#authors-maintainers>`_
+	list defined in :pep:`621`.
+	"""  # noqa: D400
+
 	name: Optional[str]
 	email: Optional[str]
+
+
+ContentTypes = Literal["text/markdown", "text/x-rst", "text/plain"]
+"""
+Type hint for the valid content-types in the license_ table defined in :pep:`621`.
+
+.. _license: <https://www.python.org/dev/peps/pep-0621/#license>
+"""

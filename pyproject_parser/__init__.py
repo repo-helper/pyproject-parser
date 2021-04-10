@@ -45,10 +45,9 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
 # this package
+from pyproject_parser.classes import License, Readme
 from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
-from pyproject_parser.type_hints import Author, BuildSystemDict, ProjectDict
-
-__all__ = ["PyProject"]
+from pyproject_parser.type_hints import Author, BuildSystemDict, ContentTypes, ProjectDict
 
 __author__: str = "Dominic Davis-Foster"
 __copyright__: str = "2021 Dominic Davis-Foster"
@@ -56,34 +55,99 @@ __license__: str = "MIT License"
 __version__: str = "0.0.0"
 __email__: str = "dominic@davis-foster.co.uk"
 
+__all__ = ["PyProject", "PyProjectTomlEncoder", "_PP"]
+
 _PP = TypeVar("_PP", bound="PyProject")
 
 
-def _represent_packaging_types(obj: Union[Version, Requirement, Marker, SpecifierSet]):
-	return _dump_str(str(obj))
-
-
 class PyProjectTomlEncoder(dom_toml.TomlEncoder):
+	"""
+	Custom TOML encoder supporting types from :mod:`pyproject_parser.classes` and packaging_.
+
+	.. _packaging: https://packaging.pypa.io/en/latest/
+	"""
 
 	def __init__(self, _dict=dict, preserve=False):
 		super().__init__(_dict=_dict, preserve=preserve)
 		self.dump_funcs[str] = _dump_str
-		self.dump_funcs[Version] = _represent_packaging_types
-		self.dump_funcs[Requirement] = _represent_packaging_types
-		self.dump_funcs[Marker] = _represent_packaging_types
-		self.dump_funcs[SpecifierSet] = _represent_packaging_types
+		self.dump_funcs[Version] = self.dump_packaging_types
+		self.dump_funcs[Requirement] = self.dump_packaging_types
+		self.dump_funcs[Marker] = self.dump_packaging_types
+		self.dump_funcs[SpecifierSet] = self.dump_packaging_types
+		self.dump_funcs[Readme] = self.dump_readme
+		self.dump_funcs[License] = self.dump_license
+
+	@staticmethod
+	def dump_packaging_types(obj: Union[Version, Requirement, Marker, SpecifierSet]) -> str:
+		"""
+		Convert types from packaging_ to TOML.
+
+		.. _packaging: https://packaging.pypa.io/en/latest/
+
+		:param obj:
+		"""
+
+		return _dump_str(str(obj))
+
+	def dump_readme(self, obj: Readme) -> str:
+		"""
+		Convert a :class:`~.Readme` to TOML.
+
+		:param obj:
+		"""
+
+		readme_dict = obj.to_pep621_dict()
+		if set(readme_dict.keys()) == {"file"}:
+			return _dump_str(readme_dict["file"])
+
+		return self.dump_inline_table(readme_dict)
+
+	def dump_license(self, obj: License) -> str:
+		"""
+		Convert a :class:`~.License` to TOML.
+
+		:param obj:
+		"""
+
+		return self.dump_inline_table(obj.to_pep621_dict())
 
 
 @serde
 @attr.s
 class PyProject:
+	"""
+	Represents a ``pyproject.toml`` file.
+	"""
+
+	#: Represents the ``[build-system]`` table defined in :pep:`517` and :pep:`518`.
 	build_system: Optional[BuildSystemDict] = attr.ib(default=None)
+
+	#: Represents the ``[project]`` table defined in :pep:`621`.
 	project: Optional[ProjectDict] = attr.ib(default=None)
+
+	#: Represents the ``[tool]`` table defined in :pep:`518`.
 	tool: Dict[str, Dict[str, Any]] = attr.ib(factory=dict)
 
+	#: The :class:`dom_toml.parser.AbstractConfigParser` to parse the ``[build-system]`` table with.
 	build_system_table_parser: ClassVar[BuildSystemParser] = BuildSystemParser()
+
+	#: The :class:`dom_toml.parser.AbstractConfigParser` to parse the ``[project]`` table with.
 	project_table_parser: ClassVar[PEP621Parser] = PEP621Parser()
+
 	tool_parsers: ClassVar[Mapping[str, AbstractConfigParser]] = {}
+	"""
+	A mapping of subtable name to :class:`dom_toml.parser.AbstractConfigParser` to parse the ``[tool]`` table with.
+
+	For example, to parse ``[tool.whey]``:
+
+	.. code-block:: python
+
+		class WheyParser(AbstractConfigParser):
+			pass
+
+		class CustomPyProject(PyProject):
+			tool_parsers = {"whey": WheyParser()}
+	"""
 
 	@classmethod
 	def load(
@@ -96,10 +160,8 @@ class PyProject:
 
 		:param filename:
 		:param set_defaults: If :py:obj:`True`, passes ``set_defaults=True``
-			the :meth:`dom_toml.parser.AbstractConfigParser.parse` method on
-			:attr:`~.build_system_table_parser` and :attr:`~.project_table_parser` the and
-			:attr:`dom_toml.parser.AbstractConfigParser.factories`
-			will be set as defaults for the returned mapping.
+			the :meth:`parse() <dom_toml.parser.AbstractConfigParser.parse>` method on
+			:attr:`~.build_system_table_parser` and :attr:`~.project_table_parser`.
 		"""
 
 		filename = PathPlus(filename)
@@ -153,7 +215,8 @@ class PyProject:
 
 		# TODO: filter out default values (lists and dicts)
 
-		return dom_toml.dumps(self.to_dict(), encoder)
+		toml_dict = {"build-system": self.build_system, "project": self.project, "tool": self.tool}
+		return dom_toml.dumps(toml_dict, encoder)
 
 	def dump(
 			self,
@@ -173,3 +236,44 @@ class PyProject:
 		as_toml = self.dumps(encoder=encoder)
 		filename.write_clean(as_toml)
 		return as_toml
+
+	@classmethod
+	def reformat(cls: Type[_PP], filename: PathLike) -> str:
+		"""
+		Reformat the given ``pyproject.toml`` file.
+
+		:param filename: The file to reformat.
+
+		:returns: A string containing the reformatted TOML.
+		"""
+
+		original_project_table_parser = cls.project_table_parser
+		cls.project_table_parser = PEP621Parser()
+
+		try:
+			config = cls.load(filename, set_defaults=False)
+			return config.dump(filename)
+		finally:
+			cls.project_table_parser = original_project_table_parser
+
+	def resolve_files(self):
+		"""
+		Resolve the "file" key in readme_ and license_ (if present) to retrieve the content of the file.
+
+		Calling this method may mean it is no longer possible to recreate
+		the original ``TOML`` file from this object.
+
+		.. _readme: https://www.python.org/dev/peps/pep-0621/#readme
+		.. _license: https://www.python.org/dev/peps/pep-0621/#license
+		"""
+
+		if self.project is not None:
+			readme = self.project.get("readme", None)
+
+			if readme is not None and isinstance(readme, Readme):
+				self.project["readme"].resolve(inplace=True)
+
+			license = self.project.get("license", None)
+
+			if license is not None and isinstance(license, License):
+				self.project["license"].resolve(inplace=True)

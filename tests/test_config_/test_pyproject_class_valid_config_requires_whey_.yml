@@ -1,5 +1,0 @@
-build_system:
-  requires:
-  - whey
-project: null
-tool: {}

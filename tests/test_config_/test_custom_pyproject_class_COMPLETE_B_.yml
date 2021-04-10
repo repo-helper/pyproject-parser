@@ -32,22 +32,8 @@ project:
   version: 2021.0.0
 tool:
   whey:
-    additional-files:
-    - include whey/style.css
-    base-classifiers:
-    - 'Development Status :: 4 - Beta'
-    license-key: MIT
     package: whey
     platforms:
     - Windows
     - macOS
     - Linux
-    python-implementations:
-    - CPython
-    - PyPy
-    python-versions:
-    - '3.6'
-    - '3.7'
-    - '3.8'
-    - '3.9'
-    - '3.10'

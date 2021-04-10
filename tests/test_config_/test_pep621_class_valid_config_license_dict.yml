@@ -1,4 +1,5 @@
 dynamic: []
-license: This is the MIT License
+license:
+  text: This is the MIT License
 name: spam
 version: 2020.0.0

@@ -1,4 +1,5 @@
 dynamic: []
-license: This is the license.
+license:
+  file: LICENSE
 name: spam
 version: 2020.0.0

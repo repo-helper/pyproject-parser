@@ -1,6 +1,6 @@
 dynamic: []
 name: spam
 readme:
-  content-type: text/plain
-  text: This is the plaintext README.
+  content_type: text/plain
+  file: README.txt
 version: 2020.0.0
