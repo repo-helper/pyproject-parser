@@ -61,6 +61,9 @@ name_re = re.compile("^([A-Z0-9]|[A-Z0-9][A-Z0-9._-]*[A-Z0-9])$", flags=re.IGNOR
 
 
 class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
+	"""
+	Abstract base class for TOML configuration parsers which have required keys.
+	"""
 
 	required_keys: ClassVar[List[str]]
 	table_name: ClassVar[str]
@@ -178,7 +181,7 @@ class BuildSystemParser(RequiredKeysConfigParser):
 		return parsed_backend_paths
 
 	if TYPE_CHECKING:
-		def parse(  # type: ignore [override]
+		def parse(  # type: ignore[override]  # noqa: D102
 			self,
 			config: Dict[str, TOML_TYPES],
 			set_defaults: bool = False,
@@ -584,8 +587,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return {e: sorted(combine_requirements(d)) for e, d in parsed_optional_dependencies.items()}
 
-
-	def parse(  # type: ignore [override]
+	def parse(  # type: ignore[override]
 		self,
 		config: Dict[str, TOML_TYPES],
 		set_defaults: bool = False,
@@ -606,7 +608,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 			raise BadConfigError("The 'project.name' field may not be dynamic.")
 
 		return {
-				**super().parse(config, set_defaults=set_defaults),  # type: ignore [misc]
+				**super().parse(config, set_defaults=set_defaults),  # type: ignore[misc]
 				"dynamic":
 						dynamic_fields,
 				}

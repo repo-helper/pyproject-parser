@@ -189,7 +189,7 @@ def test_pep621_class_valid_config_readme_dict(
 def test_pep621_class_bad_config_readme(
 		readme: str,
 		expected: str,
-		exception: Exception,
+		exception: Type[Exception],
 		tmp_pathplus: PathPlus,
 		advanced_data_regression: AdvancedDataRegressionFixture,
 		):
@@ -276,7 +276,7 @@ def test_pep621_class_bad_config_license(
 	with in_directory(tmp_pathplus), pytest.raises(BadConfigError, match=expected):
 		config = PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
 
-		advanced_data_regression.check(config)
+	advanced_data_regression.check(config)
 
 
 @pytest.mark.parametrize("config, expects, match", bad_pep621_config)

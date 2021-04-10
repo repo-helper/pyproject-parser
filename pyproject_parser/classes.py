@@ -42,20 +42,20 @@ from pyproject_parser.utils import content_type_from_filename
 
 if TYPE_CHECKING:
 	# this package
-	from pyproject_parser.type_hints import ContentTypes
+	from pyproject_parser.type_hints import ContentTypes, ReadmeDict
 
 __all__ = ["License", "Readme", "_R", "_L"]
 
 _R = TypeVar("_R", bound="Readme")
 _L = TypeVar("_L", bound="License")
-
-
-@overload
-def _convert_filename(filename: None) -> None: ...
-
-
-@overload
-def _convert_filename(filename: PathLike) -> pathlib.Path: ...
+#
+#
+# @overload
+# def _convert_filename(filename: None) -> None: ...
+#
+#
+# @overload
+# def _convert_filename(filename: PathLike) -> pathlib.Path: ...
 
 
 def _convert_filename(filename: Optional[PathLike]) -> Optional[pathlib.Path]:
@@ -152,7 +152,7 @@ class Readme:
 					text=text,
 					)
 
-	def to_dict(self) -> Dict[str, str]:
+	def to_dict(self) -> "ReadmeDict":
 		"""
 		Construct a dictionary containing the keys of the :class:`~.Readme` object.
 
@@ -162,7 +162,7 @@ class Readme:
 			* :meth:`~.Readme.from_dict`
 		"""
 
-		as_dict = {}
+		as_dict: "ReadmeDict" = {}
 
 		if self.content_type is not None:
 			as_dict["content_type"] = self.content_type
@@ -179,7 +179,7 @@ class Readme:
 		return as_dict
 
 	@classmethod
-	def from_dict(cls: Type[_R], data: Mapping[str, str]) -> _R:
+	def from_dict(cls: Type[_R], data: ReadmeDict) -> _R:
 		"""
 		Construct a :class:`~.Readme` from a dictionary containing the same keys as the class constructor.
 
@@ -197,7 +197,7 @@ class Readme:
 		if "content-type" in data_dict:
 			data_dict["content_type"] = data_dict.pop("content-type")
 
-		return cls(**data_dict)
+		return cls(**data_dict)  # type: ignore[arg-type]
 
 	def to_pep621_dict(self) -> Dict[str, str]:
 		"""
@@ -214,7 +214,7 @@ class Readme:
 		as_dict = {}
 
 		if self.content_type is not None:
-			as_dict["content-type"] = self.content_type
+			as_dict["content-type"] = str(self.content_type)
 
 		if self.charset != "UTF-8":
 			as_dict["charset"] = self.charset

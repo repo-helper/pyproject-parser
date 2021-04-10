@@ -24,10 +24,10 @@ class TestReadme:
 
 	def test_invalid_content_types(self):
 		with pytest.raises(ValueError, match="Unsupported readme content-type 'application/json'"):
-			Readme(text="This is the readme", content_type="application/json")
+			Readme(text="This is the readme", content_type="application/json")  # type: ignore[arg-type]
 
 		with pytest.raises(ValueError, match="Unsupported readme content-type 'image/jpeg'"):
-			Readme(file="photo.jpg", content_type="image/jpeg")
+			Readme(file="photo.jpg", content_type="image/jpeg")  # type: ignore[arg-type]
 
 	def test_from_file(self, tmp_pathplus: PathPlus):
 		(tmp_pathplus / "README.rst").write_clean("This is the README")
@@ -150,7 +150,9 @@ class TestReadme:
 		assert readme.to_pep621_dict() == {
 				"file": f"{tmp_pathplus.as_posix()}/README.rst",
 				}
-		assert Readme.from_dict(readme.to_pep621_dict()) == readme
+
+		# TODO: the type ignore needs the TypedDict function fix in typing-extensions
+		assert Readme.from_dict(readme.to_pep621_dict()) == readme  # type: ignore[arg-type]
 
 		(tmp_pathplus / "README.md").write_clean("This is the README")
 
@@ -160,7 +162,9 @@ class TestReadme:
 				"file": f"{tmp_pathplus.as_posix()}/README.md",
 				"content-type": "text/x-rst",
 				}
-		assert Readme.from_dict(readme.to_pep621_dict()) == readme
+
+		# TODO: the type ignore needs the TypedDict function fix in typing-extensions
+		assert Readme.from_dict(readme.to_pep621_dict()) == readme  # type: ignore[arg-type]
 
 		(tmp_pathplus / "README.rst").write_clean("This is the README", encoding="cp1252")
 
@@ -170,7 +174,9 @@ class TestReadme:
 				"file": f"{tmp_pathplus.as_posix()}/README.rst",
 				"charset": "cp1252",
 				}
-		assert Readme.from_dict(readme.to_pep621_dict()) == readme
+
+		# TODO: the type ignore needs the TypedDict function fix in typing-extensions
+		assert Readme.from_dict(readme.to_pep621_dict()) == readme  # type: ignore[arg-type]
 
 		readme = Readme(text="This is the README", content_type="text/x-rst")
 
@@ -178,7 +184,9 @@ class TestReadme:
 				"text": "This is the README",
 				"content-type": "text/x-rst",
 				}
-		assert Readme.from_dict(readme.to_pep621_dict()) == readme
+
+		# TODO: the type ignore needs the TypedDict function fix in typing-extensions
+		assert Readme.from_dict(readme.to_pep621_dict()) == readme  # type: ignore[arg-type]
 
 
 class TestLicense:

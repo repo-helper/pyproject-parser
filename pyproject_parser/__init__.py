@@ -271,9 +271,9 @@ class PyProject:
 			readme = self.project.get("readme", None)
 
 			if readme is not None and isinstance(readme, Readme):
-				self.project["readme"].resolve(inplace=True)
+				readme.resolve(inplace=True)
 
-			license = self.project.get("license", None)
+			lic = self.project.get("license", None)
 
-			if license is not None and isinstance(license, License):
-				self.project["license"].resolve(inplace=True)
+			if lic is not None and isinstance(lic, License):
+				lic.resolve(inplace=True)

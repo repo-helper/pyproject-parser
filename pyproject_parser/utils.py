@@ -47,7 +47,7 @@ try:
 
 	def render_markdown(content: str):
 		"""
-		Attempt to render the given content as :wikipedia:`Markdown`
+		Attempt to render the given content as :wikipedia:`Markdown`.
 
 		.. extras-require:: readme
 			:pyproject:
@@ -62,7 +62,7 @@ except ImportError:  # pragma: no cover
 
 	def render_markdown(content: str):
 		"""
-		Attempt to render the given content as :wikipedia:`Markdown`
+		Attempt to render the given content as :wikipedia:`Markdown`.
 
 		.. extras-require:: readme
 			:pyproject:
@@ -80,7 +80,7 @@ try:
 
 	def render_rst(content: str):
 		"""
-		Attempt to render the given content as :wikipedia:`ReStructuredText`
+		Attempt to render the given content as :wikipedia:`ReStructuredText`.
 
 		.. extras-require:: readme
 			:pyproject:
@@ -95,7 +95,7 @@ except ImportError:  # pragma: no cover
 
 	def render_rst(content: str):
 		"""
-		Attempt to render the given content as :wikipedia:`ReStructuredText`
+		Attempt to render the given content as :wikipedia:`ReStructuredText`.
 
 		.. extras-require:: readme
 			:pyproject:

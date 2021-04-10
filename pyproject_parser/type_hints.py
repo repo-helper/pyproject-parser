@@ -38,7 +38,14 @@ from typing_extensions import Literal, TypedDict
 # this package
 from pyproject_parser.classes import License, Readme
 
-__all__ = ["BuildSystemDict", "Dynamic", "ProjectDict", "Author", "ContentTypes"]
+__all__ = [
+		"BuildSystemDict",
+		"Dynamic",
+		"ProjectDict",
+		"Author",
+		"ContentTypes",
+		"ReadmeDict",
+		]
 
 #: :class:`typing.TypedDict` representing the output from the :class:`~.BuildSystemParser` class.
 BuildSystemDict = TypedDict(
@@ -112,3 +119,14 @@ Type hint for the valid content-types in the license_ table defined in :pep:`621
 
 .. _license: <https://www.python.org/dev/peps/pep-0621/#license>
 """
+
+
+class ReadmeDict(TypedDict, total=False):
+	"""
+	:class:`typing.TypedDict` representing the return type of :meth:`~.Readme.to_dict`.
+	"""
+
+	text: str
+	file: str
+	charset: str
+	content_type: ContentTypes
