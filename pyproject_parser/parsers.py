@@ -607,8 +607,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 		if "name" in dynamic_fields:
 			raise BadConfigError("The 'project.name' field may not be dynamic.")
 
+		super_parsed_config = super().parse(config, set_defaults=set_defaults)
+
 		return {
-				**super().parse(config, set_defaults=set_defaults),  # type: ignore[misc]
-				"dynamic":
-						dynamic_fields,
+				**super_parsed_config,  # type: ignore[misc]
+				"dynamic": dynamic_fields,
 				}
