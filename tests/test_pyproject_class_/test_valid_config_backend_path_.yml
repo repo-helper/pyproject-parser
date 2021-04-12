@@ -1,0 +1,8 @@
+build_system:
+  backend-path:
+  - ../foo
+  build-backend: whey
+  requires:
+  - whey
+project: null
+tool: {}

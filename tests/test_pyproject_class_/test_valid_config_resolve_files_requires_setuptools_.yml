@@ -1,0 +1,6 @@
+build_system:
+  requires:
+  - setuptools
+  - wheel
+project: null
+tool: {}

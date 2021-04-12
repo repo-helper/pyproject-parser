@@ -1,0 +1,9 @@
+build_system: null
+project:
+  dynamic: []
+  maintainers:
+  - email: brett@python.org
+    name: Brett Cannon
+  name: spam
+  version: 2020.0.0
+tool: {}
