@@ -179,7 +179,7 @@ class Readme:
 		return as_dict
 
 	@classmethod
-	def from_dict(cls: Type[_R], data: ReadmeDict) -> _R:
+	def from_dict(cls: Type[_R], data: "ReadmeDict") -> _R:
 		"""
 		Construct a :class:`~.Readme` from a dictionary containing the same keys as the class constructor.
 
