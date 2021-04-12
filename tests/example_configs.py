@@ -3,6 +3,7 @@ import re
 
 # 3rd party
 import pytest
+from coincidence.selectors import not_windows, only_windows
 from dom_toml.parser import BadConfigError
 
 MINIMAL_CONFIG = '[project]\nname = "spam"\nversion = "2020.0.0"'
@@ -370,12 +371,28 @@ bad_pep621_config = [
 				FileNotFoundError,
 				"No such file or directory: 'README.rst'",
 				id="missing_readme_file",
+				marks=not_windows("Message differs on Windows.")
 				),
 		pytest.param(
 				f'{MINIMAL_CONFIG}\nlicense = {{file = "LICENSE.txt"}}',
 				FileNotFoundError,
 				"No such file or directory: 'LICENSE.txt'",
 				id="missing_license_file",
+				marks=not_windows("Message differs on Windows.")
+				),
+		pytest.param(
+				f'{MINIMAL_CONFIG}\nreadme = "README.rst"',
+				FileNotFoundError,
+				"[WinError 2] The system cannot find the file specified: 'README.rst'",
+				id="missing_readme_file_win32",
+				marks=only_windows("Message differs on Windows.")
+				),
+		pytest.param(
+				f'{MINIMAL_CONFIG}\nlicense = {{file = "LICENSE.txt"}}',
+				FileNotFoundError,
+				"[WinError 2] The system cannot find the file specified: 'LICENSE.txt'",
+				id="missing_license_file_win32",
+				marks=only_windows("Message differs on Windows.")
 				),
 		]
 
