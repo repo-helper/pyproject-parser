@@ -12,7 +12,6 @@ license: 'MIT'
 short_desc: "Parser for 'pyproject.toml'"
 
 python_deploy_version: 3.6
-docs_fail_on_warning: true
 sphinx_html_theme: furo
 tox_testenv_extras: readme
 min_coverage: 97.5

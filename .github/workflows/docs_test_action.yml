@@ -15,4 +15,4 @@ jobs:
         with:
           pre-build-command: apt-get update && apt-get install gcc python3-dev git pandoc -y && python -m pip install tox
           docs-folder: "doc-source/"
-          build-command: "tox -e docs -- -W "
+          build-command: "tox -e docs -- "
