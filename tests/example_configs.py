@@ -369,14 +369,14 @@ bad_pep621_config = [
 		pytest.param(
 				f'{MINIMAL_CONFIG}\nreadme = "README.rst"',
 				FileNotFoundError,
-				"No such file or directory: 'README.rst'",
+				r"No such file or directory: ((Windows|Posix)Path(Plus)?\('README.rst'\)|'README.rst')",
 				id="missing_readme_file",
 				marks=not_windows("Message differs on Windows.")
 				),
 		pytest.param(
 				f'{MINIMAL_CONFIG}\nlicense = {{file = "LICENSE.txt"}}',
 				FileNotFoundError,
-				"No such file or directory: 'LICENSE.txt'",
+				r"No such file or directory: ((Windows|Posix)Path(Plus)?\('LICENSE.txt'\)|'LICENSE.txt')",
 				id="missing_license_file",
 				marks=not_windows("Message differs on Windows.")
 				),
