@@ -383,14 +383,14 @@ bad_pep621_config = [
 		pytest.param(
 				f'{MINIMAL_CONFIG}\nreadme = "README.rst"',
 				FileNotFoundError,
-				"[WinError 2] The system cannot find the file specified: 'README.rst'",
+				r"\[(Errno|WinError) 2\] The system cannot find the file specified: 'README.rst'",
 				id="missing_readme_file_win32",
 				marks=only_windows("Message differs on Windows.")
 				),
 		pytest.param(
 				f'{MINIMAL_CONFIG}\nlicense = {{file = "LICENSE.txt"}}',
 				FileNotFoundError,
-				"[WinError 2] The system cannot find the file specified: 'LICENSE.txt'",
+				r"\[(Errno|WinError) 2\] The system cannot find the file specified: 'LICENSE.txt'",
 				id="missing_license_file_win32",
 				marks=only_windows("Message differs on Windows.")
 				),
