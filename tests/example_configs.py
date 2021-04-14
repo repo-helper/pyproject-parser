@@ -299,6 +299,15 @@ valid_pep621_config = [
 		pytest.param(COMPLETE_B, id="COMPLETE_B"),
 		]
 
+
+def file_not_found_regex(filename: str) -> str:
+	return (
+			r"\[(Errno|WinError) 2\] "
+			r"(The system cannot find the file specified|No such file or directory): "
+			fr"((Windows|Posix)Path(Plus)?\('{filename}'\)|'{filename}')"
+			)
+
+
 bad_pep621_config = [
 		# pytest.param(
 		# 		'[project]\nname = "spam"',
@@ -383,14 +392,14 @@ bad_pep621_config = [
 		pytest.param(
 				f'{MINIMAL_CONFIG}\nreadme = "README.rst"',
 				FileNotFoundError,
-				r"\[(Errno|WinError) 2\] (The system cannot find the file specified|No such file or directory): 'README.rst'",
+				file_not_found_regex("README.rst"),
 				id="missing_readme_file_win32",
 				marks=only_windows("Message differs on Windows.")
 				),
 		pytest.param(
 				f'{MINIMAL_CONFIG}\nlicense = {{file = "LICENSE.txt"}}',
 				FileNotFoundError,
-				r"\[(Errno|WinError) 2\] (The system cannot find the file specified|No such file or directory): 'LICENSE.txt'",
+				file_not_found_regex("LICENSE.txt"),
 				id="missing_license_file_win32",
 				marks=only_windows("Message differs on Windows.")
 				),
