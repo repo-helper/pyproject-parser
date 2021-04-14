@@ -31,7 +31,7 @@ import os
 import re
 from abc import ABCMeta
 from collections import defaultdict
-from typing import cast, Any, ClassVar, Dict, Iterable, List, Sequence, Union
+from typing import Any, ClassVar, Dict, Iterable, List, Sequence, Union, cast
 
 # 3rd party
 from apeye import URL
