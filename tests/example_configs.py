@@ -442,6 +442,12 @@ bad_buildsystem_config = [
 				"Invalid type type for 'build-system.backend-path': expected <class 'collections.abc.Sequence'>, got <class 'str'>",
 				id="backend_path_str"
 				),
+		pytest.param(
+				'[build-system]\nrequires = ["whey"]\nbackend-path = ["whey"]',
+				BadConfigError,
+				"'build-system.backend-path' cannot be specified without also specifying 'build-system.build-backend'",
+				id="backend_path_without_backend"
+				),
 		]
 
 COMPLETE_A_WITH_FILES = """\

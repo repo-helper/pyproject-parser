@@ -31,7 +31,7 @@ import os
 import re
 from abc import ABCMeta
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, List, Sequence, Union
+from typing import cast, Any, ClassVar, Dict, Iterable, List, Sequence, Union
 
 # 3rd party
 from apeye import URL
@@ -180,12 +180,25 @@ class BuildSystemParser(RequiredKeysConfigParser):
 
 		return parsed_backend_paths
 
-	if TYPE_CHECKING:
-		def parse(  # type: ignore[override]  # noqa: D102
-			self,
-			config: Dict[str, TOML_TYPES],
-			set_defaults: bool = False,
-			) -> BuildSystemDict: ...
+	def parse(  # type: ignore[override]  # noqa: D102
+		self,
+		config: Dict[str, TOML_TYPES],
+		set_defaults: bool = False,
+		) -> BuildSystemDict:
+
+		parsed_config = super().parse(config, set_defaults)
+
+		if (
+				parsed_config.get("backend-path", None) is not None
+				and parsed_config.get("build-backend", None) is None
+				):
+			raise BadConfigError(
+					f"{construct_path([self.table_name, 'backend-path'])!r} "
+					f"cannot be specified without also specifying "
+					f"{construct_path([self.table_name, 'build-backend'])!r}"
+					)
+
+		return cast(BuildSystemDict, parsed_config)
 
 
 class PEP621Parser(RequiredKeysConfigParser):
