@@ -383,14 +383,14 @@ bad_pep621_config = [
 		pytest.param(
 				f'{MINIMAL_CONFIG}\nreadme = "README.rst"',
 				FileNotFoundError,
-				r"\[(Errno|WinError) 2\] The system cannot find the file specified: 'README.rst'",
+				r"\[(Errno|WinError) 2\] (The system cannot find the file specified|No such file or directory): 'README.rst'",
 				id="missing_readme_file_win32",
 				marks=only_windows("Message differs on Windows.")
 				),
 		pytest.param(
 				f'{MINIMAL_CONFIG}\nlicense = {{file = "LICENSE.txt"}}',
 				FileNotFoundError,
-				r"\[(Errno|WinError) 2\] The system cannot find the file specified: 'LICENSE.txt'",
+				r"\[(Errno|WinError) 2\] (The system cannot find the file specified|No such file or directory): 'LICENSE.txt'",
 				id="missing_license_file_win32",
 				marks=only_windows("Message differs on Windows.")
 				),
@@ -441,6 +441,12 @@ bad_buildsystem_config = [
 				TypeError,
 				"Invalid type type for 'build-system.backend-path': expected <class 'collections.abc.Sequence'>, got <class 'str'>",
 				id="backend_path_str"
+				),
+		pytest.param(
+				'[build-system]\nrequires = ["whey"]\nbackend-path = ["whey"]',
+				BadConfigError,
+				"'build-system.backend-path' cannot be specified without also specifying 'build-system.build-backend'",
+				id="backend_path_without_backend"
 				),
 		]
 

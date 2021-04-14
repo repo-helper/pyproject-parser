@@ -28,9 +28,11 @@ Utility functions.
 
 # stdlib
 import functools
-from typing import TYPE_CHECKING, Optional, Tuple
+import sys
+from typing import TYPE_CHECKING, Optional
 
 # 3rd party
+from dom_toml.parser import BadConfigError
 from domdf_python_tools.paths import PathPlus
 from domdf_python_tools.typing import PathLike
 
@@ -56,7 +58,10 @@ try:
 		:param content:
 		"""
 
-		readme_renderer.markdown.render(content)
+		rendering_result = readme_renderer.markdown.render(content, stream=sys.stderr)
+
+		if rendering_result is None:
+			raise BadConfigError("Error rendering README.")
 
 except ImportError:  # pragma: no cover
 
@@ -89,7 +94,10 @@ try:
 		:param content:
 		"""
 
-		readme_renderer.rst.render(content)
+		rendering_result = readme_renderer.rst.render(content, stream=sys.stderr)
+
+		if rendering_result is None:
+			raise BadConfigError("Error rendering README.")
 
 except ImportError:  # pragma: no cover
 
