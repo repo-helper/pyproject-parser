@@ -207,7 +207,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 	"""
 
 	table_name = "project"
-	keys = [
+	keys: List[str] = [
 			"name",
 			"version",
 			"description",
