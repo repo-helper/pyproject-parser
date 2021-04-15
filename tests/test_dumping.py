@@ -2,10 +2,10 @@
 import pytest
 from coincidence.regressions import AdvancedFileRegressionFixture
 from domdf_python_tools.paths import PathPlus
+from pyproject_examples.example_configs import COMPLETE_A, COMPLETE_A_WITH_FILES, COMPLETE_B, COMPLETE_PROJECT_A
 
 # this package
 from pyproject_parser import PyProject
-from pyproject_examples.example_configs import COMPLETE_A, COMPLETE_A_WITH_FILES, COMPLETE_B, COMPLETE_PROJECT_A
 
 UNORDERED = """\
 [project]

@@ -9,15 +9,15 @@ import pytest
 from coincidence.regressions import AdvancedDataRegressionFixture
 from dom_toml.parser import BadConfigError
 from domdf_python_tools.paths import PathPlus, in_directory
-
-# this package
-from pyproject_parser import BuildSystemParser, PEP621Parser
 from pyproject_examples import (
 		bad_buildsystem_config,
 		bad_pep621_config,
 		valid_buildsystem_config,
 		valid_pep621_config
 		)
+
+# this package
+from pyproject_parser import BuildSystemParser, PEP621Parser
 
 
 @pytest.mark.parametrize("toml_config", valid_pep621_config)
