@@ -6,21 +6,16 @@ import pytest
 from coincidence.regressions import AdvancedDataRegressionFixture
 from dom_toml.parser import AbstractConfigParser, BadConfigError
 from domdf_python_tools.paths import PathPlus, in_directory
-
-# this package
-from pyproject_parser import PyProject
-from pyproject_examples.example_configs import (
-		COMPLETE_A,
-		COMPLETE_A_WITH_FILES,
-		COMPLETE_B,
-		COMPLETE_PROJECT_A,
-	)
 from pyproject_examples import (
 		bad_buildsystem_config,
 		bad_pep621_config,
 		valid_buildsystem_config,
 		valid_pep621_config
 		)
+from pyproject_examples.example_configs import COMPLETE_A, COMPLETE_A_WITH_FILES, COMPLETE_B, COMPLETE_PROJECT_A
+
+# this package
+from pyproject_parser import PyProject
 
 
 @pytest.mark.parametrize("toml_config", [*valid_pep621_config, *valid_buildsystem_config])
