@@ -12,7 +12,7 @@ from domdf_python_tools.paths import PathPlus, in_directory
 
 # this package
 from pyproject_parser import BuildSystemParser, PEP621Parser
-from tests.example_configs import (
+from pyproject_examples import (
 		bad_buildsystem_config,
 		bad_pep621_config,
 		valid_buildsystem_config,

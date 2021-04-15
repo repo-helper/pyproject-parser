@@ -31,7 +31,7 @@ def test_content_type_from_filename(filename, expected: str):
 	assert content_type_from_filename(filename) == expected
 
 
-def test_render_rst_e(capsys, advanced_data_regression: AdvancedDataRegressionFixture):
+def test_render_rst_error(capsys, advanced_data_regression: AdvancedDataRegressionFixture):
 	pytest.importorskip("readme_renderer")
 
 	with pytest.raises(BadConfigError, match="Error rendering README."):

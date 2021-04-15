@@ -9,7 +9,7 @@ from packaging.version import Version
 from pytest_regressions.data_regression import RegressionYamlDumper
 
 # this package
-from pyproject_parser import License, Readme
+from pyproject_parser.classes import License, Readme
 
 _C = TypeVar("_C", bound=Callable)
 

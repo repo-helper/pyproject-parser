@@ -7,3 +7,4 @@ pytest>=6.0.0
 pytest-cov>=2.8.1
 pytest-randomly>=3.7.0
 pytest-timeout>=1.4.2
+git+https://github.com/repo-helper/pyproject-examples
