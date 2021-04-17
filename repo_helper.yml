@@ -57,3 +57,4 @@ keywords:
 extras_require:
  readme:
   - readme-renderer[md]>=27.0
+  - docutils==0.16

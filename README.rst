@@ -147,3 +147,10 @@ To install with ``conda``:
 		$ conda install pyproject-parser
 
 .. end installation
+
+``pyproject-parser`` also has an optional README validation feature, which checks the README will render correctly on PyPI.
+This requires that the ``readme`` extra is installed:
+
+.. code-block:: bash
+
+	$ python -m pip install pyproject-parser[readme]

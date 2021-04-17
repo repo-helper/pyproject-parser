@@ -135,6 +135,15 @@ Installation
 
 .. end installation
 
+
+``pyproject-parser`` also has an optional README validation feature, which checks the README will render correctly on PyPI.
+This requires that the ``readme`` extra is installed:
+
+.. prompt:: bash
+
+	python -m pip install pyproject-parser[readme]
+
+
 .. toctree::
 	:hidden:
 

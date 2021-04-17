@@ -25,8 +25,8 @@ Homepage = "https://github.com/repo-helper/pyproject-parser"
 Documentation = "https://pyproject-parser.readthedocs.io/en/latest"
 
 [project.optional-dependencies]
-readme = [ "readme-renderer[md]>=27.0",]
-all = [ "readme-renderer[md]>=27.0",]
+readme = [ "docutils==0.16", "readme-renderer[md]>=27.0",]
+all = [ "docutils==0.16", "readme-renderer[md]>=27.0",]
 
 [tool.mkrecipe]
 conda-channels = [ "conda-forge", "domdfcoding",]
