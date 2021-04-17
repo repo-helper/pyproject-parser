@@ -16,7 +16,7 @@ __all__ = [
 		"extras_require",
 		]
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 extras_require = {
 		"readme": ["docutils==0.16", "readme-renderer[md]>=27.0"],
 		"all": ["docutils==0.16", "readme-renderer[md]>=27.0"]
