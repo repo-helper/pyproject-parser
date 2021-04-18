@@ -27,7 +27,7 @@ Type hints for :mod:`pyproject_parser`.
 #
 
 # stdlib
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 # 3rd party
 from packaging.markers import Marker
@@ -130,3 +130,9 @@ class ReadmeDict(TypedDict, total=False):
 	file: str
 	charset: str
 	content_type: ContentTypes
+
+
+_PyProjectAsTomlDict = TypedDict(
+		"_PyProjectAsTomlDict",
+		{"build-system": Optional[BuildSystemDict], "project": Optional[ProjectDict], "tool": Dict[str, Any]},
+		)

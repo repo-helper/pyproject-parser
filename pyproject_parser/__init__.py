@@ -74,8 +74,6 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 		self.dump_funcs[Requirement] = self.dump_packaging_types
 		self.dump_funcs[Marker] = self.dump_packaging_types
 		self.dump_funcs[SpecifierSet] = self.dump_packaging_types
-		self.dump_funcs[Readme] = self.dump_readme
-		self.dump_funcs[License] = self.dump_license
 
 	@staticmethod
 	def dump_packaging_types(obj: Union[Version, Requirement, Marker, SpecifierSet]) -> str:
@@ -88,28 +86,6 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 		"""
 
 		return _dump_str(str(obj))
-
-	def dump_readme(self, obj: Readme) -> str:
-		"""
-		Convert a :class:`~.Readme` to TOML.
-
-		:param obj:
-		"""
-
-		readme_dict = obj.to_pep621_dict()
-		if set(readme_dict.keys()) == {"file"}:
-			return _dump_str(readme_dict["file"])
-
-		return self.dump_inline_table(readme_dict)
-
-	def dump_license(self, obj: License) -> str:
-		"""
-		Convert a :class:`~.License` to TOML.
-
-		:param obj:
-		"""
-
-		return self.dump_inline_table(obj.to_pep621_dict())
 
 
 @serde
@@ -215,7 +191,23 @@ class PyProject:
 
 		# TODO: filter out default values (lists and dicts)
 
-		toml_dict = {"build-system": self.build_system, "project": self.project, "tool": self.tool}
+		toml_dict: _PyProjectAsTomlDict = {
+				"build-system": self.build_system, "project": self.project, "tool": self.tool
+				}
+
+		if toml_dict["project"] is not None:
+			if "license" in toml_dict["project"] and toml_dict["project"]["license"] is not None:
+				toml_dict["project"]["license"] = toml_dict["project"]["license"].to_pep621_dict()  # type: ignore
+
+		if toml_dict["project"] is not None:
+			if "readme" in toml_dict["project"] and toml_dict["project"]["readme"] is not None:
+				readme_dict = toml_dict["project"]["readme"].to_pep621_dict()
+
+				if set(readme_dict.keys()) == {"file"}:
+					toml_dict["project"]["readme"] = readme_dict["file"]  # type: ignore
+				else:
+					toml_dict["project"]["readme"] = readme_dict  # type: ignore
+
 		return dom_toml.dumps(toml_dict, encoder)
 
 	def dump(

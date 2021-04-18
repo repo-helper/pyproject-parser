@@ -57,7 +57,11 @@ name = "Dominic Davis-Foster"
 				pytest.param(COMPLETE_PROJECT_A, id="COMPLETE_PROJECT_A"),
 				]
 		)
-def test_dumps(tmp_pathplus: PathPlus, toml_string: str, advanced_file_regression: AdvancedFileRegressionFixture):
+def test_dumps(
+		tmp_pathplus: PathPlus,
+		toml_string: str,
+		advanced_file_regression: AdvancedFileRegressionFixture,
+		):
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
 
 	config = PyProject.load(filename=tmp_pathplus / "pyproject.toml")
@@ -79,7 +83,9 @@ def test_dumps(tmp_pathplus: PathPlus, toml_string: str, advanced_file_regressio
 				]
 		)
 def test_reformat(
-		tmp_pathplus: PathPlus, toml_string: str, advanced_file_regression: AdvancedFileRegressionFixture
+		tmp_pathplus: PathPlus,
+		toml_string: str,
+		advanced_file_regression: AdvancedFileRegressionFixture,
 		):
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
 	(tmp_pathplus / "README.rst").write_clean("This is the README")

@@ -7,7 +7,6 @@ name = "whey"
 version = "2021.0.0"
 description = "A simple Python wheel builder for simple projects."
 readme = "README.rst"
-license = { file = "LICENSE" }
 keywords = [ "build", "distribution", "packaging", "pep517", "pep621", "sdist", "wheel",]
 dependencies = [ 'django>2.1; os_name != "nt"', 'django>2.0; os_name == "nt"', "gidgethub[httpx]>4.0.0", "httpx",]
 dynamic = [ "classifiers", "requires-python",]
@@ -16,6 +15,9 @@ dynamic = [ "classifiers", "requires-python",]
 name = "Dominic Davis-Foster"
 email = "dominic@davis-foster.co.uk"
 
+
+[project.license]
+file = "LICENSE"
 
 [project.urls]
 Homepage = "https://whey.readthedocs.io/en/latest"
