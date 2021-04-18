@@ -47,7 +47,7 @@ from packaging.version import Version
 # this package
 from pyproject_parser.classes import License, Readme
 from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
-from pyproject_parser.type_hints import Author, BuildSystemDict, ContentTypes, ProjectDict
+from pyproject_parser.type_hints import Author, BuildSystemDict, ContentTypes, ProjectDict, _PyProjectAsTomlDict
 
 __author__: str = "Dominic Davis-Foster"
 __copyright__: str = "2021 Dominic Davis-Foster"
@@ -230,23 +230,29 @@ class PyProject:
 		return as_toml
 
 	@classmethod
-	def reformat(cls: Type[_PP], filename: PathLike) -> str:
+	def reformat(
+			cls: Type[_PP],
+			filename: PathLike,
+			encoder: Union[Type[toml.TomlEncoder], toml.TomlEncoder, None] = PyProjectTomlEncoder,
+			) -> str:
 		"""
 		Reformat the given ``pyproject.toml`` file.
 
 		:param filename: The file to reformat.
+		:param encoder: The :class:`toml.TomlEncoder` to use for constructing the output string.
 
 		:returns: A string containing the reformatted TOML.
+
+		.. versionchanged:: 0.2.0
+
+			* Added the ``encoder`` argument.
+			* The parser configured as :attr:`~.project_table_parser` is now used to parse
+			  the ``[project]`` table, rather than always using :class:`~.PEP621Parser`.
+
 		"""
 
-		original_project_table_parser = cls.project_table_parser
-		cls.project_table_parser = PEP621Parser()
-
-		try:
-			config = cls.load(filename, set_defaults=False)
-			return config.dump(filename)
-		finally:
-			cls.project_table_parser = original_project_table_parser
+		config = cls.load(filename, set_defaults=False)
+		return config.dump(filename, encoder=encoder)
 
 	def resolve_files(self):
 		"""
