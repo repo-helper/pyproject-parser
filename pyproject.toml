@@ -30,6 +30,8 @@ all = [ "docutils==0.16", "readme-renderer[md]>=27.0",]
 
 [project.scripts]
 pyproject-parser = "pyproject_parser.__main__:main"
+pyproject-validate = "pyproject_parser.__main__:main"
+pyproject-fmt = "pyproject_parser.__main__:main"
 
 [tool.mkrecipe]
 conda-channels = [ "conda-forge", "domdfcoding",]
