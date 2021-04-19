@@ -81,3 +81,8 @@ repos:
        - pyproject_parser
 
 # Custom hooks can be added below this comment
+
+ - repo: https://github.com/repo-helper/pyproject-parser
+   rev: 04f35d014e641f2bec1b324a59bd457e432fe3c2
+   hooks:
+    - id: validate-pyproject

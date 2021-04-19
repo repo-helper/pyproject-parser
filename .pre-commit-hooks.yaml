@@ -4,3 +4,10 @@
     entry: pyproject-parser validate
     language: python
     files: pyproject.toml
+
+-   id: reformat-pyproject
+    name: Reformat 'pyproject.toml'
+    description: Reformat 'pyproject.toml'
+    entry: pyproject-parser reformat
+    language: python
+    files: pyproject.toml
