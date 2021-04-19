@@ -32,4 +32,4 @@ To do so, add the following to your
 
 .. pre-commit::
 	:rev: 0.2.0
-	:hooks: validate-pyproject
+	:hooks: validate-pyproject,reformat-pyproject
