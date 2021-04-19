@@ -202,8 +202,9 @@ class PyProject:
 
 		if toml_dict["project"] is not None:
 			if "license" in toml_dict["project"] and toml_dict["project"]["license"] is not None:
-				toml_dict["project"] = {
-						**toml_dict["project"], "license": toml_dict["project"]["license"].to_pep621_dict()
+				toml_dict["project"] = {  # type: ignore
+						**toml_dict["project"],  # type: ignore
+						"license": toml_dict["project"]["license"].to_pep621_dict()
 						}
 
 		if toml_dict["project"] is not None:
@@ -211,9 +212,9 @@ class PyProject:
 				readme_dict = toml_dict["project"]["readme"].to_pep621_dict()
 
 				if set(readme_dict.keys()) == {"file"}:
-					toml_dict["project"] = {**toml_dict["project"], "readme": readme_dict["file"]}
+					toml_dict["project"] = {**toml_dict["project"], "readme": readme_dict["file"]}  # type: ignore
 				else:
-					toml_dict["project"] = {**toml_dict["project"], "readme": readme_dict}
+					toml_dict["project"] = {**toml_dict["project"], "readme": readme_dict}  # type: ignore
 
 		return dom_toml.dumps(toml_dict, encoder)
 

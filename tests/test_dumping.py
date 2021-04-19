@@ -102,21 +102,20 @@ def test_dumps(
 	advanced_file_regression.check(config.dumps(), extension=".toml")
 
 
+def _param(readme_block: str, **kwargs):
+	return pytest.param(DUMPS_README_TEMPLATE.format(readme_block=readme_block), **kwargs)
+
+
 @pytest.mark.parametrize(
 		"toml_string",
 		[
-				pytest.param(DUMPS_README_TEMPLATE.format(readme_block="readme = 'README.rst'"), id="string"),
-				pytest.param(
-						DUMPS_README_TEMPLATE.format(
-								readme_block=
-								"[project.readme]\ntext = 'This is the README'\ncontent-type = 'text/x-rst'"
-								),
+				_param(readme_block="readme = 'README.rst'", id="string"),
+				_param(
+						readme_block="[project.readme]\ntext = 'This is the README'\ncontent-type = 'text/x-rst'",
 						id="dict_text"
 						),
-				pytest.param(
-						DUMPS_README_TEMPLATE.format(
-								readme_block="[project.readme]\nfile = 'README.rst'\ncontent-type = 'text/x-rst'"
-								),
+				_param(
+						readme_block="[project.readme]\nfile = 'README.rst'\ncontent-type = 'text/x-rst'",
 						id="dict_file"
 						),
 				]
