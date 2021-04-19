@@ -47,7 +47,7 @@ def test_reformat(
 	with in_directory(tmp_pathplus):
 		result: Result = cli_runner.invoke(reformat, args=args, catch_exceptions=False)
 
-	assert result.exit_code == 0
+	assert result.exit_code == 1
 
 	advanced_file_regression.check_file(tmp_pathplus / "pyproject.toml")
 	result.check_stdout(advanced_file_regression, extension=".diff")

@@ -30,7 +30,7 @@ CLI entry point.
 
 # stdlib
 import sys
-from typing import TYPE_CHECKING, Iterable, Type, TypeVar
+from typing import TYPE_CHECKING, Iterable, List, Type, TypeVar
 
 # 3rd party
 import click  # nodep
@@ -157,15 +157,17 @@ def reformat(
 		parser: Type[PyProject] = resolve_class(parser_class, "parser-class")
 		encoder: Type[TomlEncoder] = resolve_class(encoder_class, "encoder-class")
 
-		original_content = pyproject_file.read_lines()
+		original_content: List[str] = pyproject_file.read_lines()
 
 		config = parser.load(filename=pyproject_file, set_defaults=False)
-		reformatted_content = config.dump(filename=pyproject_file, encoder=encoder)
+		reformatted_content: List[str] = config.dump(filename=pyproject_file, encoder=encoder).split('\n')
 
-		if show_diff:
+		changed = reformatted_content != original_content
+
+		if show_diff and changed:
 			diff = coloured_diff(
 					original_content,
-					reformatted_content.split('\n'),
+					reformatted_content,
 					str(pyproject_file),
 					str(pyproject_file),
 					"(original)",
@@ -174,6 +176,8 @@ def reformat(
 					)
 
 			click.echo(diff, color=resolve_color_default(colour))
+
+		sys.exit(int(changed))
 
 
 if __name__ == "__main__":
