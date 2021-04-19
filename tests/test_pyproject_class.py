@@ -69,6 +69,42 @@ def test_valid_config_resolve_files(
 						"Unexpected top level keys: 'banana'",
 						id="unexpected_top_level"
 						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[[project.authors]]\nemail = "foo.bar"',
+						BadConfigError,
+						"Invalid email 'foo.bar': The email address is not valid. It must have exactly one @-sign.",
+						id="bad_email",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\noptional-dependencies = 123',
+						TypeError,
+						"Invalid type for 'project.optional-dependencies': expected <class 'dict'>, got <class 'int'>",
+						id="invalid_optional_dependencies_type_int",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\noptional-dependencies = "123"',
+						TypeError,
+						"Invalid type for 'project.optional-dependencies': expected <class 'dict'>, got <class 'str'>",
+						id="invalid_optional_dependencies_type_str",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\noptional-dependencies = ["123"]',
+						TypeError,
+						"Invalid type for 'project.optional-dependencies': expected <class 'dict'>, got <class 'list'>",
+						id="invalid_optional_dependencies_type_list",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nfoo = 123',
+						TypeError,
+						"Invalid type for 'project.optional-dependencies.foo': expected <class 'collections.abc.Sequence'>, got <class 'int'>",
+						id="invalid_optional_dependencies_type_dict_int",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nfoo = "123"',
+						TypeError,
+						"Invalid type for 'project.optional-dependencies.foo': expected <class 'collections.abc.Sequence'>, got <class 'str'>",
+						id="invalid_optional_dependencies_type_dict_str",
+						),
 				]
 		)
 def test_bad_config(

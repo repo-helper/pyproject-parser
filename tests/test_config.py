@@ -17,20 +17,25 @@ from pyproject_examples import (
 		)
 
 # this package
-from pyproject_parser import BuildSystemParser, PEP621Parser
+from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
 
 
+@pytest.mark.parametrize("set_defaults", [True, False])
 @pytest.mark.parametrize("toml_config", valid_pep621_config)
 def test_pep621_class_valid_config(
 		toml_config: str,
 		tmp_pathplus: PathPlus,
 		advanced_data_regression: AdvancedDataRegressionFixture,
+		set_defaults: bool,
 		):
 
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_config)
 
 	with in_directory(tmp_pathplus):
-		config = PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+		config = PEP621Parser().parse(
+				dom_toml.load(tmp_pathplus / "pyproject.toml")["project"],
+				set_defaults=set_defaults,
+				)
 
 	advanced_data_regression.check(config)
 

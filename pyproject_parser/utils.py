@@ -60,7 +60,7 @@ try:
 
 		rendering_result = readme_renderer.markdown.render(content, stream=sys.stderr)
 
-		if rendering_result is None:
+		if rendering_result is None:  # pragma: no cover
 			raise BadConfigError("Error rendering README.")
 
 except ImportError:  # pragma: no cover

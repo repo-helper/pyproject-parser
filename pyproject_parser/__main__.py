@@ -58,7 +58,7 @@ class CustomTracebackHandler(ConfigTracebackHandler):
 
 
 @click_group()
-def main():
+def main():  # pragma: no cover
 	pass
 
 

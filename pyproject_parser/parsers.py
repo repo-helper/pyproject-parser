@@ -27,17 +27,16 @@ TOML configuration parsers.
 #
 
 # stdlib
+import collections.abc
 import os
 import re
 from abc import ABCMeta
 from collections import defaultdict
-from typing import Any, ClassVar, Dict, Iterable, List, Sequence, Union, cast
+from typing import Any, ClassVar, Dict, Iterable, List, Union, cast
 
 # 3rd party
 from apeye import URL
 from dom_toml.parser import TOML_TYPES, AbstractConfigParser, BadConfigError, construct_path
-from domdf_python_tools.paths import PathPlus
-from domdf_python_tools.typing import PathLike
 from email_validator import EmailSyntaxError, validate_email  # type: ignore
 from natsort import natsorted, ns
 from packaging.specifiers import InvalidSpecifier, Specifier, SpecifierSet
@@ -111,11 +110,11 @@ class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
 		if isinstance(obj, str):
 			name = construct_path(path)
 			raise TypeError(
-					f"Invalid {what} type for {name!r}: "
+					f"Invalid {what} for {name!r}: "
 					f"expected <class 'collections.abc.Sequence'>, got {type(obj)!r}",
 					)
 
-		self.assert_type(obj, Sequence, path, what=what)
+		self.assert_type(obj, collections.abc.Sequence, path, what=what)
 
 
 class BuildSystemParser(RequiredKeysConfigParser):
@@ -125,13 +124,9 @@ class BuildSystemParser(RequiredKeysConfigParser):
 
 	table_name = "build-system"
 	required_keys = ["requires"]
-	keys = [
-			"requires",
-			"build-backend",
-			"backend-path",
-			]
-	defaults = {"build-backend": None, "backend-path": None}
+	keys = ["requires", "build-backend", "backend-path"]
 	factories = {"requires": list}
+	defaults = {"build-backend": None, "backend-path": None}
 
 	def parse_requires(self, config: Dict[str, TOML_TYPES]) -> List[ComparableRequirement]:
 		"""
@@ -425,7 +420,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 				try:
 					email = validate_email(email, check_deliverability=False).email
 				except EmailSyntaxError as e:
-					raise BadConfigError(f"Invalid email {email}: {e} ")
+					raise BadConfigError(f"Invalid email {email!r}: {e} ")
 
 			all_authors.append({"name": name, "email": email})
 
@@ -579,8 +574,10 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return sorted(combine_requirements(parsed_dependencies))
 
-	@staticmethod
-	def parse_optional_dependencies(config: Dict[str, TOML_TYPES]) -> Dict[str, List[ComparableRequirement]]:
+	def parse_optional_dependencies(
+			self,
+			config: Dict[str, TOML_TYPES],
+			) -> Dict[str, List[ComparableRequirement]]:
 		"""
 		Parse the
 		`optional-dependencies <https://www.python.org/dev/peps/pep-0621/#dependencies-optional-dependencies>`_ table.
@@ -598,14 +595,16 @@ class PEP621Parser(RequiredKeysConfigParser):
 		optional_dependencies = config["optional-dependencies"]
 
 		if not isinstance(optional_dependencies, dict):
-			raise TypeError(err_template.format('', type(optional_dependencies)))
+			raise TypeError(err_template.format(idx_string='', actual_type=type(optional_dependencies)))
 
 		for extra, dependencies in optional_dependencies.items():
+			self.assert_sequence_not_str(dependencies, path=["project", "optional-dependencies", extra])
+
 			for idx, dep in enumerate(dependencies):
 				if isinstance(dep, str):
 					parsed_optional_dependencies[extra].add(ComparableRequirement(dep))
 				else:
-					raise TypeError(err_template.format(f'{extra}[{idx}]', type(dep)))
+					raise TypeError(err_template.format(idx_string=f'.{extra}[{idx}]', actual_type=type(dep)))
 
 		return {e: sorted(combine_requirements(d)) for e, d in parsed_optional_dependencies.items()}
 

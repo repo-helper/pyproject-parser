@@ -1,0 +1,19 @@
+authors:
+- email: null
+  name: Łukasz Langa
+classifiers: []
+dependencies: []
+description: Factory ⸻ A code generator 🏭
+dynamic: []
+entry-points: {}
+gui-scripts: {}
+keywords: []
+license: null
+maintainers: []
+name: spam
+optional-dependencies: {}
+readme: null
+requires-python: null
+scripts: {}
+urls: {}
+version: 2020.0.0

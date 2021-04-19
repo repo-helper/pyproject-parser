@@ -1,0 +1,23 @@
+authors: []
+classifiers: []
+dependencies: []
+description: null
+dynamic: []
+entry-points:
+  flake8.extension:
+    SXL: flake8_sphinx_links:Plugin
+  spam.magical:
+    tomatoes: spam:main_tomatoes
+gui-scripts:
+  spam-gui: spam:main_gui
+keywords: []
+license: null
+maintainers: []
+name: spam
+optional-dependencies: {}
+readme: null
+requires-python: null
+scripts:
+  spam-cli: spam:main_cli
+urls: {}
+version: 2020.0.0

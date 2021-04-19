@@ -3,7 +3,7 @@ import pathlib
 
 # 3rd party
 import pytest
-from coincidence import AdvancedDataRegressionFixture
+from coincidence.regressions import AdvancedDataRegressionFixture
 from dom_toml.parser import BadConfigError
 
 # this package
