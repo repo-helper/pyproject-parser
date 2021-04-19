@@ -3,6 +3,8 @@
 #  cli.py
 """
 Command line interface.
+
+.. versionadded:: 0.2.0
 """
 #
 #  Copyright © 2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
@@ -45,6 +47,13 @@ class_string_re: Pattern[str] = re.compile("([A-Za-z_][A-Za-z_0-9.]+):([A-Za-z_]
 
 
 def resolve_class(raw_class_string: str, name: str) -> Type[_T]:
+	"""
+	Resolve the class name for the :option:`-P / --parser-class <-P>` and :option:`-E / --encoder-class <-E>` options.
+
+	:param raw_class_string:
+	:param name: The name of the option, e.g. ``encoder-class``. Used for error messages.
+	"""
+
 	class_string_m = class_string_re.match(raw_class_string)
 
 	if class_string_m:

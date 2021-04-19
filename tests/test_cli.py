@@ -36,7 +36,7 @@ def test_reformat(
 	if show_diff:
 		args = ["--no-colour", "--show-diff"]
 	else:
-		args = None
+		args = []
 
 	with in_directory(tmp_pathplus):
 		result: Result = cli_runner.invoke(reformat, args=args, catch_exceptions=False)

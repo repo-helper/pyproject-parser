@@ -3,6 +3,8 @@
 #  __main__.py
 """
 CLI entry point.
+
+.. versionadded:: 0.2.0
 """
 #
 #  Copyright © 2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
@@ -58,7 +60,7 @@ class CustomTracebackHandler(ConfigTracebackHandler):
 
 
 @click_group()
-def main():  # pragma: no cover
+def main():  # pragma: no cover  # noqa: D103
 	pass
 
 
@@ -80,7 +82,7 @@ def validate(
 		show_traceback: bool = False,
 		):
 	"""
-	Validate the given ``pyproject.toml`` file
+	Validate the given ``pyproject.toml`` file.
 	"""
 
 	pyproject_file = PathPlus(pyproject_file)
@@ -93,7 +95,7 @@ def validate(
 
 
 @colour_option()
-@flag_option("-D", "--show-diff", help="Show a (coloured) diff of changes.")
+@flag_option("-d", "--show-diff", help="Show a (coloured) diff of changes.")
 @options
 @auto_default_option("-E", "--encoder-class", default=click.STRING)
 @main.command()
@@ -106,7 +108,7 @@ def reformat(
 		colour: ColourTrilean = None,
 		):
 	"""
-	Reformat the given ``pyproject.toml`` file
+	Reformat the given ``pyproject.toml`` file.
 	"""
 
 	pyproject_file = PathPlus(pyproject_file)
