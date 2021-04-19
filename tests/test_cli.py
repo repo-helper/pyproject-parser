@@ -52,6 +52,15 @@ def test_reformat(
 	advanced_file_regression.check_file(tmp_pathplus / "pyproject.toml")
 	result.check_stdout(advanced_file_regression, extension=".diff")
 
+	# Should be no changes
+	with in_directory(tmp_pathplus):
+		result = cli_runner.invoke(reformat, args=args, catch_exceptions=False)
+
+	assert result.exit_code == 0
+
+	advanced_file_regression.check_file(tmp_pathplus / "pyproject.toml")
+	assert result.stdout == "Reformatting 'pyproject.toml'\n"
+
 
 @pytest.mark.parametrize("toml_string", [*valid_pep621_config, *valid_buildsystem_config])
 def test_check(

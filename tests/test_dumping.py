@@ -157,3 +157,7 @@ def test_reformat(
 
 	PyProject.reformat(tmp_pathplus / "pyproject.toml")
 	advanced_file_regression.check_file(tmp_pathplus / "pyproject.toml")
+
+	# Should be no changes
+	PyProject.reformat(tmp_pathplus / "pyproject.toml")
+	advanced_file_regression.check_file(tmp_pathplus / "pyproject.toml")
