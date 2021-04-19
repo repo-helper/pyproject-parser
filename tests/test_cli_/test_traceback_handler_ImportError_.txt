@@ -1,0 +1,3 @@
+ImportError: No module named 'foo'
+Use '--traceback' to view the full traceback.
+Aborted!

@@ -86,7 +86,7 @@ class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
 			if key in config:
 				continue
 			elif set_defaults and (key in self.defaults or key in self.factories):
-				continue
+				continue  # pragma: no cover https://github.com/nedbat/coveragepy/issues/198
 			else:
 				raise BadConfigError(f"The {construct_path([self.table_name, key])!r} field must be provided.")
 

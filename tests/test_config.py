@@ -17,7 +17,7 @@ from pyproject_examples import (
 		)
 
 # this package
-from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
+from pyproject_parser.parsers import BuildSystemParser, PEP621Parser, RequiredKeysConfigParser
 
 
 @pytest.mark.parametrize("set_defaults", [True, False])
@@ -310,14 +310,19 @@ readme = "{filename}"
 		PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
 
 
+@pytest.mark.parametrize("set_defaults", [True, False])
 @pytest.mark.parametrize("toml_config", valid_buildsystem_config)
 def test_buildsystem_parser_valid_config(
 		toml_config: str,
 		tmp_pathplus: PathPlus,
 		advanced_data_regression: AdvancedDataRegressionFixture,
+		set_defaults: bool,
 		):
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_config)
-	config = BuildSystemParser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["build-system"])
+	config = BuildSystemParser().parse(
+			dom_toml.load(tmp_pathplus / "pyproject.toml")["build-system"],
+			set_defaults=set_defaults,
+			)
 
 	config["requires"] = list(map(str, config["requires"]))  # type: ignore
 
@@ -330,3 +335,18 @@ def test_buildsystem_parser_errors(config: str, expects: Type[Exception], match:
 
 	with in_directory(tmp_pathplus), pytest.raises(expects, match=match):
 		BuildSystemParser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["build-system"])
+
+
+def test_RequiredKeysConfigParser():
+
+	class MyConfigParser(RequiredKeysConfigParser):
+		table_name = "my_table"
+		required_keys = ["foo"]
+		keys = ["foo", "bar"]
+		defaults = {"foo": "foo-default", "bar": "bar-defaults"}
+
+	with pytest.raises(BadConfigError, match="The 'my_table.foo' field must be provided."):
+		MyConfigParser().parse({})
+
+	assert MyConfigParser().parse({}, set_defaults=True) == {"foo": "foo-default", "bar": "bar-defaults"}
+	assert MyConfigParser().parse({"foo": "baz"}, set_defaults=True) == {"foo": "baz", "bar": "bar-defaults"}

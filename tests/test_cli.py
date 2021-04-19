@@ -1,13 +1,19 @@
+# stdlib
+import re
+
 # 3rd party
+import click
 import pytest
 from coincidence.regressions import AdvancedDataRegressionFixture, AdvancedFileRegressionFixture
 from consolekit.testing import CliRunner, Result
+from consolekit.tracebacks import handle_tracebacks
+from dom_toml.parser import BadConfigError
 from domdf_python_tools.paths import PathPlus, in_directory
 from pyproject_examples import valid_buildsystem_config, valid_pep621_config
 from pyproject_examples.example_configs import COMPLETE_A, COMPLETE_A_WITH_FILES, COMPLETE_B, COMPLETE_PROJECT_A
 
 # this package
-from pyproject_parser.__main__ import reformat, validate
+from pyproject_parser.__main__ import CustomTracebackHandler, reformat, validate
 from tests.test_dumping import UNORDERED
 
 
@@ -60,3 +66,83 @@ def test_validate(
 		result: Result = cli_runner.invoke(validate, catch_exceptions=False)
 
 	assert result.exit_code == 0
+
+
+exceptions = pytest.mark.parametrize(
+		"exception",
+		[
+				pytest.param(FileNotFoundError("foo.txt"), id="FileNotFoundError"),
+				pytest.param(FileExistsError("foo.txt"), id="FileExistsError"),
+				pytest.param(Exception("Something's awry!"), id="Exception"),
+				pytest.param(ValueError("'age' must be >= 0"), id="ValueError"),
+				pytest.param(TypeError("Expected type int, got type str"), id="TypeError"),
+				pytest.param(NameError("name 'hello' is not defined"), id="NameError"),
+				pytest.param(SyntaxError("invalid syntax"), id="SyntaxError"),
+				pytest.param(BadConfigError("Expected a string value for 'name'"), id="BadConfigError"),
+				pytest.param(KeyError("name"), id="KeyError"),
+				pytest.param(AttributeError("type object 'list' has no attribute 'foo'"), id="AttributeError"),
+				pytest.param(ImportError("No module named 'foo'"), id="ImportError"),
+				pytest.param(ModuleNotFoundError("No module named 'foo'"), id="ModuleNotFoundError"),
+				]
+		)
+
+
+@exceptions
+def test_traceback_handler(
+		exception,
+		file_regression,
+		cli_runner: CliRunner,
+		):
+
+	@click.command()
+	def demo():
+
+		with handle_tracebacks(False, CustomTracebackHandler):
+			raise exception
+
+	result: Result = cli_runner.invoke(demo, catch_exceptions=False)
+	result.check_stdout(file_regression)
+	assert result.exit_code == 1
+
+
+@exceptions
+def test_traceback_handler_show_traceback(
+		exception,
+		file_regression,
+		cli_runner: CliRunner,
+		):
+
+	@click.command()
+	def demo():
+
+		with handle_tracebacks(True, CustomTracebackHandler):
+			raise exception
+
+	with pytest.raises(type(exception), match=re.escape(str(exception))):
+		cli_runner.invoke(demo, catch_exceptions=False)
+
+
+@pytest.mark.parametrize("exception", [EOFError(), KeyboardInterrupt(), click.Abort()])
+def test_handle_tracebacks_ignored_exceptions_click(
+		exception,
+		cli_runner: CliRunner,
+		):
+
+	@click.command()
+	def demo():
+
+		with handle_tracebacks(False, CustomTracebackHandler):
+			raise exception
+
+	result: Result = cli_runner.invoke(demo, catch_exceptions=False)
+
+	assert result.stdout.strip() == "Aborted!"
+	assert result.exit_code == 1
+
+
+@pytest.mark.parametrize("exception", [EOFError, KeyboardInterrupt, click.Abort, SystemExit])
+def test_handle_tracebacks_ignored_exceptions(exception, ):
+
+	with pytest.raises(exception):  # noqa: PT012
+		with handle_tracebacks(False, CustomTracebackHandler):
+			raise exception

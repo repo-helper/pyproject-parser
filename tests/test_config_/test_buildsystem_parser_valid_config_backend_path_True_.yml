@@ -1,0 +1,5 @@
+backend-path:
+- ../foo
+build-backend: whey
+requires:
+- whey

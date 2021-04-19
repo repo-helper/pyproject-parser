@@ -1,6 +1,6 @@
 # stdlib
 import collections
-import importlib
+import email.headerregistry
 import re
 import sys
 
@@ -102,6 +102,8 @@ def test_resolve_class():
 		# stdlib
 		import importlib.metadata
 		assert resolve_class("importlib.metadata:metadata", "class") is importlib.metadata.metadata
+
+	assert resolve_class("email.headerregistry:Address", "class") is email.headerregistry.Address
 
 	with pytest.raises(click.BadOptionUsage, match="Invalid syntax for '--class'") as e:
 		resolve_class("collections.Counter", "class")

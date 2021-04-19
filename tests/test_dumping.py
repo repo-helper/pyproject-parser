@@ -48,6 +48,36 @@ name = "Dominic Davis-Foster"
 
 """
 
+DUMPS_README_TEMPLATE = """\
+[build-system]
+requires = [ "whey",]
+build-backend = "whey"
+
+[project]
+name = "Whey"
+version = "2021.0.0"
+description = "A simple Python wheel builder for simple projects."
+keywords = [ "pep517", "pep621", "build", "sdist", "wheel", "packaging", "distribution",]
+dynamic = [ "classifiers", "requires-python",]
+dependencies = [
+  "httpx",
+  "gidgethub[httpx]>4.0.0",
+  "django>2.1; os_name != 'nt'",
+  "django>2.0; os_name == 'nt'"
+]
+{readme_block}
+
+[[project.authors]]
+email = "dominic@davis-foster.co.uk"
+name = "Dominic Davis-Foster"
+
+[project.urls]
+Homepage = "https://whey.readthedocs.io/en/latest"
+Documentation = "https://whey.readthedocs.io/en/latest"
+"Issue Tracker" = "https://github.com/repo-helper/whey/issues"
+"Source Code" = "https://github.com/repo-helper/whey"
+"""
+
 
 @pytest.mark.parametrize(
 		"toml_string",
@@ -63,6 +93,41 @@ def test_dumps(
 		advanced_file_regression: AdvancedFileRegressionFixture,
 		):
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
+
+	config = PyProject.load(filename=tmp_pathplus / "pyproject.toml")
+
+	config.dump(tmp_pathplus / "pyproject.toml")
+
+	advanced_file_regression.check_file(tmp_pathplus / "pyproject.toml")
+	advanced_file_regression.check(config.dumps(), extension=".toml")
+
+
+@pytest.mark.parametrize(
+		"toml_string",
+		[
+				pytest.param(DUMPS_README_TEMPLATE.format(readme_block="readme = 'README.rst'"), id="string"),
+				pytest.param(
+						DUMPS_README_TEMPLATE.format(
+								readme_block=
+								"[project.readme]\ntext = 'This is the README'\ncontent-type = 'text/x-rst'"
+								),
+						id="dict_text"
+						),
+				pytest.param(
+						DUMPS_README_TEMPLATE.format(
+								readme_block="[project.readme]\nfile = 'README.rst'\ncontent-type = 'text/x-rst'"
+								),
+						id="dict_file"
+						),
+				]
+		)
+def test_dumps_readme(
+		tmp_pathplus: PathPlus,
+		toml_string: str,
+		advanced_file_regression: AdvancedFileRegressionFixture,
+		):
+	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
+	(tmp_pathplus / "README.rst").write_clean("This is the README")
 
 	config = PyProject.load(filename=tmp_pathplus / "pyproject.toml")
 

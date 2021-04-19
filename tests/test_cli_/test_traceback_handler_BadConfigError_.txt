@@ -1,0 +1,2 @@
+BadConfigError: Expected a string value for 'name'
+Aborted!
