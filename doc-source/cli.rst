@@ -7,11 +7,11 @@ CLI
 Commands
 ---------
 
-validate
+check
 *********
 
-.. click:: pyproject_parser.__main__:validate
-	:prog: pyproject-parser validate
+.. click:: pyproject_parser.__main__:check
+	:prog: pyproject-parser check
 	:nested: none
 
 reformat
@@ -32,4 +32,4 @@ To do so, add the following to your
 
 .. pre-commit::
 	:rev: 0.2.0
-	:hooks: validate-pyproject,reformat-pyproject
+	:hooks: check-pyproject,reformat-pyproject

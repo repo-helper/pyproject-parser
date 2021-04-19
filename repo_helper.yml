@@ -63,5 +63,5 @@ extras_require:
 
 console_scripts:
  - pyproject-parser=pyproject_parser.__main__:main
- - pyproject-validate=pyproject_parser.__main__:main
+ - check-pyproject=pyproject_parser.__main__:main
  - pyproject-fmt=pyproject_parser.__main__:main

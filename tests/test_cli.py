@@ -4,7 +4,7 @@ import re
 # 3rd party
 import click
 import pytest
-from coincidence.regressions import AdvancedDataRegressionFixture, AdvancedFileRegressionFixture
+from coincidence.regressions import AdvancedFileRegressionFixture
 from consolekit.testing import CliRunner, Result
 from consolekit.tracebacks import handle_tracebacks
 from dom_toml.parser import BadConfigError
@@ -13,7 +13,7 @@ from pyproject_examples import valid_buildsystem_config, valid_pep621_config
 from pyproject_examples.example_configs import COMPLETE_A, COMPLETE_A_WITH_FILES, COMPLETE_B, COMPLETE_PROJECT_A
 
 # this package
-from pyproject_parser.__main__ import CustomTracebackHandler, reformat, validate
+from pyproject_parser.__main__ import CustomTracebackHandler, check, reformat
 from tests.test_dumping import UNORDERED
 
 
@@ -54,7 +54,7 @@ def test_reformat(
 
 
 @pytest.mark.parametrize("toml_string", [*valid_pep621_config, *valid_buildsystem_config])
-def test_validate(
+def test_check(
 		toml_string: str,
 		tmp_pathplus: PathPlus,
 		cli_runner: CliRunner,
@@ -62,7 +62,7 @@ def test_validate(
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
 
 	with in_directory(tmp_pathplus):
-		result: Result = cli_runner.invoke(validate, catch_exceptions=False)
+		result: Result = cli_runner.invoke(check, catch_exceptions=False)
 
 	assert result.exit_code == 0
 	assert result.stdout == "Validating 'pyproject.toml'\n"
@@ -88,7 +88,7 @@ def test_validate(
 						),
 				]
 		)
-def test_validate_error(
+def test_check_error(
 		toml_string: str,
 		tmp_pathplus: PathPlus,
 		match: str,
@@ -97,7 +97,7 @@ def test_validate_error(
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
 
 	with pytest.raises(BadConfigError, match=match), in_directory(tmp_pathplus):
-		cli_runner.invoke(validate, catch_exceptions=False, args=["-T"])
+		cli_runner.invoke(check, catch_exceptions=False, args=["-T"])
 
 
 exceptions = pytest.mark.parametrize(

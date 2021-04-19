@@ -47,7 +47,7 @@ if TYPE_CHECKING:
 	from consolekit.terminal_colours import ColourTrilean
 	from domdf_python_tools.typing import PathLike
 
-__all__ = ["main", "reformat", "validate"]
+__all__ = ["main", "reformat", "check"]
 
 
 class CustomTracebackHandler(ConfigTracebackHandler):
@@ -82,7 +82,7 @@ def options(c: _C) -> _C:
 
 @options
 @main.command()
-def validate(
+def check(
 		pyproject_file: "PathLike" = "pyproject.toml",
 		parser_class: str = "pyproject_parser:PyProject",
 		show_traceback: bool = False,

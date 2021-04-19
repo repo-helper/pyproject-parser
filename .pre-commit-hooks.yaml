@@ -1,7 +1,7 @@
--   id: validate-pyproject
+-   id: check-pyproject
     name: Validate 'pyproject.toml'
     description: Validate 'pyproject.toml'
-    entry: pyproject-parser validate
+    entry: pyproject-parser check
     language: python
     files: pyproject.toml
 
