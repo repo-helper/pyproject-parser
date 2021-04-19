@@ -38,7 +38,7 @@ from dom_toml.encoder import _dump_str
 from dom_toml.parser import AbstractConfigParser, BadConfigError
 from domdf_python_tools.paths import PathPlus, in_directory
 from domdf_python_tools.typing import PathLike
-from domdf_python_tools.words import word_join
+from domdf_python_tools.words import Plural, word_join
 from packaging.markers import Marker
 from packaging.requirements import Requirement
 from packaging.specifiers import SpecifierSet
@@ -58,6 +58,8 @@ __email__: str = "dominic@davis-foster.co.uk"
 __all__ = ["PyProject", "PyProjectTomlEncoder", "_PP"]
 
 _PP = TypeVar("_PP", bound="PyProject")
+
+_keys = Plural("key", "keys")
 
 
 class PyProjectTomlEncoder(dom_toml.TomlEncoder):
@@ -171,7 +173,10 @@ class PyProject:
 						tool_table[tool_name] = cls.tool_parsers[tool_name].parse(tool_subtable)
 
 		if keys:
-			raise BadConfigError(f"Unexpected top level keys: {word_join(sorted(keys), use_repr=True)}")
+			raise BadConfigError(
+					f"Unexpected top level {_keys(len(keys))}: "
+					f"{word_join(sorted(keys), use_repr=True)}",
+					)
 
 		return cls(
 				build_system=build_system_table,

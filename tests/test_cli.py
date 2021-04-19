@@ -58,7 +58,6 @@ def test_validate(
 		toml_string: str,
 		tmp_pathplus: PathPlus,
 		cli_runner: CliRunner,
-		advanced_data_regression: AdvancedDataRegressionFixture,
 		):
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
 
@@ -66,6 +65,39 @@ def test_validate(
 		result: Result = cli_runner.invoke(validate, catch_exceptions=False)
 
 	assert result.exit_code == 0
+	assert result.stdout == "Validating 'pyproject.toml'\n"
+
+
+@pytest.mark.parametrize(
+		"toml_string, match",
+		[
+				pytest.param(
+						"[build-system]\nrequires = []\nfoo = 'bar'",
+						r"Unknown key in '\[build-system\]': 'foo'",
+						id="build-system",
+						),
+				pytest.param(
+						"[project]\nname = 'whey'\nfoo = 'bar'\nbar = 123\ndynamic = ['version']",
+						r"Unknown keys in '\[project\]': 'bar' and 'foo",
+						id="project",
+						),
+				pytest.param(
+						"[coverage]\nomit = 'demo.py'\n[flake8]\nselect = ['F401']",
+						"Unexpected top level keys: 'coverage' and 'flake8'",
+						id="top-level",
+						),
+				]
+		)
+def test_validate_error(
+		toml_string: str,
+		tmp_pathplus: PathPlus,
+		match: str,
+		cli_runner: CliRunner,
+		):
+	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
+
+	with pytest.raises(BadConfigError, match=match), in_directory(tmp_pathplus):
+		cli_runner.invoke(validate, catch_exceptions=False, args=["-T"])
 
 
 exceptions = pytest.mark.parametrize(

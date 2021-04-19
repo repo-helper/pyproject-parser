@@ -66,7 +66,7 @@ def test_valid_config_resolve_files(
 				pytest.param(
 						'banana = "fruit"\n[project]\nname = "food"',
 						BadConfigError,
-						"Unexpected top level keys: 'banana'",
+						"Unexpected top level key: 'banana'",
 						id="unexpected_top_level"
 						),
 				pytest.param(

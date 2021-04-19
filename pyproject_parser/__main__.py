@@ -30,22 +30,22 @@ CLI entry point.
 
 # stdlib
 import sys
-from typing import Type, TypeVar
+from typing import TYPE_CHECKING, Iterable, Type, TypeVar
 
 # 3rd party
 import click  # nodep
 from consolekit import click_group  # nodep
 from consolekit.options import auto_default_argument, auto_default_option, colour_option, flag_option  # nodep
-from consolekit.terminal_colours import ColourTrilean, resolve_color_default  # nodep
 from consolekit.tracebacks import handle_tracebacks, traceback_option  # nodep
-from consolekit.utils import abort, coloured_diff  # nodep
-from domdf_python_tools.paths import PathPlus
-from domdf_python_tools.typing import PathLike
-from toml import TomlEncoder
 
 # this package
-from pyproject_parser import PyProject
+from pyproject_parser import PyProject, _keys
 from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
+
+if TYPE_CHECKING:
+	# 3rd party
+	from consolekit.terminal_colours import ColourTrilean
+	from domdf_python_tools.typing import PathLike
 
 __all__ = ["main", "reformat", "validate"]
 
@@ -53,9 +53,15 @@ __all__ = ["main", "reformat", "validate"]
 class CustomTracebackHandler(ConfigTracebackHandler):
 
 	def handle_AttributeError(self, e: AttributeError) -> bool:  # noqa: D102
+		# 3rd party
+		from consolekit.utils import abort  # nodep
+
 		raise abort(f"{e.__class__.__name__}: {e}\nUse '--traceback' to view the full traceback.", colour=False)
 
 	def handle_ImportError(self, e: ImportError) -> bool:  # noqa: D102
+		# 3rd party
+		from consolekit.utils import abort  # nodep
+
 		raise abort(f"{e.__class__.__name__}: {e}\nUse '--traceback' to view the full traceback.", colour=False)
 
 
@@ -77,13 +83,22 @@ def options(c: _C) -> _C:
 @options
 @main.command()
 def validate(
-		pyproject_file: PathLike = "pyproject.toml",
+		pyproject_file: "PathLike" = "pyproject.toml",
 		parser_class: str = "pyproject_parser:PyProject",
 		show_traceback: bool = False,
 		):
 	"""
 	Validate the given ``pyproject.toml`` file.
 	"""
+
+	# 3rd party
+	import dom_toml
+	from dom_toml.parser import BadConfigError
+	from domdf_python_tools.paths import PathPlus
+	from domdf_python_tools.words import word_join
+
+	# this package
+	from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
 
 	pyproject_file = PathPlus(pyproject_file)
 
@@ -93,6 +108,23 @@ def validate(
 		parser: Type[PyProject] = resolve_class(parser_class, "parser-class")
 		parser.load(filename=pyproject_file)
 
+		raw_config = dom_toml.load(pyproject_file)
+
+		def error_on_unknown(keys: Iterable[str], expected_keys: Iterable[str], table_name: str):
+			unknown_keys = set(keys) - set(expected_keys)
+
+			if unknown_keys:
+				raise BadConfigError(
+						f"Unknown {_keys(len(unknown_keys))} in '[{table_name}]': "
+						f"{word_join(sorted(unknown_keys), use_repr=True)}",
+						)
+
+		# Implements PEPs 517 and 518
+		error_on_unknown(raw_config.get("build-system", {}).keys(), BuildSystemParser.keys, "build-system")
+
+		# Implements PEP 621
+		error_on_unknown(raw_config.get("project", {}).keys(), {*PEP621Parser.keys, "dynamic"}, "project")
+
 
 @colour_option()
 @flag_option("-d", "--show-diff", help="Show a (coloured) diff of changes.")
@@ -100,16 +132,22 @@ def validate(
 @auto_default_option("-E", "--encoder-class", default=click.STRING)
 @main.command()
 def reformat(
-		pyproject_file: PathLike = "pyproject.toml",
+		pyproject_file: "PathLike" = "pyproject.toml",
 		encoder_class: str = "pyproject_parser:PyProjectTomlEncoder",
 		parser_class: str = "pyproject_parser:PyProject",
 		show_traceback: bool = False,
 		show_diff: bool = False,
-		colour: ColourTrilean = None,
+		colour: "ColourTrilean" = None,
 		):
 	"""
 	Reformat the given ``pyproject.toml`` file.
 	"""
+
+	# 3rd party
+	from consolekit.terminal_colours import resolve_color_default  # nodep
+	from consolekit.utils import coloured_diff  # nodep
+	from domdf_python_tools.paths import PathPlus
+	from toml import TomlEncoder
 
 	pyproject_file = PathPlus(pyproject_file)
 
