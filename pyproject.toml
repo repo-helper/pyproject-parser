@@ -28,6 +28,9 @@ Documentation = "https://pyproject-parser.readthedocs.io/en/latest"
 readme = [ "docutils==0.16", "readme-renderer[md]>=27.0",]
 all = [ "docutils==0.16", "readme-renderer[md]>=27.0",]
 
+[project.scripts]
+pyproject-parser = "pyproject_parser.__main__:main"
+
 [tool.mkrecipe]
 conda-channels = [ "conda-forge", "domdfcoding",]
 extras = "all"

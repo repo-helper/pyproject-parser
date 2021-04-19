@@ -13,7 +13,7 @@ from pyproject_parser.classes import License, Readme
 
 _C = TypeVar("_C", bound=Callable)
 
-pytest_plugins = ("coincidence", )
+pytest_plugins = ("coincidence", "consolekit.testing")
 
 
 def _representer_for(*data_type: Type):

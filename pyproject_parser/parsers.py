@@ -180,11 +180,20 @@ class BuildSystemParser(RequiredKeysConfigParser):
 
 		return parsed_backend_paths
 
-	def parse(  # type: ignore[override]  # noqa: D102
+	def parse(  # type: ignore[override]
 		self,
 		config: Dict[str, TOML_TYPES],
 		set_defaults: bool = False,
 		) -> BuildSystemDict:
+		"""
+		Parse the TOML configuration.
+
+		:param config:
+		:param set_defaults: If :py:obj:`True`, the values in
+			:attr:`dom_toml.parser.AbstractConfigParser.defaults` and
+			:attr:`dom_toml.parser.AbstractConfigParser.factories`
+			will be set as defaults for the returned mapping.
+		"""
 
 		parsed_config = super().parse(config, set_defaults)
 

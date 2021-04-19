@@ -159,8 +159,9 @@ This requires that the ``readme`` extra is installed:
 
 .. toctree::
 	:maxdepth: 3
-	:caption: Contributing
+	:caption: Documentation
 
+	cli
 	contributing
 	Source
 

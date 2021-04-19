@@ -1,0 +1,59 @@
+Reformatting 'pyproject.toml'
+--- pyproject.toml	(original)
++++ pyproject.toml	(reformatted)
+@@ -3,31 +3,23 @@
+ version = "2020.0.0"
+ description = "Lovely Spam! Wonderful Spam!"
+ requires-python = ">=3.8"
+-keywords = ["egg", "bacon", "sausage", "tomatoes", "Lobster Thermidor"]
+-authors = [
+-  {email = "hi@pradyunsg.me"},
+-  {name = "Tzu-Ping Chung"}
+-]
+-maintainers = [
+-  {name = "Brett Cannon", email = "brett@python.org"}
+-]
+-classifiers = [
+-  "Development Status :: 4 - Beta",
+-  "Programming Language :: Python"
+-]
++keywords = [ "bacon", "egg", "Lobster Thermidor", "sausage", "tomatoes",]
++classifiers = [ "Development Status :: 4 - Beta", "Programming Language :: Python",]
++dependencies = [ 'django>2.1; os_name != "nt"', 'django>2.0; os_name == "nt"', "gidgethub[httpx]>4.0.0", "httpx",]
++dynamic = []
+
+-dependencies = [
+-  "httpx",
+-  "gidgethub[httpx]>4.0.0",
+-  "django>2.1; os_name != 'nt'",
+-  "django>2.0; os_name == 'nt'"
+-]
++[[project.authors]]
++email = "hi@pradyunsg.me"
+
+-[project.optional-dependencies]
+-test = [
+-  "pytest < 5.0.0",
+-  "pytest-cov[all]"
+-]
++[[project.authors]]
++name = "Tzu-Ping Chung"
++
++[[project.maintainers]]
++name = "Brett Cannon"
++email = "brett@python.org"
++
++
++[tool]
+
+ [project.urls]
+ homepage = "example.com"
+@@ -41,6 +33,9 @@
+ [project.gui-scripts]
+ spam-gui = "spam:main_gui"
+
++[project.optional-dependencies]
++test = [ "pytest<5.0.0", "pytest-cov[all]",]
++
+ [project.entry-points."spam.magical"]
+ tomatoes = "spam:main_tomatoes"

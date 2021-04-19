@@ -13,6 +13,7 @@ short_desc: "Parser for 'pyproject.toml'"
 
 python_deploy_version: 3.6
 sphinx_html_theme: furo
+standalone_contrib_guide: true
 tox_testenv_extras: readme
 min_coverage: 97.5
 
@@ -29,8 +30,8 @@ python_versions:
  - '3.8'
  - '3.9'
  - 3.10-dev
- - pypy3.6
- - pypy3.7
+ - pypy36
+ - pypy37
 
 sphinx_conf_epilogue:
  - nitpicky = True
@@ -39,6 +40,7 @@ extra_sphinx_extensions:
  - sphinx_click
  - attr_utils.autoattrs
  - sphinx_toolbox.wikipedia
+ - sphinx_toolbox.pre_commit
 
 classifiers:
  - 'Development Status :: 4 - Beta'
@@ -58,3 +60,8 @@ extras_require:
  readme:
   - readme-renderer[md]>=27.0
   - docutils==0.16
+
+console_scripts:
+ - pyproject-parser=pyproject_parser.__main__:main
+ - pyproject-validate=pyproject_parser.__main__:main
+ - pyproject-fmt=pyproject_parser.__main__:main
