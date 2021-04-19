@@ -106,4 +106,5 @@ def test_resolve_class():
 	with pytest.raises(click.BadOptionUsage, match="Invalid syntax for '--class'") as e:
 		resolve_class("collections.Counter", "class")
 
-	assert e.value.option_name == "class"
+	# TODO: https://github.com/python/typeshed/pull/5232
+	assert e.value.option_name == "class"  # type: ignore
