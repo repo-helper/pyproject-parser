@@ -6,7 +6,9 @@ CLI
 
 .. versionadded:: 0.2.0
 
-.. .. program:: pyproject-parser
+.. extras-require:: cli
+	:pyproject:
+	:scope: CLI
 
 Commands
 ---------
@@ -25,6 +27,10 @@ reformat
 	:prog: pyproject-parser reformat
 	:nested: none
 
+The :option:`-P / --parser-class <-P>` and :option:`-E / --encoder-class <-E>` options
+must be in the form ``<module_name>:<object_name``.
+or example, ``pyproject_parser:PyProject``, which corresponds to :class:`pyproject_parser.PyProject`.
+The ``module_name`` may be any valid Python module, including those containing ``.``.
 
 
 As a ``pre-commit`` hook

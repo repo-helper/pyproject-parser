@@ -5,6 +5,9 @@
 Command line interface.
 
 .. versionadded:: 0.2.0
+
+.. extras-require:: cli
+	:pyproject:
 """
 #
 #  Copyright © 2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>

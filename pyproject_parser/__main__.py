@@ -75,7 +75,14 @@ _C = TypeVar("_C", bound=click.Command)
 
 def options(c: _C) -> _C:
 	auto_default_argument("pyproject_file", type=click.STRING)(c)
-	auto_default_option("-P", "--parser-class", default=click.STRING)(c)
+	parser_class_option = auto_default_option(
+			"-P",
+			"--parser-class",
+			default=click.STRING,
+			help="The class to parse the 'pyproject.toml' file with.",
+			show_default=True,
+			)
+	parser_class_option(c)
 	traceback_option()(c)
 	return c
 
@@ -129,7 +136,13 @@ def check(
 @colour_option()
 @flag_option("-d", "--show-diff", help="Show a (coloured) diff of changes.")
 @options
-@auto_default_option("-E", "--encoder-class", default=click.STRING)
+@auto_default_option(
+		"-E",
+		"--encoder-class",
+		default=click.STRING,
+		help="The class to encode the config to TOML with.",
+		show_default=True,
+		)
 @main.command()
 def reformat(
 		pyproject_file: "PathLike" = "pyproject.toml",
