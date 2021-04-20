@@ -41,7 +41,7 @@ extra_sphinx_extensions:
  - attr_utils.autoattrs
  - sphinx_toolbox.wikipedia
  - sphinx_toolbox.pre_commit
- - hide_section
+ - html_section
 
 classifiers:
  - 'Development Status :: 4 - Beta'
