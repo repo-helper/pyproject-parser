@@ -61,17 +61,16 @@ def visit_title(self: LaTeXTranslator, node: nodes.title) -> None:
 			self.this_is_the_title = 0
 			raise nodes.SkipNode
 		elif not node.get("only-html", False):
-			print(node)
 
 			short = ''
 			if node.traverse(nodes.image):
 				short = ("[%s]" % self.escape(' '.join(clean_astext(node).split())))
 
 			try:
-				self.body.append(r'\%s%s{' % (self.sectionnames[self.sectionlevel], short))
+				self.body.append(fr'\{self.sectionnames[self.sectionlevel]}{short}{{')
 			except IndexError:
 				# just use "subparagraph", it's not numbered anyway
-				self.body.append(r'\%s%s{' % (self.sectionnames[-1], short))
+				self.body.append(fr'\{self.sectionnames[-1]}{short}{{')
 			# breakpoint()
 			self.context.append('}\n' + self.hypertarget_to(node.parent))
 		else:
@@ -123,10 +122,6 @@ class HTMLSectionDirective(SphinxDirective):
 
 
 class FilterHTMLOnlySections(sphinx.transforms.SphinxTransform):
-	"""
-	Filter system messages from a doctree.
-	"""
-
 	default_priority = 999
 
 	def apply(self, **kwargs) -> None:
@@ -137,7 +132,6 @@ class FilterHTMLOnlySections(sphinx.transforms.SphinxTransform):
 						child_node["only-html"] = True
 
 			node.parent["only-html"] = node.get("only-html", False)
-			node["only-html"] = False
 
 
 def setup(app: Sphinx):
