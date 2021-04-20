@@ -143,6 +143,10 @@ This requires that the ``readme`` extra is installed:
 
 	python -m pip install pyproject-parser[readme]
 
+Contents
+-----------
+
+.. html-section::
 
 .. toctree::
 	:hidden:
