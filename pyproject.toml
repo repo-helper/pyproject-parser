@@ -24,14 +24,15 @@ Homepage = "https://github.com/repo-helper/pyproject-parser"
 "Source Code" = "https://github.com/repo-helper/pyproject-parser"
 Documentation = "https://pyproject-parser.readthedocs.io/en/latest"
 
-[project.optional-dependencies]
-readme = [ "docutils==0.16", "readme-renderer[md]>=27.0",]
-all = [ "docutils==0.16", "readme-renderer[md]>=27.0",]
-
 [project.scripts]
 pyproject-parser = "pyproject_parser.__main__:main"
-pyproject-validate = "pyproject_parser.__main__:main"
+check-pyproject = "pyproject_parser.__main__:main"
 pyproject-fmt = "pyproject_parser.__main__:main"
+
+[project.optional-dependencies]
+readme = [ "docutils==0.16", "readme-renderer[md]>=27.0",]
+cli = [ "click>=7.1.2", "consolekit>=1.1.2",]
+all = [ "click>=7.1.2", "consolekit>=1.1.2", "docutils==0.16", "readme-renderer[md]>=27.0",]
 
 [tool.mkrecipe]
 conda-channels = [ "conda-forge", "domdfcoding",]

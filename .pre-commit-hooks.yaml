@@ -4,6 +4,7 @@
     entry: pyproject-parser check
     language: python
     files: pyproject.toml
+    additional_dependencies: ["consolekit>=1.1.2", "click>=7.1.2"]
 
 -   id: reformat-pyproject
     name: Reformat 'pyproject.toml'
@@ -11,3 +12,4 @@
     entry: pyproject-parser reformat
     language: python
     files: pyproject.toml
+    additional_dependencies: ["consolekit>=1.1.2", "click>=7.1.2"]

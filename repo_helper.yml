@@ -60,6 +60,9 @@ extras_require:
  readme:
   - readme-renderer[md]>=27.0
   - docutils==0.16
+ cli:
+  - consolekit>=1.1.2
+  - click>=7.1.2
 
 console_scripts:
  - pyproject-parser=pyproject_parser.__main__:main
