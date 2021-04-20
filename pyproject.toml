@@ -7,12 +7,12 @@ name = "pyproject-parser"
 version = "0.2.0"
 description = "Parser for 'pyproject.toml'"
 readme = "README.rst"
-keywords = [ "pep518", "pep621", "pyproject", "toml", "metadata", "packaging",]
+keywords = [ "metadata", "packaging", "pep518", "pep621", "pyproject", "toml",]
 dynamic = [ "requires-python", "classifiers", "dependencies",]
 
 [[project.authors]]
-email = "dominic@davis-foster.co.uk"
 name = "Dominic Davis-Foster"
+email = "dominic@davis-foster.co.uk"
 
 
 [project.license]
