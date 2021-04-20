@@ -32,7 +32,7 @@ import os
 import re
 from abc import ABCMeta
 from collections import defaultdict
-from typing import Any, ClassVar, Dict, Iterable, List, Union, cast
+from typing import Any, Callable, ClassVar, Dict, Iterable, List, Union, cast
 
 # 3rd party
 from apeye import URL
@@ -122,11 +122,11 @@ class BuildSystemParser(RequiredKeysConfigParser):
 	Parser for the ``[build-system]`` table from ``pyproject.toml``.
 	"""
 
-	table_name = "build-system"
-	required_keys = ["requires"]
-	keys = ["requires", "build-backend", "backend-path"]
-	factories = {"requires": list}
-	defaults = {"build-backend": None, "backend-path": None}
+	table_name: ClassVar[str] = "build-system"
+	required_keys: ClassVar[List[str]] = ["requires"]
+	keys: ClassVar[List[str]] = ["requires", "build-backend", "backend-path"]
+	factories: ClassVar[Dict[str, Callable[..., Any]]] = {"requires": list}
+	defaults: ClassVar[Dict[str, Any]] = {"build-backend": None, "backend-path": None}
 
 	def parse_requires(self, config: Dict[str, TOML_TYPES]) -> List[ComparableRequirement]:
 		"""
@@ -210,7 +210,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 	Parser for :pep:`621` metadata from ``pyproject.toml``.
 	"""
 
-	table_name = "project"
+	table_name: ClassVar[str] = "project"
 	keys: List[str] = [
 			"name",
 			"version",
@@ -229,15 +229,15 @@ class PEP621Parser(RequiredKeysConfigParser):
 			"dependencies",
 			"optional-dependencies",
 			]
-	required_keys = ["name"]
-	defaults = {
+	required_keys: ClassVar[List[str]] = ["name"]
+	defaults: ClassVar[Dict[str, Any]] = {
 			"version": None,
 			"description": None,
 			"readme": None,
 			"requires-python": None,
 			"license": None,
 			}
-	factories = {
+	factories: ClassVar[Dict[str, Callable[..., Any]]] = {
 			"authors": list,
 			"maintainers": list,
 			"keywords": list,
