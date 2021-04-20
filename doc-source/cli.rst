@@ -4,6 +4,10 @@ CLI
 
 ``pyproject-parser`` also has a command-line interface for validating and reformaing ``pyproject.toml`` files.
 
+.. versionadded:: 0.2.0
+
+.. .. program:: pyproject-parser
+
 Commands
 ---------
 

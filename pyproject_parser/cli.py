@@ -48,11 +48,12 @@ class_string_re: Pattern[str] = re.compile("([A-Za-z_][A-Za-z_0-9.]+):([A-Za-z_]
 
 def resolve_class(raw_class_string: str, name: str) -> Type[_T]:
 	"""
-	Resolve the class name for the :option:`-P / --parser-class <-P>` and :option:`-E / --encoder-class <-E>` options.
+	Resolve the class name for the :option:`-P / --parser-class <pyproject-parser check -P>`
+	and :option:`-E / --encoder-class <pyproject-parser reformat -E>` options.
 
 	:param raw_class_string:
 	:param name: The name of the option, e.g. ``encoder-class``. Used for error messages.
-	"""
+	"""  # noqa: D400
 
 	class_string_m = class_string_re.match(raw_class_string)
 

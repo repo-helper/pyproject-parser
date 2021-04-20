@@ -68,3 +68,6 @@ console_scripts:
  - pyproject-parser=pyproject_parser.__main__:main
  - check-pyproject=pyproject_parser.__main__:main
  - pyproject-fmt=pyproject_parser.__main__:main
+
+intersphinx_mapping:
+ - "'consolekit': ('https://consolekit.readthedocs.io/en/latest/', None)"
