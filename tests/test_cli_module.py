@@ -109,4 +109,4 @@ def test_resolve_class():
 		resolve_class("collections.Counter", "class")
 
 	# TODO: https://github.com/python/typeshed/pull/5232
-	assert e.value.option_name == "class"  # type: ignore
+	assert e.value.option_name == "class"
