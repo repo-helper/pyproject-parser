@@ -62,13 +62,13 @@ repos:
        - --keep-runtime-typing
 
  - repo: https://github.com/Lucas-C/pre-commit-hooks
-   rev: v1.1.9
+   rev: v1.1.10
    hooks:
     - id: remove-crlf
     - id: forbid-crlf
 
  - repo: https://github.com/repo-helper/formate
-   rev: v0.4.3
+   rev: v0.4.4
    hooks:
     - id: formate
       exclude: ^(doc-source/conf|__pkginfo__|setup)\.(_)?py$
@@ -83,6 +83,7 @@ repos:
 # Custom hooks can be added below this comment
 
  - repo: https://github.com/repo-helper/pyproject-parser
-   rev: 04f35d014e641f2bec1b324a59bd457e432fe3c2
+   rev: v0.2.0
    hooks:
-    - id: validate-pyproject
+    - id: check-pyproject
+    - id: reformat-pyproject
