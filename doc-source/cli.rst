@@ -2,7 +2,8 @@
 CLI
 =======
 
-``pyproject-parser`` also has a command-line interface for validating and reformaing ``pyproject.toml`` files.
+In addition to the parsing library, ``pyproject-parser`` has a command-line interface for validating
+and reformatting ``pyproject.toml`` files.
 
 .. versionadded:: 0.2.0
 
@@ -10,15 +11,21 @@ CLI
 	:pyproject:
 	:scope: CLI
 
+.. latex:vspace:: -9px
+
 Commands
 ---------
+
+.. latex:vspace:: -4px
 
 check
 *********
 
-.. click:: pyproject_parser.__main__:check
-	:prog: pyproject-parser check
-	:nested: none
+.. latex:samepage::
+
+	.. click:: pyproject_parser.__main__:check
+		:prog: pyproject-parser check
+		:nested: none
 
 reformat
 *********
@@ -28,9 +35,9 @@ reformat
 	:nested: none
 
 The :option:`-P / --parser-class <-P>` and :option:`-E / --encoder-class <-E>` options
-must be in the form ``<module_name>:<object_name``.
+must be in the form ``<module_name>:<object_name>``.
 or example, ``pyproject_parser:PyProject``, which corresponds to :class:`pyproject_parser.PyProject`.
-The ``module_name`` may be any valid Python module, including those containing ``.``.
+The ``module_name`` may be any valid Python module, including those containing ``.`` .
 
 
 As a ``pre-commit`` hook

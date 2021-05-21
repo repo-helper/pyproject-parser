@@ -57,7 +57,7 @@ BuildSystemDict = TypedDict(
 				}
 		)
 
-#: Type hint for the `dynamic <https://www.python.org/dev/peps/pep-0621/#dynamic>`_ field defined in :pep:`621`.
+#: Type hint for the :pep621:`dynamic` field defined in :pep:`621`.
 Dynamic = Literal[
 	"name",
 	"version",
@@ -104,10 +104,8 @@ ProjectDict = TypedDict(
 
 class Author(TypedDict, total=False):
 	"""
-	:class:`typing.TypedDict` representing the items in the
-	`authors/maintainers <https://www.python.org/dev/peps/pep-0621/#authors-maintainers>`_
-	list defined in :pep:`621`.
-	"""  # noqa: D400
+	:class:`typing.TypedDict` representing the items in the :pep621:`authors/maintainers` key of :pep:`621`.
+	"""
 
 	name: Optional[str]
 	email: Optional[str]
@@ -115,9 +113,7 @@ class Author(TypedDict, total=False):
 
 ContentTypes = Literal["text/markdown", "text/x-rst", "text/plain"]
 """
-Type hint for the valid content-types in the license_ table defined in :pep:`621`.
-
-.. _license: <https://www.python.org/dev/peps/pep-0621/#license>
+Type hint for the valid content-types in the :pep621:`license` table defined in :pep:`621`.
 """
 
 

@@ -51,9 +51,9 @@ from pyproject_parser.type_hints import Author, BuildSystemDict, ProjectDict
 from pyproject_parser.utils import content_type_from_filename, render_readme
 
 __all__ = [
+		"RequiredKeysConfigParser",
 		"BuildSystemParser",
 		"PEP621Parser",
-		"RequiredKeysConfigParser",
 		]
 
 name_re = re.compile("^([A-Z0-9]|[A-Z0-9][A-Z0-9._-]*[A-Z0-9])$", flags=re.IGNORECASE)
@@ -62,6 +62,9 @@ name_re = re.compile("^([A-Z0-9]|[A-Z0-9][A-Z0-9._-]*[A-Z0-9])$", flags=re.IGNOR
 class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
 	"""
 	Abstract base class for TOML configuration parsers which have required keys.
+
+	.. autosummary-widths:: 17/32
+		:html: 1/2
 	"""
 
 	required_keys: ClassVar[List[str]]
@@ -77,8 +80,8 @@ class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
 
 		:param config:
 		:param set_defaults: If :py:obj:`True`, the values in
-			:attr:`dom_toml.parser.AbstractConfigParser.defaults` and
-			:attr:`dom_toml.parser.AbstractConfigParser.factories`
+			:attr:`self.defaults <dom_toml.parser.AbstractConfigParser.defaults>` and
+			:attr:`self.factories <dom_toml.parser.AbstractConfigParser.factories>`
 			will be set as defaults for the returned mapping.
 		"""
 
@@ -105,6 +108,8 @@ class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
 		:param obj: The object to check the type of.
 		:param path: The elements of the path to ``obj`` in the TOML mapping.
 		:param what: What ``obj`` is, e.g. ``'type'``, ``'value type'``.
+
+		.. latex:clearpage::
 		"""  # noqa: D400
 
 		if isinstance(obj, str):
@@ -119,8 +124,11 @@ class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
 
 class BuildSystemParser(RequiredKeysConfigParser):
 	"""
-	Parser for the ``[build-system]`` table from ``pyproject.toml``.
-	"""
+	Parser for the :pep:`build-system table <518#build-system-table>` table from ``pyproject.toml``.
+
+	.. autosummary-widths:: 17/32
+		:html: 4/10
+	"""  # noqa: RST399
 
 	table_name: ClassVar[str] = "build-system"
 	required_keys: ClassVar[List[str]] = ["requires"]
@@ -130,10 +138,10 @@ class BuildSystemParser(RequiredKeysConfigParser):
 
 	def parse_requires(self, config: Dict[str, TOML_TYPES]) -> List[ComparableRequirement]:
 		"""
-		Parse the `requires <https://www.python.org/dev/peps/pep-0518/#build-system-table>`_ key.
+		Parse the :pep:`requires <518#build-system-table>` key.
 
-		:param config: The unparsed TOML config for the ``[build-system]`` table.
-		"""
+		:param config: The unparsed TOML config for the :pep:`build-system table <518#build-system-table>`.
+		"""  # noqa: RST399
 
 		parsed_dependencies = set()
 		key_path = [self.table_name, "requires"]
@@ -150,8 +158,8 @@ class BuildSystemParser(RequiredKeysConfigParser):
 		"""
 		Parse the ``build_backend`` key defined by :pep:`517`.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
-		"""
+		:param config: The unparsed TOML config for the :pep:`build-system table <518#build-system-table>`.
+		"""  # noqa: RST399
 
 		build_backend = config["build-backend"]
 		self.assert_type(build_backend, str, [self.table_name, "build-backend"])
@@ -161,8 +169,8 @@ class BuildSystemParser(RequiredKeysConfigParser):
 		"""
 		Parse the ``backend-path`` key defined by :pep:`517`.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
-		"""
+		:param config: The unparsed TOML config for the :pep:`build-system table <518#build-system-table>`.
+		"""  # noqa: RST399
 
 		parsed_backend_paths = []
 		key_path = [self.table_name, "backend-path"]
@@ -185,9 +193,13 @@ class BuildSystemParser(RequiredKeysConfigParser):
 
 		:param config:
 		:param set_defaults: If :py:obj:`True`, the values in
-			:attr:`dom_toml.parser.AbstractConfigParser.defaults` and
-			:attr:`dom_toml.parser.AbstractConfigParser.factories`
+			:attr:`self.defaults <dom_toml.parser.AbstractConfigParser.defaults>` and
+			:attr:`self.factories <dom_toml.parser.AbstractConfigParser.factories>`
 			will be set as defaults for the returned mapping.
+
+		:rtype:
+
+		.. latex:clearpage::
 		"""
 
 		parsed_config = super().parse(config, set_defaults)
@@ -208,6 +220,9 @@ class BuildSystemParser(RequiredKeysConfigParser):
 class PEP621Parser(RequiredKeysConfigParser):
 	"""
 	Parser for :pep:`621` metadata from ``pyproject.toml``.
+
+	.. autosummary-widths:: 1/2
+		:html: 1/2
 	"""
 
 	table_name: ClassVar[str] = "project"
@@ -253,9 +268,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 	@staticmethod
 	def parse_name(config: Dict[str, TOML_TYPES]) -> str:
 		"""
-		Parse the `name <https://www.python.org/dev/peps/pep-0621/#name>`_ key.
+		Parse the :pep621:`name` key.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		normalized_name = normalize(config["name"])
@@ -269,9 +284,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 	@staticmethod
 	def parse_version(config: Dict[str, TOML_TYPES]) -> Version:
 		"""
-		Parse the `version <https://www.python.org/dev/peps/pep-0621/#version>`_ key.
+		Parse the :pep621:`version` key.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		version = str(config["version"])
@@ -283,23 +298,27 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_description(self, config: Dict[str, TOML_TYPES]) -> str:
 		"""
-		Parse the `description <https://www.python.org/dev/peps/pep-0621/#description>`_ key.
+		Parse the :pep621:`description` key.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		description = config["description"]
 
 		self.assert_type(description, str, ["project", "description"])
 
-		return description
+		return description.strip()
 
 	@staticmethod
 	def parse_readme(config: Dict[str, TOML_TYPES]) -> Readme:
 		"""
-		Parse the `readme <https://www.python.org/dev/peps/pep-0621/#readme>`_ key.
+		Parse the :pep621:`readme` key.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
+
+		:rtype:
+
+		.. latex:clearpage::
 		"""
 
 		readme: Union[Dict, str] = config["readme"]
@@ -370,9 +389,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 	@staticmethod
 	def parse_license(config: Dict[str, TOML_TYPES]) -> License:
 		"""
-		Parse the `license <https://www.python.org/dev/peps/pep-0621/#license>`_ key.
+		Parse the :pep621:`license` key.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		license = config["license"]  # noqa: A001  # pylint: disable=redefined-builtin
@@ -393,9 +412,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 	@staticmethod
 	def parse_requires_python(config: Dict[str, TOML_TYPES]) -> Specifier:
 		"""
-		Parse the `requires-python <https://www.python.org/dev/peps/pep-0621/#requires-python>`_ key.
+		Parse the :pep621:`requires-python` key.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		version = str(config["requires-python"])
@@ -428,27 +447,27 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_authors(self, config: Dict[str, TOML_TYPES]) -> List[Author]:
 		"""
-		Parse the `authors <https://www.python.org/dev/peps/pep-0621/#authors-maintainers>`_ key.
+		Parse the :pep621:`authors` key.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		return self._parse_authors(config, "authors")
 
 	def parse_maintainers(self, config: Dict[str, TOML_TYPES]) -> List[Author]:
 		"""
-		Parse the `authors <https://www.python.org/dev/peps/pep-0621/#authors-maintainers>`_ key.
+		Parse the :pep621:`maintainers` key.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		return self._parse_authors(config, "maintainers")
 
 	def parse_keywords(self, config: Dict[str, TOML_TYPES]) -> List[str]:
 		"""
-		Parse the `keywords <https://www.python.org/dev/peps/pep-0621/#keywords>`_ key.
+		Parse the :pep621:`keywords` key.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		parsed_keywords = set()
@@ -464,9 +483,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_classifiers(self, config: Dict[str, TOML_TYPES]) -> List[str]:
 		"""
-		Parse the `classifiers <https://www.python.org/dev/peps/pep-0621/#classifiers>`_ key.
+		Parse the :pep621:`classifiers` key.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		parsed_classifiers = set()
@@ -484,9 +503,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_urls(self, config: Dict[str, TOML_TYPES]) -> Dict[str, str]:
 		"""
-		Parse the `urls <https://www.python.org/dev/peps/pep-0621/#urls>`_ table.
+		Parse the :pep621:`urls` table.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		parsed_urls = {}
@@ -504,9 +523,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_scripts(self, config: Dict[str, TOML_TYPES]) -> Dict[str, str]:
 		"""
-		Parse the `scripts <https://www.python.org/dev/peps/pep-0621/#entry-points>`_ table.
+		Parse the :pep621:`scripts` table.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		scripts = config["scripts"]
@@ -520,9 +539,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_gui_scripts(self, config: Dict[str, TOML_TYPES]) -> Dict[str, str]:
 		"""
-		Parse the `gui-scripts <https://www.python.org/dev/peps/pep-0621/#entry-points>`_ table.
+		Parse the :pep621:`gui-scripts` table.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		gui_scripts = config["gui-scripts"]
@@ -536,9 +555,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_entry_points(self, config: Dict[str, TOML_TYPES]) -> Dict[str, Dict[str, str]]:
 		"""
-		Parse the `entry-points <https://www.python.org/dev/peps/pep-0621/#entry-points>`_ table.
+		Parse the :pep621:`entry-points` table.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
 		entry_points = config["entry-points"]
@@ -556,11 +575,10 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_dependencies(self, config: Dict[str, TOML_TYPES]) -> List[ComparableRequirement]:
 		"""
-		Parse the
-		`dependencies <https://www.python.org/dev/peps/pep-0621/#dependencies-optional-dependencies>`_ key.
+		Parse the :pep621:`dependencies` key.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
-		"""  # noqa: D400
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
+		"""
 
 		parsed_dependencies = set()
 
@@ -579,10 +597,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 			config: Dict[str, TOML_TYPES],
 			) -> Dict[str, List[ComparableRequirement]]:
 		"""
-		Parse the
-		`optional-dependencies <https://www.python.org/dev/peps/pep-0621/#dependencies-optional-dependencies>`_ table.
+		Parse the :pep621:`optional-dependencies` table.
 
-		:param config: The unparsed TOML config for the ``[project]`` table.
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""  # noqa: D400
 
 		parsed_optional_dependencies = defaultdict(set)
@@ -618,8 +635,8 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		:param config:
 		:param set_defaults: If :py:obj:`True`, the values in
-			:attr:`dom_toml.parser.AbstractConfigParser.defaults` and
-			:attr:`dom_toml.parser.AbstractConfigParser.factories`
+			:attr:`self.defaults <dom_toml.parser.AbstractConfigParser.defaults>` and
+			:attr:`self.factories <dom_toml.parser.AbstractConfigParser.factories>`
 			will be set as defaults for the returned mapping.
 		"""
 

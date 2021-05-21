@@ -3,6 +3,14 @@
 #  classes.py
 """
 Classes to represent readme and license files.
+
+.. automodulesumm:: pyproject_parser.classes
+	:autosummary-sections: Classes
+
+.. autosummary-widths:: 4/16
+
+.. automodulesumm:: pyproject_parser.classes
+	:autosummary-sections: Data
 """
 #
 #  Copyright © 2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
@@ -113,7 +121,7 @@ class Readme:
 		Create a :class:`~.Readme` from a filename.
 
 		:param file: The path to the readme file.
-		:param charset: he charset / encoding of the readme file.
+		:param charset: The charset / encoding of the readme file.
 		"""
 
 		filename = PathPlus(file)
@@ -129,7 +137,7 @@ class Readme:
 
 	def resolve(self: _R, inplace: bool = False) -> _R:
 		"""
-		Retrieve the contents of the readme file if the :attr:`~.Readme.file` is set.
+		Retrieve the contents of the readme file if the :attr:`self.file <.Readme.file>` is set.
 
 		Returns a new :class:`~.Readme` object with :attr:`~.Readme.text` set to the content of the file.
 
@@ -156,10 +164,7 @@ class Readme:
 		"""
 		Construct a dictionary containing the keys of the :class:`~.Readme` object.
 
-		.. seealso::
-
-			* :meth:`~.Readme.to_pep621_dict`
-			* :meth:`~.Readme.from_dict`
+		.. seealso:: :meth:`~.Readme.to_pep621_dict` and :meth:`~.Readme.from_dict`
 		"""
 
 		as_dict: "ReadmeDict" = {}
@@ -187,10 +192,9 @@ class Readme:
 
 		:param data:
 
-		.. seealso::
+		:rtype:
 
-			* :meth:`~.Readme.to_dict`
-			* :meth:`~.Readme.to_pep621_dict`
+		.. seealso:: :meth:`~.Readme.to_dict` and :meth:`~.Readme.to_pep621_dict`
 		"""
 
 		data_dict = dict(data)
@@ -202,10 +206,10 @@ class Readme:
 	def to_pep621_dict(self) -> Dict[str, str]:
 		"""
 		Construct a dictionary containing the keys of the :class:`~.Readme` object,
-		suitable for use in :pep:`621` `pyproject.toml`` configuration.
+		suitable for use in :pep:`621` ``pyproject.toml`` configuration.
 
-		Unlike :meth:`~.Readme.to_dict` this ignores the ``text`` key if  :attr`~.Readme.file` is set,
-		and ignores :attr`~.Readme.content_type` if it matches the content-type inferred
+		Unlike :meth:`~.Readme.to_dict` this ignores the ``text`` key if  :attr:`self.file <.Readme.file>` is set,
+		and ignores :attr:`self.content_type <.Readme.content_type>` if it matches the content-type inferred
 		from the file extension.
 
 		.. seealso:: :meth:`~.Readme.from_dict`
@@ -236,6 +240,13 @@ class Readme:
 class License:
 	"""
 	Represents a license in :pep:`621` configuration.
+
+	:param file:
+
+	.. latex:vspace:: 20px
+
+	.. autosummary-widths:: 6/16
+		:html: 3/10
 	"""
 
 	#: The path to the license file.
@@ -279,10 +290,7 @@ class License:
 		"""
 		Construct a dictionary containing the keys of the :class:`~.License` object.
 
-		.. seealso::
-
-			* :meth:`~.License.to_pep621_dict`
-			* :meth:`~.License.from_dict`
+		.. seealso:: :meth:`~.License.to_pep621_dict` and :meth:`~.License.from_dict`
 		"""
 
 		as_dict = {}
@@ -304,22 +312,24 @@ class License:
 
 		:param data:
 
-		.. seealso::
+		:rtype:
 
-			* :meth:`~.License.to_dict`
-			* :meth:`~.License.to_pep621_dict`
+		.. seealso:: :meth:`~.License.to_dict` and :meth:`~.License.to_pep621_dict`
 		"""
 
 		return cls(**data)
 
 	def to_pep621_dict(self) -> Dict[str, str]:
 		"""
-		Construct a dictionary containing the keys of the :class:`~.Readme` object,
-		suitable for use in :pep:`621` `pyproject.toml`` configuration.
+		Construct a dictionary containing the keys of the :class:`~.License` object,
+		suitable for use in :pep:`621` ``pyproject.toml`` configuration.
 
-		Unlike :meth:`~.Readme.to_dict` this ignores the ``text`` key if :attr`~.Readme.file` is set.
+		Unlike :meth:`~.License.to_dict` this ignores the ``text`` key if :attr:`self.file <.License.file>` is set.
+
+		:rtype:
 
 		.. seealso:: :meth:`~.Readme.from_dict`
+		.. latex:clearpage::
 		"""  # noqa: D400
 
 		as_dict = self.to_dict()

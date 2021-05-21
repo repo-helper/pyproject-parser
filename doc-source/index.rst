@@ -1,10 +1,11 @@
-#################
+=================
 pyproject-parser
-#################
+=================
 
 .. start short_desc
 
 .. documentation-summary::
+	:meta:
 
 .. end short_desc
 
@@ -135,6 +136,7 @@ Installation
 
 .. end installation
 
+.. latex:vspace:: 20px
 
 ``pyproject-parser`` also has an optional README validation feature, which checks the README will render correctly on PyPI.
 This requires that the ``readme`` extra is installed:
@@ -154,6 +156,10 @@ Contents
 	Home<self>
 
 .. toctree::
+
+	cli
+
+.. toctree::
 	:maxdepth: 3
 	:caption: API Reference
 	:glob:
@@ -161,12 +167,12 @@ Contents
 	api/pyproject-parser
 	api/*
 
-.. toctree::
-	:maxdepth: 3
-	:caption: Documentation
+.. sidebar-links::
+	:caption: Links
+	:github:
+	:pypi: pyproject-parser
 
-	cli
-	contributing
+	Contributing Guide<https://contributing.repo-helper.uk>
 	Source
 
 .. start links
@@ -175,6 +181,6 @@ Contents
 
 	View the :ref:`Function Index <genindex>` or browse the `Source Code <_modules/index.html>`__.
 
-	`Browse the GitHub Repository <https://github.com/repo-helper/pyproject-parser>`__
+	:github:repo:`Browse the GitHub Repository <repo-helper/pyproject-parser>`
 
 .. end links

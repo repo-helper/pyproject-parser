@@ -13,7 +13,7 @@ short_desc: "Parser for 'pyproject.toml'"
 
 python_deploy_version: 3.6
 sphinx_html_theme: furo
-standalone_contrib_guide: true
+preserve_custom_theme: true
 tox_testenv_extras: readme
 min_coverage: 97.5
 
@@ -35,13 +35,22 @@ python_versions:
 
 sphinx_conf_epilogue:
  - nitpicky = True
+ - ''
+ - import pyproject_parser.utils
+ - import pyproject_parser.type_hints
+ - ''
+ - pyproject_parser.utils.__dict__["ContentTypes"] = pyproject_parser.type_hints.ContentTypes
+ - pyproject_parser.classes.__dict__["ContentTypes"] = pyproject_parser.type_hints.ContentTypes
+ - pyproject_parser.classes.__dict__["ReadmeDict"] = pyproject_parser.type_hints.ReadmeDict
 
 extra_sphinx_extensions:
  - sphinx_click
  - attr_utils.autoattrs
- - sphinx_toolbox.wikipedia
  - sphinx_toolbox.pre_commit
- - html_section
+ - sphinx_toolbox_experimental.html_section
+ - sphinx_toolbox_experimental.autosummary_widths
+ - sphinx_toolbox_experimental.peps
+ - sphinx_toolbox_experimental.succinct_seealso
 
 classifiers:
  - 'Development Status :: 4 - Beta'
@@ -72,3 +81,9 @@ console_scripts:
 
 intersphinx_mapping:
  - "'consolekit': ('https://consolekit.readthedocs.io/en/latest/', None)"
+
+exclude_files:
+ - contributing
+
+tox_unmanaged:
+ - flake8

@@ -67,6 +67,10 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 	Custom TOML encoder supporting types from :mod:`pyproject_parser.classes` and packaging_.
 
 	.. _packaging: https://packaging.pypa.io/en/latest/
+
+	.. autosummary-widths:: 23/64
+		:html: 7/16
+
 	"""
 
 	def __init__(self, _dict=dict, preserve=False):
@@ -80,7 +84,7 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 	@staticmethod
 	def dump_packaging_types(obj: Union[Version, Requirement, Marker, SpecifierSet]) -> str:
 		"""
-		Convert types from packaging_ to TOML.
+		Convert types in packaging_ to TOML.
 
 		.. _packaging: https://packaging.pypa.io/en/latest/
 
@@ -95,26 +99,49 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 class PyProject:
 	"""
 	Represents a ``pyproject.toml`` file.
+
+	:param build_system:
+
+	.. autosummary-widths:: 23/64
+		:html: 6/16
+
+	.. autoclasssumm:: PyProject
+		:autosummary-sections: Attributes
+
+	.. clearpage::
+
+	.. autoclasssumm:: PyProject
+		:autosummary-sections: Methods
+		:autosummary-exclude-members: __ge__,__gt__,__le__,__lt__,__ne__,__init__
+
+	.. latex:vspace:: 10px
 	"""
 
-	#: Represents the ``[build-system]`` table defined in :pep:`517` and :pep:`518`.
+	#: Represents the :pep:`build-system table <518#build-system-table>` defined in :pep:`517` and :pep:`518`.
 	build_system: Optional[BuildSystemDict] = attr.ib(default=None)
 
-	#: Represents the ``[project]`` table defined in :pep:`621`.
+	#: Represents the :pep621:`project table <table-name>` defined in :pep:`621`.
 	project: Optional[ProjectDict] = attr.ib(default=None)
 
-	#: Represents the ``[tool]`` table defined in :pep:`518`.
+	#: Represents the :pep:`tool table <518#tool-table>` defined in :pep:`518`.
 	tool: Dict[str, Dict[str, Any]] = attr.ib(factory=dict)
 
-	#: The :class:`dom_toml.parser.AbstractConfigParser` to parse the ``[build-system]`` table with.
 	build_system_table_parser: ClassVar[BuildSystemParser] = BuildSystemParser()
+	"""
+	The :class:`dom_toml.parser.AbstractConfigParser`
+	to parse the :pep:`build-system table <518#build-system-table>` with.
+	"""
 
-	#: The :class:`dom_toml.parser.AbstractConfigParser` to parse the ``[project]`` table with.
 	project_table_parser: ClassVar[PEP621Parser] = PEP621Parser()
+	"""
+	The :class:`dom_toml.parser.AbstractConfigParser`
+	to parse the :pep621:`project table <table-name>` with.
+	"""
 
 	tool_parsers: ClassVar[Mapping[str, AbstractConfigParser]] = {}
 	"""
-	A mapping of subtable name to :class:`dom_toml.parser.AbstractConfigParser` to parse the ``[tool]`` table with.
+	A mapping of subtable names to :class:`dom_toml.parser.AbstractConfigParser`
+	to parse the :pep:`tool table <518#tool-table>` with.
 
 	For example, to parse ``[tool.whey]``:
 
@@ -255,7 +282,7 @@ class PyProject:
 
 			* Added the ``encoder`` argument.
 			* The parser configured as :attr:`~.project_table_parser` is now used to parse
-			  the ``[project]`` table, rather than always using :class:`~.PEP621Parser`.
+			  the :pep621:`project table <table-name>`, rather than always using :class:`~.PEP621Parser`.
 
 		"""
 
@@ -264,14 +291,12 @@ class PyProject:
 
 	def resolve_files(self):
 		"""
-		Resolve the "file" key in readme_ and license_ (if present) to retrieve the content of the file.
+		Resolve the ``file`` key in :pep621:`readme` and :pep621:`license`
+		(if present) to retrieve the content of the file.
 
 		Calling this method may mean it is no longer possible to recreate
 		the original ``TOML`` file from this object.
-
-		.. _readme: https://www.python.org/dev/peps/pep-0621/#readme
-		.. _license: https://www.python.org/dev/peps/pep-0621/#license
-		"""
+		"""  # noqa: D400
 
 		if self.project is not None:
 			readme = self.project.get("readme", None)

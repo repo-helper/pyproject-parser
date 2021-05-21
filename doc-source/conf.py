@@ -12,91 +12,12 @@ from sphinx_pyproject import SphinxConfig
 
 sys.path.append('.')
 
-config = SphinxConfig()
+config = SphinxConfig(globalns=globals())
+project = config["project"]
+author = config["author"]
+documentation_summary = config.description
 
-github_username = "repo-helper"
-github_repository = "pyproject-parser"
-author = "Dominic Davis-Foster"
-project = "pyproject-parser"
-copyright = "2021 Dominic Davis-Foster"
-language = "en"
-package_root = "pyproject_parser"
-extensions = [
-		"sphinx_toolbox",
-		"sphinx_toolbox.more_autodoc",
-		"sphinx_toolbox.more_autosummary",
-		"sphinx_toolbox.documentation_summary",
-		"sphinx_toolbox.tweaks.param_dash",
-		"sphinx_toolbox.tweaks.latex_toc",
-		"sphinx.ext.intersphinx",
-		"sphinx.ext.mathjax",
-		"sphinxcontrib.httpdomain",
-		"sphinxcontrib.extras_require",
-		"sphinx.ext.todo",
-		"sphinxemoji.sphinxemoji",
-		"notfound.extension",
-		"sphinx_copybutton",
-		"sphinxcontrib.default_values",
-		"sphinxcontrib.toctree_plus",
-		"sphinx_debuginfo",
-		"seed_intersphinx_mapping",
-		"sphinx_click",
-		"attr_utils.autoattrs",
-		"sphinx_toolbox.wikipedia",
-		"sphinx_toolbox.pre_commit",
-		"html_section",
-		]
-sphinxemoji_style = "twemoji"
-gitstamp_fmt = "%d %b %Y"
-templates_path = ["_templates"]
-html_static_path = ["_static"]
-source_suffix = ".rst"
-master_doc = "index"
-suppress_warnings = ["image.nonlocal_uri"]
-pygments_style = "default"
-html_theme = "furo"
-html_theme_path = ["../.."]
-html_show_sourcelink = True
-toctree_plus_types = [
-		"class",
-		"confval",
-		"data",
-		"directive",
-		"enum",
-		"exception",
-		"flag",
-		"function",
-		"method",
-		"namedtuple",
-		"protocol",
-		"role",
-		"typeddict",
-		]
-add_module_names = False
-hide_none_rtype = True
-all_typevars = True
-overloads_location = "bottom"
-documentation_summary = "Parser for 'pyproject.toml'"
-autodoc_exclude_members = [
-		"__dict__",
-		"__class__",
-		"__dir__",
-		"__weakref__",
-		"__module__",
-		"__annotations__",
-		"__orig_bases__",
-		"__parameters__",
-		"__subclasshook__",
-		"__init_subclass__",
-		"__attrs_attrs__",
-		"__init__",
-		"__new__",
-		"__getnewargs__",
-		"__abstractmethods__",
-		"__hash__",
-		]
-
-github_url = f"https://github.com/{github_username}/{github_repository}"
+github_url = "https://github.com/{github_username}/{github_repository}".format_map(config)
 
 rst_prolog = f""".. |pkgname| replace:: pyproject-parser
 .. |pkgname2| replace:: ``pyproject-parser``
@@ -134,14 +55,34 @@ latex_documents = [("index", f'{slug}.tex', project, author, "manual")]
 man_pages = [("index", slug, project, [author], 1)]
 texinfo_documents = [("index", slug, project, author, slug, project, "Miscellaneous")]
 
-toctree_plus_types = set(toctree_plus_types)
+toctree_plus_types = set(config["toctree_plus_types"])
 
 autodoc_default_options = {
 		"members": None,  # Include all members (methods).
 		"special-members": None,
 		"autosummary": None,
 		"show-inheritance": None,
-		"exclude-members": ','.join(autodoc_exclude_members),
+		"exclude-members": ','.join(config["autodoc_exclude_members"]),
 		}
 
+latex_elements = {
+		"printindex": "\\begin{flushleft}\n\\printindex\n\\end{flushleft}",
+		}
+
+
+def setup(app):
+	# 3rd party
+	from sphinx_toolbox.latex import better_header_layout
+
+	app.connect("config-inited", lambda app, config: better_header_layout(config))
+
+
 nitpicky = True
+
+# 3rd party
+import pyproject_parser.type_hints
+import pyproject_parser.utils
+
+pyproject_parser.utils.__dict__["ContentTypes"] = pyproject_parser.type_hints.ContentTypes
+pyproject_parser.classes.__dict__["ContentTypes"] = pyproject_parser.type_hints.ContentTypes
+pyproject_parser.classes.__dict__["ReadmeDict"] = pyproject_parser.type_hints.ReadmeDict
