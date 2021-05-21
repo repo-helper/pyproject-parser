@@ -64,7 +64,7 @@ _keys = Plural("key", "keys")
 
 class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 	"""
-	Custom TOML encoder supporting types from :mod:`pyproject_parser.classes` and packaging_.
+	Custom TOML encoder supporting types in :mod:`pyproject_parser.classes` and packaging_.
 
 	.. _packaging: https://packaging.pypa.io/en/latest/
 
@@ -213,7 +213,7 @@ class PyProject:
 
 	def dumps(
 			self,
-			encoder: Union[Type[toml.TomlEncoder], toml.TomlEncoder, None] = PyProjectTomlEncoder,
+			encoder: Union[Type[toml.TomlEncoder], toml.TomlEncoder] = PyProjectTomlEncoder,
 			) -> str:
 		"""
 		Serialise to TOML.
@@ -248,7 +248,7 @@ class PyProject:
 	def dump(
 			self,
 			filename: PathLike,
-			encoder: Union[Type[toml.TomlEncoder], toml.TomlEncoder, None] = PyProjectTomlEncoder,
+			encoder: Union[Type[toml.TomlEncoder], toml.TomlEncoder] = PyProjectTomlEncoder,
 			):
 		"""
 		Write as TOML to the given file.
@@ -268,7 +268,7 @@ class PyProject:
 	def reformat(
 			cls: Type[_PP],
 			filename: PathLike,
-			encoder: Union[Type[toml.TomlEncoder], toml.TomlEncoder, None] = PyProjectTomlEncoder,
+			encoder: Union[Type[toml.TomlEncoder], toml.TomlEncoder] = PyProjectTomlEncoder,
 			) -> str:
 		"""
 		Reformat the given ``pyproject.toml`` file.
