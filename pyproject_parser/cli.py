@@ -44,12 +44,10 @@ from dom_toml.parser import BadConfigError
 
 __all__ = ["resolve_class", "ConfigTracebackHandler"]
 
-_T = TypeVar("_T")
-
 class_string_re: Pattern[str] = re.compile("([A-Za-z_][A-Za-z_0-9.]+):([A-Za-z_][A-Za-z_0-9]+)")
 
 
-def resolve_class(raw_class_string: str, name: str) -> Type[_T]:
+def resolve_class(raw_class_string: str, name: str) -> Type:
 	"""
 	Resolve the class name for the :option:`-P / --parser-class <pyproject-parser check -P>`
 	and :option:`-E / --encoder-class <pyproject-parser reformat -E>` options.
@@ -66,7 +64,7 @@ def resolve_class(raw_class_string: str, name: str) -> Type[_T]:
 		raise click.BadOptionUsage(f"{name}", f"Invalid syntax for '--{name}'")
 
 	module = importlib.import_module(module_name)
-	resolved_class: Type[_T] = getattr(module, class_name)
+	resolved_class: Type = getattr(module, class_name)
 
 	return resolved_class
 
