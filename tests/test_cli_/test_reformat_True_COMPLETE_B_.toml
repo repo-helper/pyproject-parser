@@ -3,7 +3,7 @@ requires = [ "whey",]
 build-backend = "whey"
 
 [project]
-name = "whey"
+name = "Whey"
 version = "2021.0.0"
 description = "A simple Python wheel builder for simple projects."
 keywords = [ "build", "distribution", "packaging", "pep517", "pep621", "sdist", "wheel",]

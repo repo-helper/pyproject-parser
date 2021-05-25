@@ -70,7 +70,6 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 
 	.. autosummary-widths:: 23/64
 		:html: 7/16
-
 	"""
 
 	def __init__(self, _dict=dict, preserve=False):

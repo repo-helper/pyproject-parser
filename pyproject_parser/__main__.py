@@ -39,7 +39,7 @@ from consolekit.options import auto_default_argument, auto_default_option, colou
 from consolekit.tracebacks import handle_tracebacks, traceback_option  # nodep
 
 # this package
-from pyproject_parser import PyProject, _keys
+from pyproject_parser import _NormalisedName, PyProject, _keys
 from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
 
 if TYPE_CHECKING:
@@ -173,6 +173,10 @@ def reformat(
 		original_content: List[str] = pyproject_file.read_lines()
 
 		config = parser.load(filename=pyproject_file, set_defaults=False)
+
+		if config.project is not None and isinstance(config.project["name"], _NormalisedName):
+			config.project["name"] = config.project["name"].unnormalized
+
 		reformatted_content: List[str] = config.dump(filename=pyproject_file, encoder=encoder).split('\n')
 
 		changed = reformatted_content != original_content

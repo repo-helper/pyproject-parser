@@ -14,7 +14,7 @@ from pyproject_examples.example_configs import COMPLETE_A, COMPLETE_A_WITH_FILES
 
 # this package
 from pyproject_parser.__main__ import CustomTracebackHandler, check, reformat
-from tests.test_dumping import UNORDERED
+from tests.test_dumping import COMPLETE_UNDERSCORE_NAME, UNORDERED
 
 
 @pytest.mark.parametrize(
@@ -25,6 +25,7 @@ from tests.test_dumping import UNORDERED
 				pytest.param(COMPLETE_B, id="COMPLETE_B"),
 				pytest.param(COMPLETE_PROJECT_A, id="COMPLETE_PROJECT_A"),
 				pytest.param(UNORDERED, id="UNORDERED"),
+				pytest.param(COMPLETE_UNDERSCORE_NAME, id="COMPLETE_UNDERSCORE_NAME"),
 				]
 		)
 @pytest.mark.parametrize("show_diff", [True, False])

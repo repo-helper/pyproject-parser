@@ -3,7 +3,7 @@ requires = [ "whey",]
 build-backend = "whey"
 
 [project]
-name = "Whey"
+name = "toctree_plus"
 version = "2021.0.0"
 description = "A simple Python wheel builder for simple projects."
 keywords = [ "build", "distribution", "packaging", "pep517", "pep621", "sdist", "wheel",]
@@ -28,4 +28,3 @@ python-implementations = [ "CPython", "PyPy",]
 platforms = [ "Windows", "macOS", "Linux",]
 license-key = "MIT"
 package = "whey"
-additional-files = [ "include whey/style.css",]
