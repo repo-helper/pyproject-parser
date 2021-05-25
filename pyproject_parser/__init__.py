@@ -45,7 +45,7 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
 # this package
-from pyproject_parser.classes import License, Readme
+from pyproject_parser.classes import License, Readme, _NormalisedName
 from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
 from pyproject_parser.type_hints import Author, BuildSystemDict, ContentTypes, ProjectDict, _PyProjectAsTomlDict
 
@@ -287,6 +287,9 @@ class PyProject:
 		"""
 
 		config = cls.load(filename, set_defaults=False)
+		if config.project is not None and isinstance(config.project["name"], _NormalisedName):
+			config.project["name"] = config.project["name"].unnormalized
+
 		return config.dump(filename, encoder=encoder)
 
 	def resolve_files(self):

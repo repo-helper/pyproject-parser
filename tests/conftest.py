@@ -35,6 +35,11 @@ def represent_packaging_types(
 	return dumper.represent_str(str(data))
 
 
+@_representer_for(str)
+def represent_string_subclasses(dumper: RegressionYamlDumper, data: str):
+	return dumper.represent_str(str(data))
+
+
 @_representer_for(Readme, License)
 def represent_readme_or_license(
 		dumper: RegressionYamlDumper,

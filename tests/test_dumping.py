@@ -78,6 +78,43 @@ Documentation = "https://whey.readthedocs.io/en/latest"
 "Source Code" = "https://github.com/repo-helper/whey"
 """
 
+COMPLETE_UNDERSCORE_NAME = """\
+[build-system]
+requires = [ "whey",]
+build-backend = "whey"
+
+[project]
+name = "toctree_plus"
+version = "2021.0.0"
+description = "A simple Python wheel builder for simple projects."
+keywords = [ "pep517", "pep621", "build", "sdist", "wheel", "packaging", "distribution",]
+dynamic = [ "classifiers", "requires-python",]
+dependencies = [
+  "httpx",
+  "gidgethub[httpx]>4.0.0",
+  "django>2.1; os_name != 'nt'",
+  "django>2.0; os_name == 'nt'"
+]
+
+[[project.authors]]
+email = "dominic@davis-foster.co.uk"
+name = "Dominic Davis-Foster"
+
+[project.urls]
+Homepage = "https://whey.readthedocs.io/en/latest"
+Documentation = "https://whey.readthedocs.io/en/latest"
+"Issue Tracker" = "https://github.com/repo-helper/whey/issues"
+"Source Code" = "https://github.com/repo-helper/whey"
+
+[tool.whey]
+base-classifiers = [ "Development Status :: 4 - Beta",]
+python-versions = [ "3.6", "3.7", "3.8", "3.9", "3.10",]
+python-implementations = [ "CPython", "PyPy",]
+platforms = [ "Windows", "macOS", "Linux",]
+license-key = "MIT"
+package = "whey"
+"""
+
 
 @pytest.mark.parametrize(
 		"toml_string",
@@ -144,6 +181,7 @@ def test_dumps_readme(
 				pytest.param(COMPLETE_B, id="COMPLETE_B"),
 				pytest.param(COMPLETE_PROJECT_A, id="COMPLETE_PROJECT_A"),
 				pytest.param(UNORDERED, id="UNORDERED"),
+				pytest.param(COMPLETE_UNDERSCORE_NAME, id="COMPLETE_UNDERSCORE_NAME"),
 				]
 		)
 def test_reformat(

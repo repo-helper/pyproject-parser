@@ -46,7 +46,7 @@ from shippinglabel.classifiers import validate_classifiers
 from shippinglabel.requirements import ComparableRequirement, combine_requirements
 
 # this package
-from pyproject_parser.classes import License, Readme
+from pyproject_parser.classes import License, Readme, _NormalisedName
 from pyproject_parser.type_hints import Author, BuildSystemDict, ProjectDict
 from pyproject_parser.utils import content_type_from_filename, render_readme
 
@@ -273,7 +273,8 @@ class PEP621Parser(RequiredKeysConfigParser):
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
-		normalized_name = normalize(config["name"])
+		normalized_name = _NormalisedName(normalize(config["name"]))
+		normalized_name.unnormalized = config["name"]
 
 		# https://packaging.python.org/specifications/core-metadata/#name
 		if not name_re.match(normalized_name):

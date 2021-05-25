@@ -337,3 +337,30 @@ class License:
 			as_dict.pop("text")
 
 		return as_dict
+
+
+class _NormalisedName(str):
+	"""
+	Represents a name normalized per :pep:`503`,
+	and allows the original name to be stored as an attribute.
+	"""  # noqa: D400
+
+	__slots__ = ("_unnormalized", )
+
+	_unnormalized: Optional[str]
+
+	def __new__(cls, o, **kwargs):
+		self = super().__new__(cls, o, **kwargs)
+		self._unnormalized = None
+		return self
+
+	@property
+	def unnormalized(self) -> str:
+		if self._unnormalized is None:
+			return str(self)
+		else:
+			return self._unnormalized
+
+	@unnormalized.setter
+	def unnormalized(self, value: str):
+		self._unnormalized = str(value)
