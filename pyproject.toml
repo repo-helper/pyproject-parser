@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyproject-parser"
-version = "0.2.1"
+version = "0.2.2"
 description = "Parser for 'pyproject.toml'"
 readme = "README.rst"
 keywords = [ "metadata", "packaging", "pep518", "pep621", "pyproject", "toml",]
