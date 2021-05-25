@@ -76,6 +76,7 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 	def __init__(self, _dict=dict, preserve=False):
 		super().__init__(_dict=_dict, preserve=preserve)
 		self.dump_funcs[str] = _dump_str
+		self.dump_funcs[_NormalisedName] = _dump_str
 		self.dump_funcs[Version] = self.dump_packaging_types
 		self.dump_funcs[Requirement] = self.dump_packaging_types
 		self.dump_funcs[Marker] = self.dump_packaging_types
