@@ -51,6 +51,7 @@ extra_sphinx_extensions:
  - sphinx_toolbox_experimental.autosummary_widths
  - sphinx_toolbox_experimental.peps
  - sphinx_toolbox_experimental.succinct_seealso
+ - sphinx_toolbox_experimental.needspace
 
 classifiers:
  - 'Development Status :: 4 - Beta'

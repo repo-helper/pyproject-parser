@@ -56,8 +56,7 @@ __all__ = ["License", "Readme", "_R", "_L"]
 
 _R = TypeVar("_R", bound="Readme")
 _L = TypeVar("_L", bound="License")
-#
-#
+
 # @overload
 # def _convert_filename(filename: None) -> None: ...
 #

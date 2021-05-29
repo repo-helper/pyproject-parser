@@ -316,10 +316,6 @@ class PEP621Parser(RequiredKeysConfigParser):
 		Parse the :pep621:`readme` key.
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
-
-		:rtype:
-
-		.. latex:clearpage::
 		"""
 
 		readme: Union[Dict, str] = config["readme"]
