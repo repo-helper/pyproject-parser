@@ -35,7 +35,6 @@ python_versions:
 
 sphinx_conf_epilogue:
  - nitpicky = True
- - latex_domain_indices = False
  - ''
  - import pyproject_parser.utils
  - import pyproject_parser.type_hints
