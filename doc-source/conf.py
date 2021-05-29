@@ -79,6 +79,7 @@ def setup(app):
 
 
 nitpicky = True
+latex_domain_indices = False
 
 # 3rd party
 import pyproject_parser.type_hints

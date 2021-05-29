@@ -35,6 +35,7 @@ python_versions:
 
 sphinx_conf_epilogue:
  - nitpicky = True
+ - latex_domain_indices = False
  - ''
  - import pyproject_parser.utils
  - import pyproject_parser.type_hints
@@ -71,7 +72,7 @@ extras_require:
   - readme-renderer[md]>=27.0
   - docutils==0.16
  cli:
-  - consolekit>=1.1.2
+  - consolekit>=1.2.0
   - click>=7.1.2
 
 console_scripts:

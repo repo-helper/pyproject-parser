@@ -34,6 +34,8 @@ reformat
 	:prog: pyproject-parser reformat
 	:nested: none
 
+.. latex:vspace:: 20px
+
 The :option:`-P / --parser-class <-P>` and :option:`-E / --encoder-class <-E>` options
 must be in the form ``<module_name>:<object_name>``.
 or example, ``pyproject_parser:PyProject``, which corresponds to :class:`pyproject_parser.PyProject`.

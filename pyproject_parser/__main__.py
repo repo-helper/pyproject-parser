@@ -35,11 +35,17 @@ from typing import TYPE_CHECKING, Iterable, List, Type, TypeVar
 # 3rd party
 import click  # nodep
 from consolekit import click_group  # nodep
-from consolekit.options import auto_default_argument, auto_default_option, colour_option, flag_option  # nodep
+from consolekit.options import (  # nodep
+		DescribedArgument,
+		auto_default_argument,
+		auto_default_option,
+		colour_option,
+		flag_option
+		)
 from consolekit.tracebacks import handle_tracebacks, traceback_option  # nodep
 
 # this package
-from pyproject_parser import _NormalisedName, PyProject, _keys
+from pyproject_parser import PyProject, _keys, _NormalisedName
 from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
 
 if TYPE_CHECKING:
@@ -74,7 +80,12 @@ _C = TypeVar("_C", bound=click.Command)
 
 
 def options(c: _C) -> _C:
-	auto_default_argument("pyproject_file", type=click.STRING)(c)
+	pyproject_file_option = auto_default_argument(
+			"pyproject_file",
+			type=click.STRING,
+			description="The ``pyproject.toml`` file.",
+			cls=DescribedArgument,
+			)
 	parser_class_option = auto_default_option(
 			"-P",
 			"--parser-class",
@@ -82,8 +93,11 @@ def options(c: _C) -> _C:
 			help="The class to parse the 'pyproject.toml' file with.",
 			show_default=True,
 			)
+
+	pyproject_file_option(c)
 	parser_class_option(c)
 	traceback_option()(c)
+
 	return c
 
 

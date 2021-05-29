@@ -19,6 +19,6 @@ __all__ = [
 __version__ = "0.2.3"
 extras_require = {
 		"readme": ["docutils==0.16", "readme-renderer[md]>=27.0"],
-		"cli": ["click>=7.1.2", "consolekit>=1.1.2"],
-		"all": ["click>=7.1.2", "consolekit>=1.1.2", "docutils==0.16", "readme-renderer[md]>=27.0"]
+		"cli": ["click>=7.1.2", "consolekit>=1.2.0"],
+		"all": ["click>=7.1.2", "consolekit>=1.2.0", "docutils==0.16", "readme-renderer[md]>=27.0"]
 		}

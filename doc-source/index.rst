@@ -156,14 +156,10 @@ Contents
 	Home<self>
 
 .. toctree::
-
-	cli
-
-.. toctree::
 	:maxdepth: 3
-	:caption: API Reference
 	:glob:
 
+	cli
 	api/pyproject-parser
 	api/*
 
