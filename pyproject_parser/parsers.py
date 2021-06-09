@@ -32,7 +32,7 @@ import os
 import re
 from abc import ABCMeta
 from collections import defaultdict
-from typing import Any, Callable, ClassVar, Dict, Iterable, List, Union, cast
+from typing import Any, Callable, ClassVar, Dict, Iterable, List, Mapping, Union, cast
 
 # 3rd party
 from apeye import URL
@@ -268,7 +268,22 @@ class PEP621Parser(RequiredKeysConfigParser):
 	@staticmethod
 	def parse_name(config: Dict[str, TOML_TYPES]) -> str:
 		"""
-		Parse the :pep621:`name` key.
+		Parse the :pep621:`name` key, giving the name of the project.
+
+		* **Format**: :toml:`String`
+		* **Core Metadata**: :core-meta:`Name`
+
+		This key is required, and must be defined statically.
+
+		Tools SHOULD normalize this name, as specified by :pep:`503`,
+		as soon as it is read for internal consistency.
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project]
+			name = "spam"
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
@@ -285,7 +300,19 @@ class PEP621Parser(RequiredKeysConfigParser):
 	@staticmethod
 	def parse_version(config: Dict[str, TOML_TYPES]) -> Version:
 		"""
-		Parse the :pep621:`version` key.
+		Parse the :pep621:`version` key, giving the version of the project as supported by :pep:`440`.
+
+		* **Format**: :toml:`String`
+		* **Core Metadata**: :core-meta:`Version`
+
+		Users SHOULD prefer to specify normalized versions.
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project]
+			version = "2020.0.0"
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
@@ -299,7 +326,17 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_description(self, config: Dict[str, TOML_TYPES]) -> str:
 		"""
-		Parse the :pep621:`description` key.
+		Parse the :pep621:`description` key, giving a summary description of the project.
+
+		* **Format**: :toml:`String`
+		* **Core Metadata**: :core-meta:`Summary`
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project]
+			description = "Lovely Spam! Wonderful Spam!"
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
@@ -313,7 +350,51 @@ class PEP621Parser(RequiredKeysConfigParser):
 	@staticmethod
 	def parse_readme(config: Dict[str, TOML_TYPES]) -> Readme:
 		"""
-		Parse the :pep621:`readme` key.
+		Parse the :pep621:`readme` key, giving the full description of the project (i.e. the README).
+
+		* **Format**: :toml:`String` or :toml:`table`
+		* **Core Metadata**: :core-meta:`Description`
+
+		This field accepts either a string or a table.
+		If it is a string then it is the relative path to a text file containing the full description.
+		The file's encoding MUST be UTF-8, and have one of the following content types:
+
+		* ``text/markdown``, with a case-insensitive ``.md`` suffix.
+		* ``text/x-rst``, with a case-insensitive ``.rst`` suffix.
+		* ``text/plain``, with a case-insensitive ``.txt`` suffix.
+
+		If a tool recognizes more extensions than this PEP, they MAY infer the content-type for the user
+		without specifying this field as dynamic.
+		For all unrecognized suffixes when a content-type is not provided, tools MUST raise an error.
+
+		.. space::
+		.. latex:clearpage::
+
+		The readme field may instead be a table with the following keys:
+
+		* ``file`` -- a string value representing a relative path to a file containing the full description.
+		* ``text`` -- a string value which is the full description.
+		* ``content-type`` -- (required) a string specifying the content-type of the full description.
+		* ``charset`` -- (optional, default UTF-8) the encoding of the ``file``.
+		  Tools MAY support other encodings if they choose to.
+
+		The ``file`` and ``text`` keys are mutually exclusive, but one must be provided in the table.
+
+		:bold-title:`Examples:`
+
+		.. code-block:: TOML
+
+			[project]
+			readme = "README.rst"
+
+			[project.readme]
+			file = "README.rst"
+			content-type = "text/x-rst"
+			encoding = "UTF-8"
+
+			[project.readme]
+			text = "Spam is a brand of canned cooked pork made by Hormel Foods Corporation."
+			content-type = "text/x-rst"
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
@@ -384,12 +465,70 @@ class PEP621Parser(RequiredKeysConfigParser):
 		raise TypeError(f"Unsupported type for 'project.readme': {type(readme)!r}")
 
 	@staticmethod
+	def parse_requires_python(config: Dict[str, TOML_TYPES]) -> Specifier:
+		"""
+		Parse the :pep621:`requires-python` key, giving the Python version requirements of the project.
+
+		The requirement should be in the form of a :pep:`508` marker.
+
+		* **Format**: :toml:`String`
+		* **Core Metadata**: :core-meta:`Requires-Python`
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project]
+			requires-python = ">=3.6"
+
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
+
+		:rtype:
+
+		.. latex:clearpage::
+		"""
+
+		version = str(config["requires-python"])
+
+		try:
+			return SpecifierSet(str(version))
+		except InvalidSpecifier as e:
+			raise BadConfigError(str(e))
+
+	@staticmethod
 	def parse_license(config: Dict[str, TOML_TYPES]) -> License:
 		"""
 		Parse the :pep621:`license` key.
 
+		* **Format**: :toml:`Table`
+		* **Core Metadata**: :core-meta:`License`
+
+		The table may have one of two keys:
+
+		* ``file`` -- a string value that is a relative file path to the file which contains
+		  the license for the project. The file's encoding MUST be UTF-8.
+		* ``text`` -- string value which is the license of the project.
+
+		These keys are mutually exclusive,  so a tool MUST raise an error if the metadata specifies both keys.
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project.license]
+			file = "LICENSE.rst"
+
+			[project.license]
+			file = "COPYING"
+
+			[project.license]
+			text = \"\"\"
+			This software may only be obtained by sending the author a postcard,
+			and then the user promises not to redistribute it.
+			\"\"\"
+
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
-		"""
+		"""  # noqa: D300,D301
 
 		license = config["license"]  # noqa: A001  # pylint: disable=redefined-builtin
 
@@ -405,21 +544,6 @@ class PEP621Parser(RequiredKeysConfigParser):
 			return License(license["file"])
 		else:
 			raise BadConfigError("The 'project.license' table should contain one of 'text' or 'file'.")
-
-	@staticmethod
-	def parse_requires_python(config: Dict[str, TOML_TYPES]) -> Specifier:
-		"""
-		Parse the :pep621:`requires-python` key.
-
-		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
-		"""
-
-		version = str(config["requires-python"])
-
-		try:
-			return SpecifierSet(str(version))
-		except InvalidSpecifier as e:
-			raise BadConfigError(str(e))
 
 	@staticmethod
 	def _parse_authors(config: Dict[str, TOML_TYPES], key_name: str = "authors") -> List[Author]:
@@ -446,6 +570,42 @@ class PEP621Parser(RequiredKeysConfigParser):
 		"""
 		Parse the :pep621:`authors` key.
 
+		* **Format**: :toml:`Array` of :toml:`inline tables <inline table>` with string keys and values
+		* **Core Metadata**: :core-meta:`Author/Author-email`
+
+		The tables list the people or organizations considered to be the "authors" of the project.
+
+		Each table has 2 keys: ``name`` and ``email``.
+		Both values must be strings.
+
+		* The ``name`` value MUST be a valid email name (i.e. whatever can be put as a name,
+		  before an email, in :rfc:`822`) and not contain commas.
+		* The ``email`` value MUST be a valid email address.
+
+		Both keys are optional.
+
+		Using the data to fill in core metadata is as follows:
+
+		1. If only ``name`` is provided, the value goes in :core-meta:`Author`.
+		2. If only ``email`` is provided, the value goes in :core-meta:`Author-email`.
+		3. If both ``email`` and ``name`` are provided, the value goes in :core-meta:`Author-email`.
+		   The value should be formatted as ``{name} <{email}>``
+		   (with appropriate quoting, e.g. using :class:`email.headerregistry.Address`).
+		4. Multiple values should be separated by commas.
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project]
+			authors = [
+				{email = "hi@pradyunsg.me"},
+				{name = "Tzu-Ping Chung"}
+			]
+
+			[[project.authors]]
+			name = "Tzu-Ping Chung"
+
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
@@ -455,6 +615,27 @@ class PEP621Parser(RequiredKeysConfigParser):
 		"""
 		Parse the :pep621:`maintainers` key.
 
+		* **Format**: :toml:`Array` of :toml:`inline tables <inline table>` with string keys and values
+		* **Core Metadata**: :core-meta:`Maintainer/Maintainer-email`
+
+		The tables list the people or organizations considered to be the "maintainers" of the project.
+
+		Each table has 2 keys: ``name`` and ``email``.
+		Both values must be strings.
+
+		* The ``name`` value MUST be a valid email name (i.e. whatever can be put as a name,
+		  before an email, in :rfc:`822`) and not contain commas.
+		* The ``email`` value MUST be a valid email address.
+
+		Both keys are optional.
+
+		1. If only ``name`` is provided, the value goes in :core-meta:`Maintainer`.
+		2. If only ``email`` is provided, the value goes in :core-meta:`Maintainer-email`.
+		3. If both ``email`` and ``name`` are provided, the value goes in :core-meta:`Maintainer-email`,
+		   with the format ``{name} <{email}>``
+		   (with appropriate quoting, e.g. using :class:`email.headerregistry.Address`).
+		4. Multiple values should be separated by commas.
+
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
@@ -462,7 +643,17 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_keywords(self, config: Dict[str, TOML_TYPES]) -> List[str]:
 		"""
-		Parse the :pep621:`keywords` key.
+		Parse the :pep621:`keywords` key, giving the keywords for the project.
+
+		* **Format**: :toml:`Array` of :toml:`strings <string>`
+		* **Core Metadata**: :core-meta:`Keywords`
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project]
+			keywords = ["egg", "bacon", "sausage", "tomatoes", "Lobster Thermidor"]
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
@@ -480,7 +671,22 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_classifiers(self, config: Dict[str, TOML_TYPES]) -> List[str]:
 		"""
-		Parse the :pep621:`classifiers` key.
+		Parse the :pep621:`classifiers` key, giving the `trove classifiers`_ which apply to the project.
+
+		.. _trove classifiers: https://pypi.org/classifiers/
+
+		* **Format**: :toml:`Array` of :toml:`strings <string>`
+		* **Core Metadata**: :core-meta:`Classifiers`
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project]
+			classifiers = [
+				"Development Status :: 4 - Beta",
+				"Programming Language :: Python"
+			]
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
@@ -502,6 +708,21 @@ class PEP621Parser(RequiredKeysConfigParser):
 		"""
 		Parse the :pep621:`urls` table.
 
+		* **Format**: :toml:`Table`, with keys and values of :toml:`strings <string>`
+		* **Core Metadata**: :core-meta:`Project-URL`
+
+		A table of URLs where the key is the URL label and the value is the URL itself.
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project.urls]
+			homepage = "https://example.com"
+			documentation = "https://readthedocs.org"
+			repository = "https://github.com"
+			changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
@@ -522,6 +743,20 @@ class PEP621Parser(RequiredKeysConfigParser):
 		"""
 		Parse the :pep621:`scripts` table.
 
+		**Format**: :toml:`Table`, with keys and values of :toml:`strings <string>`
+
+		The console scripts provided by the project.
+
+		The keys are the names of the scripts and the values are the object references
+		in the form ``module.submodule:object``.
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project.scripts]
+			spam-cli = "spam:main_cli"
+
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
@@ -537,6 +772,20 @@ class PEP621Parser(RequiredKeysConfigParser):
 	def parse_gui_scripts(self, config: Dict[str, TOML_TYPES]) -> Dict[str, str]:
 		"""
 		Parse the :pep621:`gui-scripts` table.
+
+		**Format**: table, with keys and values of strings
+
+		The graphical application scripts provided by the project.
+
+		The keys are the names of the scripts and the values are the object references
+		in the form ``module.submodule:object``.
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project.gui-scripts]
+			spam-gui = "spam.gui:main_gui"
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
@@ -554,7 +803,34 @@ class PEP621Parser(RequiredKeysConfigParser):
 		"""
 		Parse the :pep621:`entry-points` table.
 
+		**Format**: :toml:`Table` of :toml:`tables <table>`, with keys and values of :toml:`strings <string>`
+
+		Each sub-table's name is an entry point group.
+
+		* Users MUST NOT create nested sub-tables but instead keep the entry point groups to only one level deep.
+		* Users MUST NOT created sub-tables for ``console_scripts`` or ``gui_scripts``.
+		  Use ``[project.scripts]`` and ``[project.gui-scripts]`` instead.
+
+		See the `entry point specification`_ for more details.
+
+		.. _entry point specification: https://packaging.python.org/specifications/entry-points/
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project.entry-points."spam.magical"]
+			tomatoes = "spam:main_tomatoes"
+
+			# pytest plugins refer to a module, so there is no ':obj'
+			[project.entry-points.pytest11]
+			nbval = "nbval.plugin"
+
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
+
+		:rtype:
+
+		.. latex:clearpage::
 		"""
 
 		entry_points = config["entry-points"]
@@ -565,6 +841,15 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 			self.assert_value_type(sub_table, dict, ["project", "entry-points", group])
 
+			if group in "console_scripts":
+				name = construct_path(["project", "entry_points"])
+				suggested_name = construct_path(["project", "scripts"])
+				raise TypeError(f"{name!r} may not contain a {group} sub-table. Use {suggested_name!r} instead.")
+			elif group in "gui_scripts":
+				name = construct_path(["project", "entry_points"])
+				suggested_name = construct_path(["project", "gui-scripts"])
+				raise TypeError(f"{name!r} may not contain a {group} sub-table. Use {suggested_name!r} instead.")
+
 			for name, func in sub_table.items():
 				self.assert_value_type(func, str, ["project", "entry-points", group, name])
 
@@ -572,7 +857,24 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 	def parse_dependencies(self, config: Dict[str, TOML_TYPES]) -> List[ComparableRequirement]:
 		"""
-		Parse the :pep621:`dependencies` key.
+		Parse the :pep621:`dependencies` key, giving the dependencies of the project.
+
+		* **Format**: :toml:`Array` of :pep:`508` strings
+		* **Core Metadata**: :core-meta:`Requires-Dist`
+
+		Each string MUST be formatted as a valid :pep:`508` string.
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project]
+			dependencies = [
+				"httpx",
+				"gidgethub[httpx]>4.0.0",
+				"django>2.1; os_name != 'nt'",
+				"django>2.0; os_name == 'nt'"
+			]
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
@@ -594,10 +896,30 @@ class PEP621Parser(RequiredKeysConfigParser):
 			config: Dict[str, TOML_TYPES],
 			) -> Dict[str, List[ComparableRequirement]]:
 		"""
-		Parse the :pep621:`optional-dependencies` table.
+		Parse the :pep621:`optional-dependencies` table, giving the optional dependencies of the project.
+
+		* **Format**: :toml:`Table` with values of :toml:`arrays <Array>` of :pep:`508` strings
+		* **Core Metadata**: :core-meta:`Requires-Dist` and :core-meta:`Provides-Extra`
+
+		.. raw:: html
+
+			</br>
+
+		* The keys specify an extra, and must be valid Python identifiers.
+		* The values are arrays of strings, which must be valid :pep:`508` strings.
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project.optional-dependencies]
+			test = [
+			  "pytest < 5.0.0",
+			  "pytest-cov[all]"
+			]
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
-		"""  # noqa: D400
+		"""
 
 		parsed_optional_dependencies = defaultdict(set)
 
@@ -606,12 +928,15 @@ class PEP621Parser(RequiredKeysConfigParser):
 				f"expected {dict!r}, got {{actual_type!r}}"
 				)
 
-		optional_dependencies = config["optional-dependencies"]
+		optional_dependencies: Mapping[str, Any] = config["optional-dependencies"]
 
 		if not isinstance(optional_dependencies, dict):
 			raise TypeError(err_template.format(idx_string='', actual_type=type(optional_dependencies)))
 
 		for extra, dependencies in optional_dependencies.items():
+			if not extra.isidentifier():
+				raise TypeError(f"Invalid extra name {extra!r}: must be a valid Python identifier")
+
 			self.assert_sequence_not_str(dependencies, path=["project", "optional-dependencies", extra])
 
 			for idx, dep in enumerate(dependencies):

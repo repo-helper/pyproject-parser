@@ -79,6 +79,7 @@ def setup(app):
 
 
 nitpicky = True
+toml_spec_version = "0.5.0"
 
 # 3rd party
 import pyproject_parser.type_hints
