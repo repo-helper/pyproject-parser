@@ -38,11 +38,12 @@ from dom_toml.encoder import _dump_str
 from dom_toml.parser import AbstractConfigParser, BadConfigError
 from domdf_python_tools.paths import PathPlus, in_directory
 from domdf_python_tools.typing import PathLike
-from domdf_python_tools.words import Plural, word_join
+from domdf_python_tools.words import word_join
 from packaging.markers import Marker
 from packaging.requirements import Requirement
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
+from shippinglabel import normalize
 
 # this package
 from pyproject_parser.classes import License, Readme, _NormalisedName
@@ -58,8 +59,6 @@ __email__: str = "dominic@davis-foster.co.uk"
 __all__ = ["PyProject", "PyProjectTomlEncoder", "_PP"]
 
 _PP = TypeVar("_PP", bound="PyProject")
-
-_keys = Plural("key", "keys")
 
 
 class PyProjectTomlEncoder(dom_toml.TomlEncoder):
@@ -200,10 +199,22 @@ class PyProject:
 						tool_table[tool_name] = cls.tool_parsers[tool_name].parse(tool_subtable)
 
 		if keys:
-			raise BadConfigError(
-					f"Unexpected top level {_keys(len(keys))}: "
-					f"{word_join(sorted(keys), use_repr=True)}",
-					)
+			allowed_top_level = ("build-system", "project", "tool")
+
+			for top_level_key in sorted(keys):
+				if top_level_key in allowed_top_level:
+					continue
+
+				if normalize(top_level_key) in allowed_top_level:
+					raise BadConfigError(
+							f"Unexpected top-level key {top_level_key!r}. "
+							f"Did you mean {normalize(top_level_key)!r}?",
+							)
+
+				raise BadConfigError(
+						f"Unexpected top-level key {top_level_key!r}. "
+						f"Only {word_join(allowed_top_level, use_repr=True)} are allowed.",
+						)
 
 		return cls(
 				build_system=build_system_table,

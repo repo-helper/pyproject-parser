@@ -93,8 +93,18 @@ def test_check(
 						),
 				pytest.param(
 						"[coverage]\nomit = 'demo.py'\n[flake8]\nselect = ['F401']",
-						"Unexpected top level keys: 'coverage' and 'flake8'",
+						"Unexpected top-level key 'coverage'. Only 'build-system', 'project' and 'tool' are allowed.",
 						id="top-level",
+						),
+				pytest.param(
+						"[build_system]\nbackend = 'whey'",
+						"Unexpected top-level key 'build_system'. Did you mean 'build-system'",
+						id="top_level_typo_underscore",
+						),
+				pytest.param(
+						"[Build-System]\nbackend = 'whey'",
+						"Unexpected top-level key 'Build-System'. Did you mean 'build-system'",
+						id="top_level_typo_caps",
 						),
 				]
 		)

@@ -66,8 +66,26 @@ def test_valid_config_resolve_files(
 				pytest.param(
 						'banana = "fruit"\n[project]\nname = "food"',
 						BadConfigError,
-						"Unexpected top level key: 'banana'",
+						"Unexpected top-level key 'banana'. Only 'build-system', 'project' and 'tool' are allowed.",
 						id="unexpected_top_level"
+						),
+				pytest.param(
+						"[coverage]\nomit = 'demo.py'\n[flake8]\nselect = ['F401']",
+						BadConfigError,
+						"Unexpected top-level key 'coverage'. Only 'build-system', 'project' and 'tool' are allowed.",
+						id="top-level",
+						),
+				pytest.param(
+						"[build_system]\nbackend = 'whey'",
+						BadConfigError,
+						"Unexpected top-level key 'build_system'. Did you mean 'build-system'",
+						id="top_level_typo_underscore",
+						),
+				pytest.param(
+						"[Build-System]\nbackend = 'whey'",
+						BadConfigError,
+						"Unexpected top-level key 'Build-System'. Did you mean 'build-system'",
+						id="top_level_typo_caps",
 						),
 				pytest.param(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[[project.authors]]\nemail = "foo.bar"',

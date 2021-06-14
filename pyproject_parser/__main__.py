@@ -45,7 +45,7 @@ from consolekit.options import (  # nodep
 from consolekit.tracebacks import handle_tracebacks, traceback_option  # nodep
 
 # this package
-from pyproject_parser import PyProject, _keys, _NormalisedName
+from pyproject_parser import PyProject, _NormalisedName
 from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
 
 if TYPE_CHECKING:
@@ -116,7 +116,7 @@ def check(
 	import dom_toml
 	from dom_toml.parser import BadConfigError
 	from domdf_python_tools.paths import PathPlus
-	from domdf_python_tools.words import word_join
+	from domdf_python_tools.words import Plural, word_join
 
 	# this package
 	from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
@@ -130,6 +130,8 @@ def check(
 		parser.load(filename=pyproject_file)
 
 		raw_config = dom_toml.load(pyproject_file)
+
+		_keys = Plural("key", "keys")
 
 		def error_on_unknown(keys: Iterable[str], expected_keys: Iterable[str], table_name: str):
 			unknown_keys = set(keys) - set(expected_keys)
