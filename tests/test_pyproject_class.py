@@ -105,6 +105,48 @@ def test_valid_config_resolve_files(
 						"Invalid type for 'project.optional-dependencies.foo': expected <class 'collections.abc.Sequence'>, got <class 'str'>",
 						id="invalid_optional_dependencies_type_dict_str",
 						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.entry-points.console_scripts]',
+						BadConfigError,
+						"'project.entry-points' may not contain a 'console_scripts' sub-table. Use 'project.scripts' instead.",
+						id="console_scripts_entry_point",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.entry-points.gui_scripts]',
+						BadConfigError,
+						"'project.entry-points' may not contain a 'gui_scripts' sub-table. Use 'project.gui-scripts' instead.",
+						id="gui_scripts_entry_point",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.entry-points.console-scripts]',
+						BadConfigError,
+						"'project.entry-points' may not contain a 'console-scripts' sub-table. Use 'project.scripts' instead.",
+						id="console_scripts_hyphen_entry_point",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.entry-points.gui-scripts]',
+						BadConfigError,
+						"'project.entry-points' may not contain a 'gui-scripts' sub-table. Use 'project.gui-scripts' instead.",
+						id="gui_scripts_hyphen_entry_point",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nwith-hyphen = []',
+						TypeError,
+						"Invalid extra name 'with-hyphen': must be a valid Python identifier",
+						id="extra_invalid_a",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"quoted?" = []',
+						TypeError,
+						r"Invalid extra name 'quoted\?': must be a valid Python identifier",
+						id="extra_invalid_b",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"number#1" = []',
+						TypeError,
+						"Invalid extra name 'number#1': must be a valid Python identifier",
+						id="extra_invalid_c",
+						),
 				]
 		)
 def test_bad_config(

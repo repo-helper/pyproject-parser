@@ -841,14 +841,14 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 			self.assert_value_type(sub_table, dict, ["project", "entry-points", group])
 
-			if group in "console_scripts":
-				name = construct_path(["project", "entry_points"])
+			if normalize(group) in "console-scripts":
+				name = construct_path(["project", "entry-points"])
 				suggested_name = construct_path(["project", "scripts"])
-				raise TypeError(f"{name!r} may not contain a {group} sub-table. Use {suggested_name!r} instead.")
-			elif group in "gui_scripts":
-				name = construct_path(["project", "entry_points"])
+				raise BadConfigError(f"{name!r} may not contain a {group!r} sub-table. Use {suggested_name!r} instead.")
+			elif normalize(group) in "gui-scripts":
+				name = construct_path(["project", "entry-points"])
 				suggested_name = construct_path(["project", "gui-scripts"])
-				raise TypeError(f"{name!r} may not contain a {group} sub-table. Use {suggested_name!r} instead.")
+				raise BadConfigError(f"{name!r} may not contain a {group!r} sub-table. Use {suggested_name!r} instead.")
 
 			for name, func in sub_table.items():
 				self.assert_value_type(func, str, ["project", "entry-points", group, name])
