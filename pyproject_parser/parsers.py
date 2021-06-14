@@ -36,8 +36,8 @@ from typing import Any, Callable, ClassVar, Dict, Iterable, List, Mapping, Union
 
 # 3rd party
 from apeye import URL
+from apeye.email_validator import EmailSyntaxError, validate_email
 from dom_toml.parser import TOML_TYPES, AbstractConfigParser, BadConfigError, construct_path
-from email_validator import EmailSyntaxError, validate_email  # type: ignore
 from natsort import natsorted, ns
 from packaging.specifiers import InvalidSpecifier, Specifier, SpecifierSet
 from packaging.version import InvalidVersion, Version
@@ -558,7 +558,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 			if email is not None:
 				try:
-					email = validate_email(email, check_deliverability=False).email
+					email = validate_email(email).email
 				except EmailSyntaxError as e:
 					raise BadConfigError(f"Invalid email {email!r}: {e} ")
 
