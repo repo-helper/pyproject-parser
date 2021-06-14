@@ -50,5 +50,5 @@ To do so, add the following to your
 `.pre-commit-config.yaml <https://pre-commit.com/#2-add-a-pre-commit-configuration>`_ file:
 
 .. pre-commit::
-	:rev: 0.2.3
+	:rev: 0.3.0
 	:hooks: check-pyproject,reformat-pyproject
