@@ -34,7 +34,7 @@ Command line interface.
 # stdlib
 import importlib
 import re
-from typing import Pattern, Type, TypeVar
+from typing import Pattern, Type
 
 # 3rd party
 import click  # nodep
