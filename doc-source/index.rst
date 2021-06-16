@@ -145,6 +145,11 @@ This requires that the ``readme`` extra is installed:
 
 	python -m pip install pyproject-parser[readme]
 
+
+Once the dependencies are installed the validation can be disabled by setting the
+``CHECK_README`` environment variable to ``0``.
+
+
 Contents
 -----------
 

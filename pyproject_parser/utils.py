@@ -28,6 +28,7 @@ Utility functions.
 
 # stdlib
 import functools
+import os
 import sys
 from typing import TYPE_CHECKING, Optional
 
@@ -156,7 +157,8 @@ def render_readme(
 
 	content = readme_file.read_text(encoding=encoding)
 
-	if content_type == "text/markdown":
-		render_markdown(content)
-	elif content_type == "text/x-rst":
-		render_rst(content)
+	if int(os.environ.get("CHECK_README", 1)):
+		if content_type == "text/markdown":
+			render_markdown(content)
+		elif content_type == "text/x-rst":
+			render_rst(content)
