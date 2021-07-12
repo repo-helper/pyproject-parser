@@ -11,12 +11,8 @@
 # This script based on https://github.com/rocky/python-uncompyle6/blob/master/__pkginfo__.py
 #
 
-__all__ = [
-		"__version__",
-		"extras_require",
-		]
+__all__ = ["extras_require"]
 
-__version__ = "0.3.0"
 extras_require = {
 		"readme": ["docutils==0.16", "readme-renderer[md]>=27.0"],
 		"cli": ["click>=7.1.2", "consolekit>=1.2.0"],
