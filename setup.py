@@ -21,8 +21,8 @@ setup(
 		description="Parser for 'pyproject.toml'",
 		extras_require=extras_require,
 		install_requires=install_requires,
+		name="pyproject-parser",
 		py_modules=[],
-		version=__version__,
 		)
 
 shutil.rmtree("pyproject_parser.egg-info", ignore_errors=True)

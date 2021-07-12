@@ -127,5 +127,19 @@ autodoc_exclude_members = [
     "__hash__",
 ]
 
+[tool.whey]
+base-classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Archiving :: Packaging",
+    "Typing :: Typed",
+]
+python-versions = [ "3.6", "3.7", "3.8", "3.9",]
+python-implementations = [ "CPython", "PyPy",]
+platforms = [ "Windows", "macOS", "Linux",]
+license-key = "MIT"
+package = "pyproject_parser"
+
 [tool.dep_checker.name_mapping]
 attrs = "attr"
