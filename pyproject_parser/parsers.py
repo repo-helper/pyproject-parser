@@ -465,7 +465,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		raise TypeError(f"Unsupported type for 'project.readme': {type(readme)!r}")
 
 	@staticmethod
-	def parse_requires_python(config: Dict[str, TOML_TYPES]) -> Specifier:
+	def parse_requires_python(config: Dict[str, TOML_TYPES]) -> SpecifierSet:
 		"""
 		Parse the :pep621:`requires-python` key, giving the Python version requirements of the project.
 
