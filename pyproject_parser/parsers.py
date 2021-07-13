@@ -39,7 +39,7 @@ from apeye import URL
 from apeye.email_validator import EmailSyntaxError, validate_email
 from dom_toml.parser import TOML_TYPES, AbstractConfigParser, BadConfigError, construct_path
 from natsort import natsorted, ns
-from packaging.specifiers import InvalidSpecifier, Specifier, SpecifierSet
+from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import InvalidVersion, Version
 from shippinglabel import normalize
 from shippinglabel.classifiers import validate_classifiers

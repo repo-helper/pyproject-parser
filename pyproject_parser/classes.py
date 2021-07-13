@@ -37,7 +37,7 @@ Classes to represent readme and license files.
 # stdlib
 import pathlib
 from contextlib import suppress
-from typing import TYPE_CHECKING, Dict, Mapping, Optional, Type, TypeVar, overload
+from typing import TYPE_CHECKING, Dict, Mapping, Optional, Type, TypeVar
 
 # 3rd party
 import attr
