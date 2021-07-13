@@ -33,6 +33,25 @@ def test_valid_config(
 	advanced_data_regression.check(config.to_dict())
 
 
+@pytest.mark.parametrize("toml_config", [*valid_pep621_config, *valid_buildsystem_config])
+def test_from_dict(
+		toml_config: str,
+		tmp_pathplus: PathPlus,
+		advanced_data_regression: AdvancedDataRegressionFixture,
+		):
+
+	(tmp_pathplus / "pyproject.toml").write_clean(toml_config)
+
+	with in_directory(tmp_pathplus):
+		config = PyProject.load(tmp_pathplus / "pyproject.toml")
+
+	assert PyProject.from_dict(config.to_dict()) == config
+
+	hyphen_map = config.to_dict()
+	hyphen_map["build-system"] = hyphen_map.pop("build_system")
+	assert PyProject.from_dict(hyphen_map) == config
+
+
 @pytest.mark.parametrize(
 		"toml_config",
 		[
