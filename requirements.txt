@@ -1,5 +1,4 @@
 apeye>=1.0.0
-attr-utils>=0.5.6
 attrs>=20.3.0
 dom-toml>=0.4.0
 domdf-python-tools>=2.8.0

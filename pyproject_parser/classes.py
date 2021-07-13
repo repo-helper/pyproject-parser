@@ -41,7 +41,6 @@ from typing import TYPE_CHECKING, Dict, Mapping, Optional, Type, TypeVar, overlo
 
 # 3rd party
 import attr
-from attr_utils.docstrings import add_attrs_doc
 from domdf_python_tools.paths import PathPlus
 from domdf_python_tools.typing import PathLike
 
@@ -74,7 +73,6 @@ def _convert_filename(filename: Optional[PathLike]) -> Optional[pathlib.Path]:
 # TODO: overloads for __init__
 
 
-@add_attrs_doc
 @attr.s
 class Readme:
 	"""
@@ -234,7 +232,6 @@ class Readme:
 		return as_dict
 
 
-@add_attrs_doc
 @attr.s
 class License:
 	"""

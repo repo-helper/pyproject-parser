@@ -27,13 +27,12 @@ Parser for ``pyproject.toml``.
 #
 
 # stdlib
-from typing import Any, ClassVar, Dict, Mapping, Optional, Type, TypeVar, Union
+from typing import Any, ClassVar, Dict, Mapping, MutableMapping, Optional, Type, TypeVar, Union
 
 # 3rd party
 import attr
 import dom_toml
 import toml
-from attr_utils.serialise import serde
 from dom_toml.encoder import _dump_str
 from dom_toml.parser import AbstractConfigParser, BadConfigError
 from domdf_python_tools.paths import PathPlus, in_directory
@@ -93,7 +92,6 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 		return _dump_str(str(obj))
 
 
-@serde
 @attr.s
 class PyProject:
 	"""
@@ -322,3 +320,34 @@ class PyProject:
 
 			if lic is not None and isinstance(lic, License):
 				lic.resolve(inplace=True)
+
+	@classmethod
+	def from_dict(cls, d: Mapping[str, Any]):
+		"""
+		Construct an instance of :class:`~.PyProject` from a dictionary.
+
+		:param d: The dictionary.
+		"""
+
+		kwargs = {}
+
+		for key, value in d.items():
+			if key == "build-system":
+				key = "build_system"
+
+			kwargs[key] = value
+
+		return cls(**kwargs)
+
+	def to_dict(self) -> MutableMapping[str, Any]:
+		"""
+		Returns a dictionary containing the contents of the class.
+
+		.. seealso:: :func:`attr.asdict`
+		"""
+
+		return {
+				"build_system": self.build_system,
+				"project": self.project,
+				"tool": self.tool,
+				}
