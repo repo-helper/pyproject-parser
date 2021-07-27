@@ -925,7 +925,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
-		parsed_optional_dependencies = defaultdict(set)
+		parsed_optional_dependencies = dict()
 
 		err_template = (
 				f"Invalid type for 'project.optional-dependencies{{idx_string}}': "
@@ -942,6 +942,8 @@ class PEP621Parser(RequiredKeysConfigParser):
 				raise TypeError(f"Invalid extra name {extra!r}: must be a valid Python identifier")
 
 			self.assert_sequence_not_str(dependencies, path=["project", "optional-dependencies", extra])
+
+			parsed_optional_dependencies[extra] = set()
 
 			for idx, dep in enumerate(dependencies):
 				if isinstance(dep, str):
