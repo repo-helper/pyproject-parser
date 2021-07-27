@@ -31,8 +31,7 @@ import collections.abc
 import os
 import re
 from abc import ABCMeta
-from collections import defaultdict
-from typing import Any, Callable, ClassVar, Dict, Iterable, List, Mapping, Union, cast
+from typing import Any, Callable, ClassVar, Dict, Iterable, List, Mapping, Set, Union, cast
 
 # 3rd party
 from apeye import URL
@@ -925,7 +924,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
-		parsed_optional_dependencies = dict()
+		parsed_optional_dependencies: Dict[str, Set[ComparableRequirement]] = dict()
 
 		err_template = (
 				f"Invalid type for 'project.optional-dependencies{{idx_string}}': "
