@@ -4,10 +4,11 @@ name: macOS
 
 on:
   push:
-  pull_request:
     branches-ignore:
       - 'repo-helper-update'
       - 'pre-commit-ci-update-config'
+
+  pull_request:
 
 permissions:
   actions: write
