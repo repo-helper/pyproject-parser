@@ -175,6 +175,7 @@ Contents
 
 	Contributing Guide<https://contributing.repo-helper.uk>
 	Source
+	license
 
 .. start links
 

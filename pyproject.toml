@@ -66,6 +66,7 @@ extensions = [
     "sphinxcontrib.default_values",
     "sphinxcontrib.toctree_plus",
     "sphinx_debuginfo",
+    "sphinx_licenseinfo",
     "seed_intersphinx_mapping",
     "sphinx_click",
     "attr_utils.autoattrs",
