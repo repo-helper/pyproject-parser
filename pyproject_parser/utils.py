@@ -43,77 +43,53 @@ if TYPE_CHECKING:
 
 __all__ = ["render_markdown", "render_rst", "content_type_from_filename"]
 
-try:
-	# 3rd party
-	import cmarkgfm  # type: ignore
-	import readme_renderer.markdown  # type: ignore
 
-	def render_markdown(content: str):
-		"""
-		Attempt to render the given content as :wikipedia:`Markdown`.
+def render_markdown(content: str):
+	"""
+	Attempt to render the given content as :wikipedia:`Markdown`.
 
-		.. extras-require:: readme
-			:pyproject:
-			:scope: function
+	.. extras-require:: readme
+		:pyproject:
+		:scope: function
 
-		:param content:
-		"""
+	:param content:
+	"""
 
-		rendering_result = readme_renderer.markdown.render(content, stream=sys.stderr)
+	try:
+		# 3rd party
+		import cmarkgfm  # type: ignore
+		import readme_renderer.markdown  # type: ignore
+	except ImportError:
+		return
 
-		if rendering_result is None:  # pragma: no cover
-			raise BadConfigError("Error rendering README.")
+	rendering_result = readme_renderer.markdown.render(content, stream=sys.stderr)
 
-except ImportError:  # pragma: no cover
-
-	def render_markdown(content: str):
-		"""
-		Attempt to render the given content as :wikipedia:`Markdown`.
-
-		.. extras-require:: readme
-			:pyproject:
-			:scope: function
-
-		:param content:
-		"""
-
-		pass
+	if rendering_result is None:  # pragma: no cover
+		raise BadConfigError("Error rendering README.")
 
 
-try:
-	# 3rd party
-	import readme_renderer.rst  # type: ignore
+def render_rst(content: str):
+	"""
+	Attempt to render the given content as :wikipedia:`ReStructuredText`.
 
-	def render_rst(content: str):
-		"""
-		Attempt to render the given content as :wikipedia:`ReStructuredText`.
+	.. extras-require:: readme
+		:pyproject:
+		:scope: function
 
-		.. extras-require:: readme
-			:pyproject:
-			:scope: function
+	:param content:
+	"""
 
-		:param content:
-		"""
+	try:
+		# 3rd party
+		import readme_renderer.rst  # type: ignore
 
-		rendering_result = readme_renderer.rst.render(content, stream=sys.stderr)
+	except ImportError:
+		return
 
-		if rendering_result is None:
-			raise BadConfigError("Error rendering README.")
+	rendering_result = readme_renderer.rst.render(content, stream=sys.stderr)
 
-except ImportError:  # pragma: no cover
-
-	def render_rst(content: str):
-		"""
-		Attempt to render the given content as :wikipedia:`ReStructuredText`.
-
-		.. extras-require:: readme
-			:pyproject:
-			:scope: function
-
-		:param content:
-		"""
-
-		pass
+	if rendering_result is None:
+		raise BadConfigError("Error rendering README.")
 
 
 @functools.lru_cache()
