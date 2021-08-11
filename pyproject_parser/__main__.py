@@ -58,13 +58,13 @@ __all__ = ["main", "reformat", "check"]
 
 class CustomTracebackHandler(ConfigTracebackHandler):
 
-	def handle_AttributeError(self, e: AttributeError) -> bool:  # noqa: D102
+	def handle_AttributeError(self, e: AttributeError) -> bool:
 		# 3rd party
 		from consolekit.utils import abort  # nodep
 
 		raise abort(f"{e.__class__.__name__}: {e}\nUse '--traceback' to view the full traceback.", colour=False)
 
-	def handle_ImportError(self, e: ImportError) -> bool:  # noqa: D102
+	def handle_ImportError(self, e: ImportError) -> bool:
 		# 3rd party
 		from consolekit.utils import abort  # nodep
 
