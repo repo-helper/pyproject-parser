@@ -1,5 +1,4 @@
 # stdlib
-import re
 from textwrap import dedent
 from typing import Type
 
@@ -196,7 +195,6 @@ def test_pep621_class_bad_config_readme(
 		expected: str,
 		exception: Type[Exception],
 		tmp_pathplus: PathPlus,
-		advanced_data_regression: AdvancedDataRegressionFixture,
 		):
 
 	(tmp_pathplus / "pyproject.toml").write_lines([
@@ -268,7 +266,6 @@ def test_pep621_class_bad_config_license(
 		license_key: str,
 		expected: str,
 		tmp_pathplus: PathPlus,
-		advanced_data_regression: AdvancedDataRegressionFixture,
 		):
 
 	(tmp_pathplus / "pyproject.toml").write_lines([

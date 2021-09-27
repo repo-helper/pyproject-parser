@@ -158,11 +158,7 @@ def test_traceback_handler(
 
 
 @exceptions
-def test_traceback_handler_show_traceback(
-		exception,
-		file_regression,
-		cli_runner: CliRunner,
-		):
+def test_traceback_handler_show_traceback(exception, cli_runner: CliRunner):
 
 	@click.command()
 	def demo():

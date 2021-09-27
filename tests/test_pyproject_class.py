@@ -34,11 +34,7 @@ def test_valid_config(
 
 
 @pytest.mark.parametrize("toml_config", [*valid_pep621_config, *valid_buildsystem_config])
-def test_from_dict(
-		toml_config: str,
-		tmp_pathplus: PathPlus,
-		advanced_data_regression: AdvancedDataRegressionFixture,
-		):
+def test_from_dict(toml_config: str, tmp_pathplus: PathPlus):
 
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_config)
 
