@@ -68,6 +68,7 @@ extensions = [
     "sphinx_debuginfo",
     "sphinx_licenseinfo",
     "seed_intersphinx_mapping",
+    "html_section",
     "sphinx_click",
     "attr_utils.autoattrs",
     "sphinx_toolbox.pre_commit",
