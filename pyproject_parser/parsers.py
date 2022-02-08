@@ -732,7 +732,11 @@ class PEP621Parser(RequiredKeysConfigParser):
 		self.assert_type(project_urls, dict, ["project", "urls"])
 
 		for category, url in project_urls.items():
-			self.assert_value_type(url, str, ["project", "urls", category])
+			path = ("project", "urls", category)
+			self.assert_value_type(url, str, path)
+			if len(category) > 32:
+				name = construct_path(path)
+				raise ValueError(f"{name!r}: label too long (max 32 characters)")
 
 			parsed_urls[category] = str(URL(url))
 
