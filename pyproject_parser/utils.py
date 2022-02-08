@@ -59,7 +59,7 @@ def render_markdown(content: str):
 		# 3rd party
 		import cmarkgfm  # type: ignore
 		import readme_renderer.markdown  # type: ignore
-	except ImportError:
+	except ImportError:  # pragma: no cover
 		return
 
 	rendering_result = readme_renderer.markdown.render(content, stream=sys.stderr)
@@ -82,8 +82,7 @@ def render_rst(content: str):
 	try:
 		# 3rd party
 		import readme_renderer.rst  # type: ignore
-
-	except ImportError:
+	except ImportError:  # pragma: no cover
 		return
 
 	rendering_result = readme_renderer.rst.render(content, stream=sys.stderr)
