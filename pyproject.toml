@@ -8,7 +8,26 @@ version = "0.4.3"
 description = "Parser for 'pyproject.toml'"
 readme = "README.rst"
 keywords = [ "metadata", "packaging", "pep518", "pep621", "pyproject", "toml",]
-dynamic = [ "requires-python", "classifiers", "dependencies",]
+dynamic = []
+requires-python = ">=3.6.1"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Archiving :: Packaging",
+    "Typing :: Typed",
+]
 
 [[project.authors]]
 name = "Dominic Davis-Foster"
@@ -154,6 +173,11 @@ show_error_codes = true
 
 [tool.snippet-fmt]
 directives = [ "code-block",]
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+platforms = [ "Windows", "macOS", "Linux",]
 
 [tool.dep_checker.name_mapping]
 attrs = "attr"
