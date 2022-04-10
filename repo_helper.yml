@@ -14,7 +14,7 @@ short_desc: "Parser for 'pyproject.toml'"
 python_deploy_version: 3.6
 sphinx_html_theme: furo
 preserve_custom_theme: true
-tox_testenv_extras: readme
+tox_testenv_extras: readme,cli
 min_coverage: 97.5
 
 mypy_plugins:

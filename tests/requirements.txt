@@ -1,6 +1,5 @@
 git+https://github.com/repo-helper/pyproject-examples
 coincidence>=0.2.0
-consolekit>=1.2.2
 coverage>=5.1
 coverage-pyver-pragma>=0.2.1
 importlib-metadata>=3.6.0
