@@ -98,8 +98,8 @@ class ConfigTracebackHandler(TracebackHandler):
 	def handle_TypeError(self, e: TypeError) -> bool:  # noqa: D102
 		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
 
-	def handle_AttributeError(self, e: AttributeError) -> bool:
+	def handle_AttributeError(self, e: AttributeError) -> bool:  # noqa: D102
 		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
 
-	def handle_ImportError(self, e: ImportError) -> bool:
+	def handle_ImportError(self, e: ImportError) -> bool:  # noqa: D102
 		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
