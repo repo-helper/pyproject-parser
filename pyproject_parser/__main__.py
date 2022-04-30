@@ -35,6 +35,7 @@ from typing import TYPE_CHECKING, Iterable, List, Type, TypeVar
 # 3rd party
 import click  # nodep
 from consolekit import click_group  # nodep
+from consolekit.commands import MarkdownHelpCommand
 from consolekit.options import (  # nodep
 		DescribedArgument,
 		auto_default_argument,
@@ -102,7 +103,7 @@ def options(c: _C) -> _C:
 
 
 @options
-@main.command()
+@main.command(cls=MarkdownHelpCommand)
 def check(
 		pyproject_file: "PathLike" = "pyproject.toml",
 		parser_class: str = "pyproject_parser:PyProject",
@@ -159,7 +160,7 @@ def check(
 		help="The class to encode the config to TOML with.",
 		show_default=True,
 		)
-@main.command()
+@main.command(cls=MarkdownHelpCommand)
 def reformat(
 		pyproject_file: "PathLike" = "pyproject.toml",
 		encoder_class: str = "pyproject_parser:PyProjectTomlEncoder",
