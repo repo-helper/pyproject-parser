@@ -13,7 +13,8 @@ from pyproject_examples import valid_buildsystem_config, valid_pep621_config
 from pyproject_examples.example_configs import COMPLETE_A, COMPLETE_A_WITH_FILES, COMPLETE_B, COMPLETE_PROJECT_A
 
 # this package
-from pyproject_parser.__main__ import CustomTracebackHandler, check, reformat
+from pyproject_parser.__main__ import check, reformat
+from pyproject_parser.cli import ConfigTracebackHandler
 from tests.test_dumping import COMPLETE_UNDERSCORE_NAME, UNORDERED
 
 
@@ -149,7 +150,7 @@ def test_traceback_handler(
 	@click.command()
 	def demo():
 
-		with handle_tracebacks(False, CustomTracebackHandler):
+		with handle_tracebacks(False, ConfigTracebackHandler):
 			raise exception
 
 	result: Result = cli_runner.invoke(demo, catch_exceptions=False)
@@ -163,7 +164,7 @@ def test_traceback_handler_show_traceback(exception, cli_runner: CliRunner):
 	@click.command()
 	def demo():
 
-		with handle_tracebacks(True, CustomTracebackHandler):
+		with handle_tracebacks(True, ConfigTracebackHandler):
 			raise exception
 
 	with pytest.raises(type(exception), match=re.escape(str(exception))):
@@ -179,7 +180,7 @@ def test_handle_tracebacks_ignored_exceptions_click(
 	@click.command()
 	def demo():
 
-		with handle_tracebacks(False, CustomTracebackHandler):
+		with handle_tracebacks(False, ConfigTracebackHandler):
 			raise exception
 
 	result: Result = cli_runner.invoke(demo, catch_exceptions=False)
@@ -192,5 +193,5 @@ def test_handle_tracebacks_ignored_exceptions_click(
 def test_handle_tracebacks_ignored_exceptions(exception, ):
 
 	with pytest.raises(exception):  # noqa: PT012
-		with handle_tracebacks(False, CustomTracebackHandler):
+		with handle_tracebacks(False, ConfigTracebackHandler):
 			raise exception

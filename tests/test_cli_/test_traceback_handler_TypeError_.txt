@@ -1,2 +1,3 @@
 TypeError: Expected type int, got type str
+Use '--traceback' to view the full traceback.
 Aborted!

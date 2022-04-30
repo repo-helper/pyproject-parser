@@ -73,12 +73,32 @@ class ConfigTracebackHandler(TracebackHandler):
 	"""
 	:class:`consolekit.tracebacks.TracebackHandler` which handles :exc:`dom_toml.parser.BadConfigError`.
 	"""
+	"""
+	Whether to show the message ``Use '--traceback' to view the full traceback.`` on error.
+	Enabled by default.
+
+	.. versionadded:: 0.5.0  In previous versions this was effectively :py:obj:`False`.
+	"""
+	has_traceback_option: bool = True
+
+	@property
+	def _tb_option_msg(self) -> str:
+		if self.has_traceback_option:
+			return "\nUse '--traceback' to view the full traceback."
+		else:
+			return ''
 
 	def handle_BadConfigError(self, e: "BadConfigError") -> bool:  # noqa: D102
-		raise abort(f"{e.__class__.__name__}: {e}", colour=False)
+		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
 
 	def handle_KeyError(self, e: KeyError) -> bool:  # noqa: D102
-		raise abort(f"{e.__class__.__name__}: {e}", colour=False)
+		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
 
 	def handle_TypeError(self, e: TypeError) -> bool:  # noqa: D102
-		raise abort(f"{e.__class__.__name__}: {e}", colour=False)
+		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
+
+	def handle_AttributeError(self, e: AttributeError) -> bool:
+		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
+
+	def handle_ImportError(self, e: ImportError) -> bool:
+		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)

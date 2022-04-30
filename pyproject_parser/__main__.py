@@ -35,7 +35,7 @@ from typing import TYPE_CHECKING, Iterable, List, Type, TypeVar
 # 3rd party
 import click  # nodep
 from consolekit import click_group  # nodep
-from consolekit.commands import MarkdownHelpCommand
+from consolekit.commands import MarkdownHelpCommand  # nodep
 from consolekit.options import (  # nodep
 		DescribedArgument,
 		auto_default_argument,
@@ -45,31 +45,12 @@ from consolekit.options import (  # nodep
 		)
 from consolekit.tracebacks import handle_tracebacks, traceback_option  # nodep
 
-# this package
-from pyproject_parser import PyProject, _NormalisedName
-from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
-
 if TYPE_CHECKING:
 	# 3rd party
 	from consolekit.terminal_colours import ColourTrilean
 	from domdf_python_tools.typing import PathLike
 
 __all__ = ["main", "reformat", "check"]
-
-
-class CustomTracebackHandler(ConfigTracebackHandler):
-
-	def handle_AttributeError(self, e: AttributeError) -> bool:
-		# 3rd party
-		from consolekit.utils import abort  # nodep
-
-		raise abort(f"{e.__class__.__name__}: {e}\nUse '--traceback' to view the full traceback.", colour=False)
-
-	def handle_ImportError(self, e: ImportError) -> bool:
-		# 3rd party
-		from consolekit.utils import abort  # nodep
-
-		raise abort(f"{e.__class__.__name__}: {e}\nUse '--traceback' to view the full traceback.", colour=False)
 
 
 @click_group()
@@ -120,13 +101,15 @@ def check(
 	from domdf_python_tools.words import Plural, word_join
 
 	# this package
+	from pyproject_parser import PyProject
+	from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
 	from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
 
 	pyproject_file = PathPlus(pyproject_file)
 
 	click.echo(f"Validating {str(pyproject_file)!r}")
 
-	with handle_tracebacks(show_traceback, CustomTracebackHandler):
+	with handle_tracebacks(show_traceback, ConfigTracebackHandler):
 		parser: Type[PyProject] = resolve_class(parser_class, "parser-class")
 		parser.load(filename=pyproject_file)
 
@@ -179,11 +162,15 @@ def reformat(
 	from domdf_python_tools.paths import PathPlus
 	from toml import TomlEncoder
 
+	# this package
+	from pyproject_parser import PyProject, _NormalisedName
+	from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
+
 	pyproject_file = PathPlus(pyproject_file)
 
 	click.echo(f"Reformatting {str(pyproject_file)!r}")
 
-	with handle_tracebacks(show_traceback, CustomTracebackHandler):
+	with handle_tracebacks(show_traceback, ConfigTracebackHandler):
 		parser: Type[PyProject] = resolve_class(parser_class, "parser-class")
 		encoder: Type[TomlEncoder] = resolve_class(encoder_class, "encoder-class")
 
