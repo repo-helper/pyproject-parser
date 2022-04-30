@@ -45,8 +45,8 @@ Documentation = "https://pyproject-parser.readthedocs.io/en/latest"
 
 [project.scripts]
 pyproject-parser = "pyproject_parser.__main__:main"
-check-pyproject = "pyproject_parser.__main__:main"
-pyproject-fmt = "pyproject_parser.__main__:main"
+check-pyproject = "pyproject_parser.__main__:check"
+pyproject-fmt = "pyproject_parser.__main__:reformat"
 
 [project.optional-dependencies]
 readme = [ "docutils==0.16", "readme-renderer[md]>=27.0",]
