@@ -73,13 +73,14 @@ class ConfigTracebackHandler(TracebackHandler):
 	"""
 	:class:`consolekit.tracebacks.TracebackHandler` which handles :exc:`dom_toml.parser.BadConfigError`.
 	"""
+
+	has_traceback_option: bool = True
 	"""
 	Whether to show the message ``Use '--traceback' to view the full traceback.`` on error.
 	Enabled by default.
 
 	.. versionadded:: 0.5.0  In previous versions this was effectively :py:obj:`False`.
 	"""
-	has_traceback_option: bool = True
 
 	@property
 	def _tb_option_msg(self) -> str:

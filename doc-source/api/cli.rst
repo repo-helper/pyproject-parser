@@ -24,4 +24,6 @@
 
 		\end{flushleft}
 
+	.. autoattribute:: has_traceback_option
+
 .. autofunction:: pyproject_parser.cli.resolve_class
