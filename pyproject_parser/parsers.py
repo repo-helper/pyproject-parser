@@ -941,16 +941,28 @@ class PEP621Parser(RequiredKeysConfigParser):
 			raise TypeError(err_template.format(idx_string='', actual_type=type(optional_dependencies)))
 
 		for extra, dependencies in optional_dependencies.items():
-			if not extra.isidentifier():
-				raise TypeError(f"Invalid extra name {extra!r}: must be a valid Python identifier")
 
-			self.assert_sequence_not_str(dependencies, path=["project", "optional-dependencies", extra])
+			# Normalize per PEP 685
+			normalized_extra = normalize(extra)
 
-			parsed_optional_dependencies[extra] = set()
+			path = ("project", "optional-dependencies", extra)
+
+			if extra in parsed_optional_dependencies:
+				raise BadConfigError(
+						f"{construct_path(path)!r}: "
+						f"Multiple extras were defined with the same normalized name of {normalized_extra!r}",
+						)
+
+			# if not normalized_extra.isidentifier():
+			# 	raise ValueError(f"{construct_path(path)!r}: Invalid extra name {extra!r}")
+
+			self.assert_sequence_not_str(dependencies, path=path)
+
+			parsed_optional_dependencies[normalized_extra] = set()
 
 			for idx, dep in enumerate(dependencies):
 				if isinstance(dep, str):
-					parsed_optional_dependencies[extra].add(ComparableRequirement(dep))
+					parsed_optional_dependencies[normalized_extra].add(ComparableRequirement(dep))
 				else:
 					raise TypeError(err_template.format(idx_string=f'.{extra}[{idx}]', actual_type=type(dep)))
 

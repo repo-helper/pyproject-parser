@@ -180,6 +180,24 @@ def test_valid_config_resolve_files(
 						"Invalid extra name 'number#1': must be a valid Python identifier",
 						id="extra_invalid_c",
 						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev_test" = []\n"dev-test" = []',
+						BadConfigError,
+						"'project.optional-dependencies.dev-test': Multiple extras were defined with the same normalized name of 'dev-test'",
+						id="duplicate_extra_1",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev-test" = []\n"dev_test" = []',
+						BadConfigError,
+						"'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'",
+						id="duplicate_extra_2",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev.test" = []\n"dev_test" = []',
+						BadConfigError,
+						"'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'",
+						id="duplicate_extra_3",
+						),
 				]
 		)
 def test_bad_config(
