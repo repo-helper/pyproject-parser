@@ -7,7 +7,7 @@ CLI entry point.
 .. versionadded:: 0.2.0
 """
 #
-#  Copyright © 2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright © 2021-2022 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ CLI entry point.
 
 # stdlib
 import sys
-from typing import TYPE_CHECKING, Iterable, List, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Iterable, List, Optional, Type, TypeVar
 
 # 3rd party
 import click  # nodep
@@ -135,6 +135,108 @@ def check(
 
 		# Implements PEP 621
 		error_on_unknown(raw_config.get("project", {}).keys(), {*PEP621Parser.keys, "dynamic"}, "project")
+
+
+@auto_default_argument(
+		"field",
+		type=click.STRING,
+		description="The field to retrieve from the ``pyproject.toml`` file.",
+		cls=DescribedArgument,
+		)
+@auto_default_option(
+		"-f",
+		"--file",
+		"pyproject_file",
+		type=click.STRING,
+		help="The ``pyproject.toml`` file.",
+		)
+@auto_default_option(
+		"-P",
+		"--parser-class",
+		default=click.STRING,
+		help="The class to parse the 'pyproject.toml' file with.",
+		show_default=True,
+		)
+@traceback_option()
+@main.command(cls=MarkdownHelpCommand)
+def info(
+		field: Optional[str] = None,
+		pyproject_file: "PathLike" = "pyproject.toml",
+		parser_class: str = "pyproject_parser:PyProject",
+		show_traceback: bool = False,
+		):
+	"""
+	Extract information from the given ``pyproject.toml`` file.
+
+	**Example usage:**
+
+	``pip install $(python3 -m pyproject_parser info build-system.requires | jq -r 'join(" ")')``
+	"""
+
+	# stdlib
+	import os
+	import re
+
+	# 3rd party
+	import dom_toml
+	import sdjson  # nodep
+	from domdf_python_tools.paths import PathPlus
+
+	# this package
+	from pyproject_parser import PyProject
+	from pyproject_parser.cli import _json_encoders  # noqa: F401
+	from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
+	from pyproject_parser.type_hints import Readme
+
+	pyproject_file = PathPlus(pyproject_file)
+
+	with handle_tracebacks(show_traceback, ConfigTracebackHandler):
+		parser: Type[PyProject] = resolve_class(parser_class, "parser-class")
+
+		check_readme = os.getenv("CHECK_README")
+
+		try:
+
+			if field != "project.readme":
+				os.environ["CHECK_README"] = '0'
+
+			config = parser.load(filename=pyproject_file)
+
+			raw_config = dom_toml.load(pyproject_file)
+
+			output: Any
+
+			if not field:
+				print(sdjson.dumps(config))
+				sys.exit(0)
+
+			field_parts = field.split('.')
+			if field_parts[0] == "build-system":
+				output = config.build_system
+			elif field_parts[0] == "project":
+				output = config.project
+			else:
+				output = raw_config[field_parts[0]]
+
+			for part in field_parts[1:]:
+				m = re.match(r"^\[(\d)]$", part)
+				if m:
+					# array index
+					output = output[int(m.group(1))]
+				elif isinstance(output, Readme):
+					output = getattr(output, part)
+				else:
+					# field name
+					output = output[part]
+
+			print(sdjson.dumps(output))
+
+		finally:
+			if check_readme is None:
+				if "CHECK_README" in os.environ:
+					del os.environ["CHECK_README"]
+			else:
+				os.environ["CHECK_README"] = check_readme
 
 
 @options
