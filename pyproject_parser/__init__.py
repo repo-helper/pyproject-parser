@@ -47,7 +47,13 @@ from shippinglabel import normalize
 # this package
 from pyproject_parser.classes import License, Readme, _NormalisedName
 from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
-from pyproject_parser.type_hints import Author, BuildSystemDict, ContentTypes, ProjectDict, _PyProjectAsTomlDict
+from pyproject_parser.type_hints import (  # noqa: F401
+		Author,
+		BuildSystemDict,
+		ContentTypes,
+		ProjectDict,
+		_PyProjectAsTomlDict
+		)
 
 __author__: str = "Dominic Davis-Foster"
 __copyright__: str = "2021 Dominic Davis-Foster"
@@ -70,7 +76,7 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 		:html: 7/16
 	"""
 
-	def __init__(self, _dict=dict, preserve=False):
+	def __init__(self, _dict=dict, preserve: bool = False) -> None:
 		super().__init__(_dict=_dict, preserve=preserve)
 		self.dump_funcs[str] = _dump_str
 		self.dump_funcs[_NormalisedName] = _dump_str
@@ -233,13 +239,15 @@ class PyProject:
 		# TODO: filter out default values (lists and dicts)
 
 		toml_dict: _PyProjectAsTomlDict = {
-				"build-system": self.build_system, "project": self.project, "tool": self.tool
+				"build-system": self.build_system,
+				"project": self.project,
+				"tool": self.tool,
 				}
 
 		if toml_dict["project"] is not None:
 			if "license" in toml_dict["project"] and toml_dict["project"]["license"] is not None:
-				toml_dict["project"] = {  # type: ignore
-					**toml_dict["project"],  # type: ignore
+				toml_dict["project"] = {  # type: ignore[typeddict-item]
+					**toml_dict["project"],  # type: ignore[misc,arg-type]
 					"license": toml_dict["project"]["license"].to_pep621_dict()
 					}
 
@@ -247,10 +255,14 @@ class PyProject:
 			if "readme" in toml_dict["project"] and toml_dict["project"]["readme"] is not None:
 				readme_dict = toml_dict["project"]["readme"].to_pep621_dict()
 
+				_project: Dict[str, Any]
+
 				if set(readme_dict.keys()) == {"file"}:
-					toml_dict["project"] = {**toml_dict["project"], "readme": readme_dict["file"]}  # type: ignore
+					_project = {**toml_dict["project"], "readme": readme_dict["file"]}
 				else:
-					toml_dict["project"] = {**toml_dict["project"], "readme": readme_dict}  # type: ignore
+					_project = {**toml_dict["project"], "readme": readme_dict}
+
+				toml_dict["project"] = _project  # type: ignore[typeddict-item]
 
 		return dom_toml.dumps(toml_dict, encoder)
 
@@ -258,7 +270,7 @@ class PyProject:
 			self,
 			filename: PathLike,
 			encoder: Union[Type[toml.TomlEncoder], toml.TomlEncoder] = PyProjectTomlEncoder,
-			):
+			) -> str:
 		"""
 		Write as TOML to the given file.
 
@@ -301,7 +313,7 @@ class PyProject:
 
 		return config.dump(filename, encoder=encoder)
 
-	def resolve_files(self):
+	def resolve_files(self) -> None:
 		"""
 		Resolve the ``file`` key in :pep621:`readme` and :pep621:`license`
 		(if present) to retrieve the content of the file.
@@ -322,7 +334,7 @@ class PyProject:
 				lic.resolve(inplace=True)
 
 	@classmethod
-	def from_dict(cls, d: Mapping[str, Any]):
+	def from_dict(cls: Type[_PP], d: Mapping[str, Any]) -> _PP:
 		"""
 		Construct an instance of :class:`~.PyProject` from a dictionary.
 

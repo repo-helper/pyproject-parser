@@ -321,7 +321,7 @@ def test_buildsystem_parser_valid_config(
 			set_defaults=set_defaults,
 			)
 
-	config["requires"] = list(map(str, config["requires"]))  # type: ignore
+	config["requires"] = list(map(str, config["requires"]))  # type: ignore[arg-type]
 
 	advanced_data_regression.check(config)
 

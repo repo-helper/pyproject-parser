@@ -117,7 +117,11 @@ def check(
 
 		_keys = Plural("key", "keys")
 
-		def error_on_unknown(keys: Iterable[str], expected_keys: Iterable[str], table_name: str):
+		def error_on_unknown(
+				keys: Iterable[str],
+				expected_keys: Iterable[str],
+				table_name: str,
+				) -> None:
 			unknown_keys = set(keys) - set(expected_keys)
 
 			if unknown_keys:

@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 __all__ = ["render_markdown", "render_rst", "content_type_from_filename"]
 
 
-def render_markdown(content: str):
+def render_markdown(content: str) -> None:
 	"""
 	Attempt to render the given content as :wikipedia:`Markdown`.
 
@@ -57,8 +57,8 @@ def render_markdown(content: str):
 
 	try:
 		# 3rd party
-		import cmarkgfm  # type: ignore
-		import readme_renderer.markdown  # type: ignore
+		import cmarkgfm  # type: ignore[import]  # noqa: F401
+		import readme_renderer.markdown  # type: ignore[import]
 	except ImportError:  # pragma: no cover
 		return
 
@@ -68,7 +68,7 @@ def render_markdown(content: str):
 		raise BadConfigError("Error rendering README.")
 
 
-def render_rst(content: str):
+def render_rst(content: str) -> None:
 	"""
 	Attempt to render the given content as :wikipedia:`ReStructuredText`.
 
@@ -81,7 +81,7 @@ def render_rst(content: str):
 
 	try:
 		# 3rd party
-		import readme_renderer.rst  # type: ignore
+		import readme_renderer.rst  # type: ignore[import]
 	except ImportError:  # pragma: no cover
 		return
 
@@ -114,8 +114,8 @@ def content_type_from_filename(filename: PathLike) -> "ContentTypes":
 def render_readme(
 		readme_file: PathLike,
 		content_type: Optional["ContentTypes"] = None,
-		encoding="UTF-8",
-		):
+		encoding: str = "UTF-8",
+		) -> None:
 	"""
 	Attempts to render the given readme file.
 

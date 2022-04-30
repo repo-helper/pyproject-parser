@@ -16,7 +16,7 @@ _C = TypeVar("_C", bound=Callable)
 pytest_plugins = ("coincidence", "consolekit.testing")
 
 
-def _representer_for(*data_type: Type):
+def _representer_for(*data_type: Type) -> Callable[[_C], _C]:
 
 	def deco(representer_fn: _C) -> _C:
 		for dtype in data_type:

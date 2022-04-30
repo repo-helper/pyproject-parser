@@ -37,7 +37,7 @@ Classes to represent readme and license files.
 # stdlib
 import pathlib
 from contextlib import suppress
-from typing import TYPE_CHECKING, Dict, Mapping, Optional, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Type, TypeVar
 
 # 3rd party
 import attr
@@ -91,7 +91,7 @@ class Readme:
 	#: The content of the readme.
 	text: Optional[str] = attr.ib(default=None)
 
-	def __attrs_post_init__(self):
+	def __attrs_post_init__(self) -> None:
 		# Sanity checks the supplied arguments
 
 		if self.content_type and not (self.text or self.file):
@@ -108,7 +108,7 @@ class Readme:
 				self.content_type = content_type_from_filename(self.file)
 
 	@content_type.validator
-	def _check_content_type(self, attribute, value):
+	def _check_content_type(self, attribute: Any, value: str) -> None:
 		if value not in {"text/markdown", "text/x-rst", "text/plain", None}:
 			raise ValueError(f"Unsupported readme content-type {value!r}")
 
@@ -251,7 +251,7 @@ class License:
 	#: The content of the license.
 	text: Optional[str] = attr.ib(default=None)
 
-	def __attrs_post_init__(self):
+	def __attrs_post_init__(self) -> None:
 		# Sanity checks the supplied arguments
 		if self.text is None and self.file is None:
 			raise TypeError(f"At least one of 'text' and 'file' must be supplied to {self.__class__!r}")
@@ -358,5 +358,5 @@ class _NormalisedName(str):
 			return self._unnormalized
 
 	@unnormalized.setter
-	def unnormalized(self, value: str):
+	def unnormalized(self, value: str) -> None:
 		self._unnormalized = str(value)
