@@ -39,6 +39,7 @@ from shippinglabel.requirements import ComparableRequirement
 # this package
 from pyproject_parser import PyProject
 from pyproject_parser.classes import License, Readme
+from pyproject_parser.type_hints import ReadmeDict
 
 
 @sdjson.register_encoder(ComparableRequirement)
@@ -60,5 +61,5 @@ def _encode_pyproject(obj: PyProject) -> Dict:
 
 @sdjson.register_encoder(Readme)
 @sdjson.register_encoder(License)
-def _encode_readme_license(obj: Union[Readme, License]) -> Dict:
+def _encode_readme_license(obj: Union[Readme, License]) -> Union[ReadmeDict, Dict[str, str]]:
 	return obj.to_dict()
