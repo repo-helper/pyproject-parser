@@ -17,6 +17,7 @@ from pyproject_examples import (
 
 # this package
 from pyproject_parser.parsers import BuildSystemParser, PEP621Parser, RequiredKeysConfigParser
+from pyproject_parser.utils import PyProjectDeprecationWarning
 
 
 @pytest.mark.parametrize("set_defaults", [True, False])
@@ -279,7 +280,30 @@ def test_pep621_class_bad_config_license(
 		PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
 
 
-@pytest.mark.parametrize("config, expects, match", bad_pep621_config)
+@pytest.mark.parametrize(
+		"config, expects, match",
+		[
+				*bad_pep621_config,
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nwith-hyphen = []',
+						TypeError,
+						"Invalid extra name 'with-hyphen'",
+						id="extra_invalid_a",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"quoted?" = []',
+						TypeError,
+						r"Invalid extra name 'quoted\?'",
+						id="extra_invalid_b",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"number#1" = []',
+						TypeError,
+						"Invalid extra name 'number#1'",
+						id="extra_invalid_c",
+						),
+				]
+		)
 def test_pep621_class_bad_config(
 		config: str,
 		expects: Type[Exception],
@@ -289,6 +313,38 @@ def test_pep621_class_bad_config(
 	(tmp_pathplus / "pyproject.toml").write_clean(config)
 
 	with in_directory(tmp_pathplus), pytest.raises(expects, match=match):
+		PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+
+
+@pytest.mark.parametrize(
+		"config, match",
+		[
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev_test" = []\n"dev-test" = []',
+						"'project.optional-dependencies.dev-test': Multiple extras were defined with the same normalized name of 'dev-test'",
+						id="duplicate_extra_1",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev-test" = []\n"dev_test" = []',
+						"'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'",
+						id="duplicate_extra_2",
+						),
+				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev.test" = []\n"dev_test" = []',
+						"'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'",
+						id="duplicate_extra_3",
+						),
+				]
+		)
+def test_extra_deprecation(
+		config: str,
+		match: str,
+		tmp_pathplus: PathPlus,
+		):
+
+	(tmp_pathplus / "pyproject.toml").write_clean(config)
+
+	with in_directory(tmp_pathplus), pytest.warns(PyProjectDeprecationWarning, match=match):
 		PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
 
 

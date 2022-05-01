@@ -30,6 +30,7 @@ TOML configuration parsers.
 import collections.abc
 import os
 import re
+import warnings
 from abc import ABCMeta
 from typing import Any, Callable, ClassVar, Dict, Iterable, List, Mapping, Set, Union, cast
 
@@ -47,7 +48,7 @@ from shippinglabel.requirements import ComparableRequirement, combine_requiremen
 # this package
 from pyproject_parser.classes import License, Readme, _NormalisedName
 from pyproject_parser.type_hints import Author, BuildSystemDict, ProjectDict
-from pyproject_parser.utils import content_type_from_filename, render_readme
+from pyproject_parser.utils import PyProjectDeprecationWarning, content_type_from_filename, render_readme
 
 __all__ = [
 		"RequiredKeysConfigParser",
@@ -56,6 +57,7 @@ __all__ = [
 		]
 
 name_re = re.compile("^([A-Z0-9]|[A-Z0-9][A-Z0-9._-]*[A-Z0-9])$", flags=re.IGNORECASE)
+extra_re = re.compile("^([a-z0-9]|[a-z0-9]([a-z0-9-](?!-))*[a-z0-9])$")
 
 
 class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
@@ -929,6 +931,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		"""
 
 		parsed_optional_dependencies: Dict[str, Set[ComparableRequirement]] = dict()
+		normalized_names: Set[str] = set()  # remove for part 2
 
 		err_template = (
 				f"Invalid type for 'project.optional-dependencies{{idx_string}}': "
@@ -941,15 +944,37 @@ class PEP621Parser(RequiredKeysConfigParser):
 			raise TypeError(err_template.format(idx_string='', actual_type=type(optional_dependencies)))
 
 		for extra, dependencies in optional_dependencies.items():
-			if not extra.isidentifier():
-				raise TypeError(f"Invalid extra name {extra!r}: must be a valid Python identifier")
 
-			self.assert_sequence_not_str(dependencies, path=["project", "optional-dependencies", extra])
+			# Normalize per PEP 685
+			normalized_extra = normalize(extra)
 
-			parsed_optional_dependencies[extra] = set()
+			path = ("project", "optional-dependencies", extra)
+
+			if normalized_extra in normalized_names:  # parsed_optional_dependencies for part 2
+				warnings.warn(
+						f"{construct_path(path)!r}: "
+						f"Multiple extras were defined with the same normalized name of {normalized_extra!r}",
+						PyProjectDeprecationWarning,
+						)
+				# For part 2
+				# raise BadConfigError(
+				# 		f"{construct_path(path)!r}: "
+				# 		f"Multiple extras were defined with the same normalized name of {normalized_extra!r}",
+				# 		)
+
+			# https://packaging.python.org/specifications/core-metadata/#provides-extra-multiple-use
+			# if not extra_re.match(normalized_extra):
+			if not (extra.isidentifier() or extra_re.match(normalized_extra)):
+				raise TypeError(f"Invalid extra name {extra!r} ({extra_re.match(normalized_extra)})")
+
+			self.assert_sequence_not_str(dependencies, path=path)
+
+			parsed_optional_dependencies[extra] = set()  # normalized_extra for part 2
+			normalized_names.add(extra)  # Remove for part 2
 
 			for idx, dep in enumerate(dependencies):
 				if isinstance(dep, str):
+					# normalized_extra for part 2
 					parsed_optional_dependencies[extra].add(ComparableRequirement(dep))
 				else:
 					raise TypeError(err_template.format(idx_string=f'.{extra}[{idx}]', actual_type=type(dep)))

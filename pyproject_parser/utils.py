@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 	# this package
 	from pyproject_parser.type_hints import ContentTypes
 
-__all__ = ["render_markdown", "render_rst", "content_type_from_filename"]
+__all__ = ["render_markdown", "render_rst", "content_type_from_filename", "PyProjectDeprecationWarning"]
 
 
 def render_markdown(content: str) -> None:
@@ -137,3 +137,15 @@ def render_readme(
 			render_markdown(content)
 		elif content_type == "text/x-rst":
 			render_rst(content)
+
+
+class PyProjectDeprecationWarning(Warning):
+	"""
+	Warning for the use of deprecated features in `pyproject.toml`.
+
+	This is a user-facing warning which will be shown by default.
+	For developer-facing warnings intended for direct consumers of this library,
+	use a standard :class:`DeprecationWarning`.
+
+	.. versionadded:: $VERSION
+	"""

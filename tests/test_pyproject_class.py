@@ -165,21 +165,40 @@ def test_valid_config_resolve_files(
 				pytest.param(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nwith-hyphen = []',
 						TypeError,
-						"Invalid extra name 'with-hyphen': must be a valid Python identifier",
+						"Invalid extra name 'with-hyphen'",
 						id="extra_invalid_a",
 						),
 				pytest.param(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"quoted?" = []',
 						TypeError,
-						r"Invalid extra name 'quoted\?': must be a valid Python identifier",
+						r"Invalid extra name 'quoted\?'",
 						id="extra_invalid_b",
 						),
 				pytest.param(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"number#1" = []',
 						TypeError,
-						"Invalid extra name 'number#1': must be a valid Python identifier",
+						"Invalid extra name 'number#1'",
 						id="extra_invalid_c",
 						),
+				# For Part 2
+				# pytest.param(
+				# 		'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev_test" = []\n"dev-test" = []',
+				# 		BadConfigError,
+				# 		"'project.optional-dependencies.dev-test': Multiple extras were defined with the same normalized name of 'dev-test'",
+				# 		id="duplicate_extra_1",
+				# 		),
+				# pytest.param(
+				# 		'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev-test" = []\n"dev_test" = []',
+				# 		BadConfigError,
+				# 		"'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'",
+				# 		id="duplicate_extra_2",
+				# 		),
+				# pytest.param(
+				# 		'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev.test" = []\n"dev_test" = []',
+				# 		BadConfigError,
+				# 		"'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'",
+				# 		id="duplicate_extra_3",
+				# 		),
 				]
 		)
 def test_bad_config(
