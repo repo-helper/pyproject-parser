@@ -1,10 +1,12 @@
 # stdlib
+import json
 import re
+from typing import Optional
 
 # 3rd party
 import click
 import pytest
-from coincidence.regressions import AdvancedFileRegressionFixture
+from coincidence.regressions import AdvancedDataRegressionFixture, AdvancedFileRegressionFixture
 from consolekit.testing import CliRunner, Result
 from consolekit.tracebacks import handle_tracebacks
 from dom_toml.parser import BadConfigError
@@ -13,7 +15,7 @@ from pyproject_examples import valid_buildsystem_config, valid_pep621_config
 from pyproject_examples.example_configs import COMPLETE_A, COMPLETE_A_WITH_FILES, COMPLETE_B, COMPLETE_PROJECT_A
 
 # this package
-from pyproject_parser.__main__ import check, reformat
+from pyproject_parser.__main__ import check, info, reformat
 from pyproject_parser.cli import ConfigTracebackHandler
 from tests.test_dumping import COMPLETE_UNDERSCORE_NAME, UNORDERED
 
@@ -195,3 +197,148 @@ def test_handle_tracebacks_ignored_exceptions(exception, ):
 	with pytest.raises(exception):  # noqa: PT012
 		with handle_tracebacks(False, ConfigTracebackHandler):
 			raise exception
+
+
+@pytest.mark.parametrize(
+		"path",
+		[
+				pytest.param(None, id="all"),
+				"build-system",
+				"build-system.requires",
+				pytest.param("build-system.requires.[0]", id="first_build_requirement"),
+				"project",
+				"project.authors",
+				pytest.param("project.authors.[0]", id="first_author"),
+				pytest.param("project.keywords.[3]", id="fourth_keyword"),
+				"project.urls.Source Code",  # Written as `python3 -m pyproject_parser info project.urls."Source Code"`
+				"tool.whey.base-classifiers"
+				]
+		)
+@pytest.mark.parametrize("indent", [None, 0, 2, 4])
+def test_info(
+		path: str,
+		tmp_pathplus: PathPlus,
+		cli_runner: CliRunner,
+		advanced_data_regression: AdvancedDataRegressionFixture,
+		advanced_file_regression: AdvancedFileRegressionFixture,
+		indent: Optional[int],
+		):
+	(tmp_pathplus / "pyproject.toml").write_clean(COMPLETE_A)
+
+	if path is None:
+		args = []
+	else:
+		args = [path]
+
+	if indent:
+		args.append("--indent")
+		args.append(str(indent))
+
+	with in_directory(tmp_pathplus):
+		result: Result = cli_runner.invoke(info, catch_exceptions=False, args=args)
+
+	print(result.stdout)
+	assert result.exit_code == 0
+	output = json.loads(result.stdout)
+
+	if isinstance(output, str):
+		advanced_file_regression.check(output, extension=".md")
+	else:
+		advanced_data_regression.check(output)
+		advanced_file_regression.check(result.stdout, extension=".json")
+
+	if path is None:
+		args = []
+	else:
+		args = [path]
+
+	if indent:
+		args.append("-i")
+		args.append(str(indent))
+
+	with in_directory(tmp_pathplus):
+		result = cli_runner.invoke(info, catch_exceptions=False, args=args)
+
+	print(result.stdout)
+	assert result.exit_code == 0
+	output = json.loads(result.stdout)
+
+	if isinstance(output, str):
+		advanced_file_regression.check(output, extension=".md")
+	else:
+		advanced_data_regression.check(output)
+		advanced_file_regression.check(result.stdout, extension=".json")
+
+
+@pytest.mark.parametrize(
+		"path",
+		[
+				"project.readme",
+				"project.readme.file",
+				"project.readme.text",
+				"project.license",
+				"project.license.file",
+				"project.license.text",
+				]
+		)
+@pytest.mark.parametrize("check_readme", [0, 1])
+@pytest.mark.parametrize("indent", [None, 0, 2, 4])
+@pytest.mark.parametrize("resolve", [True, False])
+def test_info_readme_license(
+		path: str,
+		check_readme: int,
+		tmp_pathplus: PathPlus,
+		cli_runner: CliRunner,
+		advanced_data_regression: AdvancedDataRegressionFixture,
+		advanced_file_regression: AdvancedFileRegressionFixture,
+		monkeypatch,
+		resolve: bool,
+		indent: Optional[int],
+		):
+
+	monkeypatch.setenv("CHECK_README", str(check_readme))
+
+	(tmp_pathplus / "pyproject.toml").write_clean(COMPLETE_A_WITH_FILES)
+	(tmp_pathplus / "README.rst").write_clean("This is the README")
+	(tmp_pathplus / "LICENSE").write_clean("This is the LICENSE")
+
+	args = [path]
+
+	if resolve:
+		args.append("--resolve")
+	elif indent:
+		args.append("--indent")
+		args.append(str(indent))
+
+	with in_directory(tmp_pathplus):
+		result: Result = cli_runner.invoke(info, catch_exceptions=False, args=args)
+
+	print(result.stdout)
+	assert result.exit_code == 0
+	output = json.loads(result.stdout)
+
+	if isinstance(output, str):
+		advanced_file_regression.check(output, extension=".md")
+	else:
+		advanced_data_regression.check(output)
+		advanced_file_regression.check(result.stdout, extension=".json")
+
+	args = [path, "-f", (tmp_pathplus / "pyproject.toml").as_posix()]
+
+	if resolve:
+		args.append("-r")
+	elif indent:
+		args.append("-i")
+		args.append(str(indent))
+
+	result = cli_runner.invoke(info, catch_exceptions=False, args=args)
+
+	print(result.stdout)
+	assert result.exit_code == 0
+	output = json.loads(result.stdout)
+
+	if isinstance(output, str):
+		advanced_file_regression.check(output, extension=".md")
+	else:
+		advanced_data_regression.check(output)
+		advanced_file_regression.check(result.stdout, extension=".json")

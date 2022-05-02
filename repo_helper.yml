@@ -80,11 +80,13 @@ extras_require:
  cli:
   - consolekit>=1.2.0
   - click>=7.1.2
+  - sdjson>=0.3.1
 
 console_scripts:
  - pyproject-parser=pyproject_parser.__main__:main
  - check-pyproject=pyproject_parser.__main__:check
  - pyproject-fmt=pyproject_parser.__main__:reformat
+ - pyproject-info=pyproject_parser.__main__:info
 
 intersphinx_mapping:
  - "'consolekit': ('https://consolekit.readthedocs.io/en/latest/', None)"

@@ -44,6 +44,37 @@ reformat
 	:nested: none
 
 
+info
+*********
+
+.. versionadded:: $VERSION
+
+.. click:: pyproject_parser.__main__:info
+	:prog: pyproject-parser info
+	:nested: none
+
+.. latex:vspace:: 20px
+
+:bold-title:`Example Usage:`
+
+.. code-block:: bash
+
+	# Print the readme text
+	echo -e $(python3 -m pyproject_parser info project.readme.text -r | tr -d '"')
+
+	# Print the license filename
+	python3 -m pyproject_parser info project.license.file
+
+	# Get one of the project's URLs
+	python3 -m pyproject_parser info project.urls."Source Code"
+
+	# Install the build-system requirements with pip
+	pip install $(python3 -m pyproject_parser info build-system.requires | jq -r 'join(" ")')
+
+	# Dump one of the tool sub-tables
+	python3 -m pyproject_parser info tool.dependency-dash
+
+
 As a ``pre-commit`` hook
 ----------------------------
 
