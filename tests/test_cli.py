@@ -143,7 +143,7 @@ def test_check_extra_deprecation_warning(
 		):
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
 
-	args = ["python3", "-m", "pyproject_parser", "check"]
+	args = ["pyproject-parser", "check"]
 
 	with in_directory(tmp_pathplus):
 		process = subprocess.run(
