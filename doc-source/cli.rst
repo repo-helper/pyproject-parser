@@ -47,6 +47,8 @@ reformat
 info
 *********
 
+.. versionadded:: $VERSION
+
 .. click:: pyproject_parser.__main__:info
 	:prog: pyproject-parser info
 	:nested: none
