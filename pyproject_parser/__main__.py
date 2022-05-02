@@ -45,6 +45,9 @@ from consolekit.options import (  # nodep
 		)
 from consolekit.tracebacks import handle_tracebacks, traceback_option  # nodep
 
+# this package
+from pyproject_parser import License
+
 if TYPE_CHECKING:
 	# 3rd party
 	from consolekit.terminal_colours import ColourTrilean
@@ -137,11 +140,16 @@ def check(
 		error_on_unknown(raw_config.get("project", {}).keys(), {*PEP621Parser.keys, "dynamic"}, "project")
 
 
-@auto_default_argument(
-		"field",
+_resolve_help = "Resolve file key in project.readme and project.license (if present) to retrieve the content of the file."
+
+
+@traceback_option()
+@auto_default_option(
+		"-P",
+		"--parser-class",
 		type=click.STRING,
-		description="The field to retrieve from the ``pyproject.toml`` file.",
-		cls=DescribedArgument,
+		help="The class to parse the 'pyproject.toml' file with.",
+		show_default=True,
 		)
 @auto_default_option(
 		"-f",
@@ -150,27 +158,28 @@ def check(
 		type=click.STRING,
 		help="The ``pyproject.toml`` file.",
 		)
-@auto_default_option(
-		"-P",
-		"--parser-class",
-		default=click.STRING,
-		help="The class to parse the 'pyproject.toml' file with.",
+@flag_option(
+		"-r",
+		"--resolve",
+		help=_resolve_help,
 		show_default=True,
 		)
-@traceback_option()
+@auto_default_argument(
+		"field",
+		type=click.STRING,
+		description="The field to retrieve from the ``pyproject.toml`` file.",
+		cls=DescribedArgument,
+		)
 @main.command(cls=MarkdownHelpCommand)
 def info(
 		field: Optional[str] = None,
 		pyproject_file: "PathLike" = "pyproject.toml",
 		parser_class: str = "pyproject_parser:PyProject",
+		resolve: bool = False,
 		show_traceback: bool = False,
 		):
 	"""
 	Extract information from the given ``pyproject.toml`` file.
-
-	**Example usage:**
-
-	``pip install $(python3 -m pyproject_parser info build-system.requires | jq -r 'join(" ")')``
 	"""
 
 	# stdlib
@@ -197,10 +206,13 @@ def info(
 
 		try:
 
-			if field != "project.readme":
+			if field is not None and not field.startswith("project.readme"):
 				os.environ["CHECK_README"] = '0'
 
 			config = parser.load(filename=pyproject_file)
+
+			if resolve:
+				config.resolve_files()
 
 			raw_config = dom_toml.load(pyproject_file)
 
@@ -219,11 +231,12 @@ def info(
 				output = raw_config[field_parts[0]]
 
 			for part in field_parts[1:]:
+				# TODO: slice?
 				m = re.match(r"^\[(\d)]$", part)
 				if m:
 					# array index
 					output = output[int(m.group(1))]
-				elif isinstance(output, Readme):
+				elif isinstance(output, (Readme, License)):
 					output = getattr(output, part)
 				else:
 					# field name

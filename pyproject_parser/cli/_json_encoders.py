@@ -27,6 +27,7 @@ Encoder functions for :mod:`sdjson`.
 #
 
 # stdlib
+from pathlib import PurePath
 from typing import Dict, Union
 
 # 3rd party
@@ -46,8 +47,13 @@ from pyproject_parser.type_hints import ReadmeDict
 @sdjson.register_encoder(Requirement)
 @sdjson.register_encoder(Version)
 @sdjson.register_encoder(SpecifierSet)
-def _encode_from_packaging(obj: Union[ComparableRequirement, Requirement, Version, SpecifierSet], ) -> str:
+def _encode_from_packaging(obj: Union[ComparableRequirement, Requirement, Version, SpecifierSet]) -> str:
 	return str(obj)
+
+
+@sdjson.register_encoder(PurePath)
+def _encode_pathlib(obj: PurePath) -> str:
+	return obj.as_posix()
 
 
 @sdjson.register_encoder(PyProject)
