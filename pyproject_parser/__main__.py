@@ -71,7 +71,7 @@ def options(c: _C) -> _C:
 	parser_class_option = auto_default_option(
 			"-P",
 			"--parser-class",
-			default=click.STRING,
+			type=click.STRING,
 			help="The class to parse the 'pyproject.toml' file with.",
 			show_default=True,
 			)
@@ -137,13 +137,13 @@ def check(
 		error_on_unknown(raw_config.get("project", {}).keys(), {*PEP621Parser.keys, "dynamic"}, "project")
 
 
+@options
 @colour_option()
 @flag_option("-d", "--show-diff", help="Show a (coloured) diff of changes.")
-@options
 @auto_default_option(
 		"-E",
 		"--encoder-class",
-		default=click.STRING,
+		type=click.STRING,
 		help="The class to encode the config to TOML with.",
 		show_default=True,
 		)
