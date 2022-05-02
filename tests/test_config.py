@@ -9,6 +9,7 @@ from coincidence.regressions import AdvancedDataRegressionFixture
 from dom_toml.parser import BadConfigError
 from domdf_python_tools.paths import PathPlus, in_directory
 from pyproject_examples import (
+		OPTIONAL_DEPENDENCIES,
 		bad_buildsystem_config,
 		bad_pep621_config,
 		valid_buildsystem_config,
@@ -21,7 +22,13 @@ from pyproject_parser.utils import PyProjectDeprecationWarning
 
 
 @pytest.mark.parametrize("set_defaults", [True, False])
-@pytest.mark.parametrize("toml_config", valid_pep621_config)
+@pytest.mark.parametrize(
+		"toml_config",
+		[
+				*valid_pep621_config,
+				pytest.param(f"{OPTIONAL_DEPENDENCIES}dev-test = ['black']\n", id="optional-dependencies-hyphen"),
+				]
+		)
 def test_pep621_class_valid_config(
 		toml_config: str,
 		tmp_pathplus: PathPlus,
