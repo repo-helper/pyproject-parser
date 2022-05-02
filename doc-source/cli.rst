@@ -27,12 +27,6 @@ check
 		:prog: pyproject-parser check
 		:nested: none
 
-reformat
-*********
-
-.. click:: pyproject_parser.__main__:reformat
-	:prog: pyproject-parser reformat
-	:nested: none
 
 .. latex:vspace:: 20px
 
@@ -40,6 +34,14 @@ The :option:`-P / --parser-class <-P>` and :option:`-E / --encoder-class <-E>` o
 must be in the form ``<module_name>:<object_name>``.
 or example, ``pyproject_parser:PyProject``, which corresponds to :class:`pyproject_parser.PyProject`.
 The ``module_name`` may be any valid Python module, including those containing ``.`` .
+
+
+reformat
+*********
+
+.. click:: pyproject_parser.__main__:reformat
+	:prog: pyproject-parser reformat
+	:nested: none
 
 
 As a ``pre-commit`` hook
