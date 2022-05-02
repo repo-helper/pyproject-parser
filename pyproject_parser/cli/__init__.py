@@ -50,7 +50,6 @@ from pyproject_parser.utils import PyProjectDeprecationWarning
 
 __all__ = ["resolve_class", "ConfigTracebackHandler", "prettify_deprecation_warning"]
 
-
 class_string_re: Pattern[str] = re.compile("([A-Za-z_][A-Za-z_0-9.]+):([A-Za-z_][A-Za-z_0-9]+)")
 
 
