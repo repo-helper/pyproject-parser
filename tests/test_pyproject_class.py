@@ -133,6 +133,12 @@ def test_valid_config_resolve_files(
 						id="invalid_optional_dependencies_type_dict_int",
 						),
 				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nfoo = [123]',
+						TypeError,
+						r"Invalid type for 'project.optional-dependencies.foo\[0\]': expected <class 'str'>, got <class 'int'>",
+						id="invalid_optional_dependencies_type_dict_list_int",
+						),
+				pytest.param(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nfoo = "123"',
 						TypeError,
 						"Invalid type for 'project.optional-dependencies.foo': expected <class 'collections.abc.Sequence'>, got <class 'str'>",

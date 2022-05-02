@@ -933,15 +933,13 @@ class PEP621Parser(RequiredKeysConfigParser):
 		parsed_optional_dependencies: Dict[str, Set[ComparableRequirement]] = dict()
 		normalized_names: Set[str] = set()  # remove for part 2
 
-		err_template = (
-				f"Invalid type for 'project.optional-dependencies{{idx_string}}': "
-				f"expected {dict!r}, got {{actual_type!r}}"
-				)
-
 		optional_dependencies: Mapping[str, Any] = config["optional-dependencies"]
 
 		if not isinstance(optional_dependencies, dict):
-			raise TypeError(err_template.format(idx_string='', actual_type=type(optional_dependencies)))
+			raise TypeError(
+					"Invalid type for 'project.optional-dependencies': "
+					f"expected {dict!r}, got {type(optional_dependencies)!r}",
+					)
 
 		for extra, dependencies in optional_dependencies.items():
 
@@ -970,14 +968,17 @@ class PEP621Parser(RequiredKeysConfigParser):
 			self.assert_sequence_not_str(dependencies, path=path)
 
 			parsed_optional_dependencies[extra] = set()  # normalized_extra for part 2
-			normalized_names.add(extra)  # Remove for part 2
+			normalized_names.add(normalized_extra)  # Remove for part 2
 
 			for idx, dep in enumerate(dependencies):
 				if isinstance(dep, str):
 					# normalized_extra for part 2
 					parsed_optional_dependencies[extra].add(ComparableRequirement(dep))
 				else:
-					raise TypeError(err_template.format(idx_string=f'.{extra}[{idx}]', actual_type=type(dep)))
+					raise TypeError(
+							f"Invalid type for 'project.optional-dependencies.{extra}[{idx}]': "
+							f"expected {str!r}, got {type(dep)!r}"
+							)
 
 		return {e: sorted(combine_requirements(d)) for e, d in parsed_optional_dependencies.items()}
 
