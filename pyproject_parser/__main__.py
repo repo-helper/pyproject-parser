@@ -189,7 +189,7 @@ def info(
 	# 3rd party
 	import dom_toml
 	import sdjson  # nodep
-	from domdf_python_tools.paths import PathPlus
+	from domdf_python_tools.paths import PathPlus, in_directory
 
 	# this package
 	from pyproject_parser import PyProject
@@ -212,7 +212,8 @@ def info(
 			config = parser.load(filename=pyproject_file)
 
 			if resolve:
-				config.resolve_files()
+				with in_directory(pyproject_file.parent):
+					config.resolve_files()
 
 			raw_config = dom_toml.load(pyproject_file)
 
