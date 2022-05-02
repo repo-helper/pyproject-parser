@@ -162,12 +162,12 @@ def test_valid_config_resolve_files(
 						"'project.entry-points' may not contain a 'gui-scripts' sub-table. Use 'project.gui-scripts' instead.",
 						id="gui_scripts_hyphen_entry_point",
 						),
-				pytest.param(
-						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nwith-hyphen = []',
-						TypeError,
-						"Invalid extra name 'with-hyphen'",
-						id="extra_invalid_a",
-						),
+				# pytest.param(
+				# 		'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nwith-hyphen = []',
+				# 		TypeError,
+				# 		"Invalid extra name 'with-hyphen'",
+				# 		id="extra_invalid_a",
+				# 		),
 				pytest.param(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"quoted?" = []',
 						TypeError,

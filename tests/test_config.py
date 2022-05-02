@@ -284,12 +284,12 @@ def test_pep621_class_bad_config_license(
 		"config, expects, match",
 		[
 				*bad_pep621_config,
-				pytest.param(
-						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nwith-hyphen = []',
-						TypeError,
-						"Invalid extra name 'with-hyphen'",
-						id="extra_invalid_a",
-						),
+				# pytest.param(
+				# 		'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nwith-hyphen = []',
+				# 		TypeError,
+				# 		"Invalid extra name 'with-hyphen'",
+				# 		id="extra_invalid_a",
+				# 		),
 				pytest.param(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"quoted?" = []',
 						TypeError,

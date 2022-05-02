@@ -57,7 +57,7 @@ __all__ = [
 		]
 
 name_re = re.compile("^([A-Z0-9]|[A-Z0-9][A-Z0-9._-]*[A-Z0-9])$", flags=re.IGNORECASE)
-extra_re = re.compile("^([a-z0-9]|[a-z0-9]([a-z0-9-](?!-))*[a-z0-9])$")
+extra_re = re.compile("^([a-z0-9]|[a-z0-9]([a-z0-9-](?!--))*[a-z0-9])$")
 
 
 class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
