@@ -1,6 +1,7 @@
 # stdlib
 import json
 import re
+from typing import Optional
 
 # 3rd party
 import click
@@ -213,12 +214,14 @@ def test_handle_tracebacks_ignored_exceptions(exception, ):
 				"tool.whey.base-classifiers"
 				]
 		)
+@pytest.mark.parametrize("indent", [None, 0, 2, 4])
 def test_info(
 		path: str,
 		tmp_pathplus: PathPlus,
 		cli_runner: CliRunner,
 		advanced_data_regression: AdvancedDataRegressionFixture,
 		advanced_file_regression: AdvancedFileRegressionFixture,
+		indent: Optional[int],
 		):
 	(tmp_pathplus / "pyproject.toml").write_clean(COMPLETE_A)
 
@@ -226,6 +229,10 @@ def test_info(
 		args = []
 	else:
 		args = [path]
+
+	if indent:
+		args.append("--indent")
+		args.append(str(indent))
 
 	with in_directory(tmp_pathplus):
 		result: Result = cli_runner.invoke(info, catch_exceptions=False, args=args)
@@ -238,6 +245,29 @@ def test_info(
 		advanced_file_regression.check(output, extension=".md")
 	else:
 		advanced_data_regression.check(output)
+		advanced_file_regression.check(result.stdout, extension=".json")
+
+	if path is None:
+		args = []
+	else:
+		args = [path]
+
+	if indent:
+		args.append("-i")
+		args.append(str(indent))
+
+	with in_directory(tmp_pathplus):
+		result: Result = cli_runner.invoke(info, catch_exceptions=False, args=args)
+
+	print(result.stdout)
+	assert result.exit_code == 0
+	output = json.loads(result.stdout)
+
+	if isinstance(output, str):
+		advanced_file_regression.check(output, extension=".md")
+	else:
+		advanced_data_regression.check(output)
+		advanced_file_regression.check(result.stdout, extension=".json")
 
 
 @pytest.mark.parametrize(
@@ -252,6 +282,7 @@ def test_info(
 				]
 		)
 @pytest.mark.parametrize("check_readme", [0, 1])
+@pytest.mark.parametrize("indent", [None, 0, 2, 4])
 @pytest.mark.parametrize("resolve", [True, False])
 def test_info_readme_license(
 		path: str,
@@ -262,6 +293,7 @@ def test_info_readme_license(
 		advanced_file_regression: AdvancedFileRegressionFixture,
 		monkeypatch,
 		resolve: bool,
+		indent: Optional[int],
 		):
 
 	monkeypatch.setenv("CHECK_README", str(check_readme))
@@ -274,6 +306,9 @@ def test_info_readme_license(
 
 	if resolve:
 		args.append("--resolve")
+	elif indent:
+		args.append("--indent")
+		args.append(str(indent))
 
 	with in_directory(tmp_pathplus):
 		result: Result = cli_runner.invoke(info, catch_exceptions=False, args=args)
@@ -286,3 +321,24 @@ def test_info_readme_license(
 		advanced_file_regression.check(output, extension=".md")
 	else:
 		advanced_data_regression.check(output)
+		advanced_file_regression.check(result.stdout, extension=".json")
+
+	args = [path, "-f", (tmp_pathplus / "pyproject.toml").as_posix()]
+
+	if resolve:
+		args.append("-r")
+	elif indent:
+		args.append("-i")
+		args.append(str(indent))
+
+	result: Result = cli_runner.invoke(info, catch_exceptions=False, args=args)
+
+	print(result.stdout)
+	assert result.exit_code == 0
+	output = json.loads(result.stdout)
+
+	if isinstance(output, str):
+		advanced_file_regression.check(output, extension=".md")
+	else:
+		advanced_data_regression.check(output)
+		advanced_file_regression.check(result.stdout, extension=".json")

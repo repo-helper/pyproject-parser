@@ -158,6 +158,12 @@ _resolve_help = "Resolve file key in project.readme and project.license (if pres
 		type=click.STRING,
 		help="The ``pyproject.toml`` file.",
 		)
+@auto_default_option(
+		"-i",
+		"--indent",
+		help="Add indentation to the JSON output.",
+		type=click.INT,
+		)
 @flag_option(
 		"-r",
 		"--resolve",
@@ -177,9 +183,10 @@ def info(
 		parser_class: str = "pyproject_parser:PyProject",
 		resolve: bool = False,
 		show_traceback: bool = False,
+		indent: int = None,
 		):
 	"""
-	Extract information from the given ``pyproject.toml`` file.
+	Extract information from the given ``pyproject.toml`` file and print the JSON representation.
 	"""
 
 	# stdlib
@@ -220,7 +227,7 @@ def info(
 			output: Any
 
 			if not field:
-				print(sdjson.dumps(config))
+				print(sdjson.dumps(config, indent=indent))
 				sys.exit(0)
 
 			field_parts = field.split('.')
@@ -243,7 +250,7 @@ def info(
 					# field name
 					output = output[part]
 
-			print(sdjson.dumps(output))
+			print(sdjson.dumps(output, indent=indent))
 
 		finally:
 			if check_readme is None:
