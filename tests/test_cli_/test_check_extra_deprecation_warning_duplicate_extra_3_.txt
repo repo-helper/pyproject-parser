@@ -1,0 +1,2 @@
+Validating 'pyproject.toml'
+WARNING: 'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'

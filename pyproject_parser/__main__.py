@@ -47,6 +47,7 @@ from consolekit.tracebacks import handle_tracebacks, traceback_option  # nodep
 
 # this package
 from pyproject_parser import License
+from pyproject_parser.cli import prettify_deprecation_warning
 
 if TYPE_CHECKING:
 	# 3rd party
@@ -107,6 +108,9 @@ def check(
 	from pyproject_parser import PyProject
 	from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
 	from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
+
+	if not show_traceback:
+		prettify_deprecation_warning()
 
 	pyproject_file = PathPlus(pyproject_file)
 
@@ -204,6 +208,9 @@ def info(
 	from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
 	from pyproject_parser.type_hints import Readme
 
+	if not show_traceback:
+		prettify_deprecation_warning()
+
 	pyproject_file = PathPlus(pyproject_file)
 
 	with handle_tracebacks(show_traceback, ConfigTracebackHandler):
@@ -292,6 +299,9 @@ def reformat(
 	# this package
 	from pyproject_parser import PyProject, _NormalisedName
 	from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
+
+	if not show_traceback:
+		prettify_deprecation_warning()
 
 	pyproject_file = PathPlus(pyproject_file)
 
