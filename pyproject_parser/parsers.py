@@ -928,6 +928,19 @@ class PEP621Parser(RequiredKeysConfigParser):
 			]
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
+
+		:rtype:
+
+		.. versionchanged:: $VERSION
+
+			Extra names with hyphens are now considered valid.
+			If two extra names would normalize to the same string per :pep:`685` a warning is emitted.
+			In a future version this will become an error.
+
+		.. attention::
+
+			A future version of `pyproject-parser` will normalize all extra names
+			and write them to ``METADATA`` in this normalized form.
 		"""
 
 		parsed_optional_dependencies: Dict[str, Set[ComparableRequirement]] = dict()
