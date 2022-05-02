@@ -257,7 +257,7 @@ def test_info(
 		args.append(str(indent))
 
 	with in_directory(tmp_pathplus):
-		result: Result = cli_runner.invoke(info, catch_exceptions=False, args=args)
+		result = cli_runner.invoke(info, catch_exceptions=False, args=args)
 
 	print(result.stdout)
 	assert result.exit_code == 0
@@ -331,7 +331,7 @@ def test_info_readme_license(
 		args.append("-i")
 		args.append(str(indent))
 
-	result: Result = cli_runner.invoke(info, catch_exceptions=False, args=args)
+	result = cli_runner.invoke(info, catch_exceptions=False, args=args)
 
 	print(result.stdout)
 	assert result.exit_code == 0

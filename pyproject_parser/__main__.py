@@ -183,7 +183,7 @@ def info(
 		parser_class: str = "pyproject_parser:PyProject",
 		resolve: bool = False,
 		show_traceback: bool = False,
-		indent: int = None,
+		indent: Optional[int] = None,
 		):
 	"""
 	Extract information from the given ``pyproject.toml`` file and print the JSON representation.
