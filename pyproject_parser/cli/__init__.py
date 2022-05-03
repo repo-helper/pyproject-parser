@@ -116,7 +116,7 @@ def prettify_deprecation_warning() -> None:
 	Catch :class:`PyProjectDeprecationWarnings <~.PyProjectDeprecationWarning>`
 	and format them prettily for the command line.
 
-	.. versionadded:: $VERSION
+	.. versionadded:: 0.5.0
 	"""  # noqa: D400
 
 	orig_showwarning = warnings.showwarning

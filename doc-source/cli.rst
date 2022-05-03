@@ -47,7 +47,7 @@ reformat
 info
 *********
 
-.. versionadded:: $VERSION
+.. versionadded:: 0.5.0
 
 .. click:: pyproject_parser.__main__:info
 	:prog: pyproject-parser info

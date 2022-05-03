@@ -931,7 +931,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		:rtype:
 
-		.. versionchanged:: $VERSION
+		.. versionchanged:: 0.5.0
 
 			Extra names with hyphens are now considered valid.
 			If two extra names would normalize to the same string per :pep:`685` a warning is emitted.

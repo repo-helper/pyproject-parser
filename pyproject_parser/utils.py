@@ -147,5 +147,5 @@ class PyProjectDeprecationWarning(Warning):
 	For developer-facing warnings intended for direct consumers of this library,
 	use a standard :class:`DeprecationWarning`.
 
-	.. versionadded:: $VERSION
+	.. versionadded:: 0.5.0
 	"""
