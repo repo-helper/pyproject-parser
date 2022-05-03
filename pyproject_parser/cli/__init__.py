@@ -32,8 +32,11 @@ Command line interface.
 #
 
 # stdlib
+import functools
 import importlib
 import re
+import sys
+import warnings
 from typing import Pattern, Type
 
 # 3rd party
@@ -42,7 +45,10 @@ from consolekit.tracebacks import TracebackHandler  # nodep
 from consolekit.utils import abort  # nodep
 from dom_toml.parser import BadConfigError
 
-__all__ = ["resolve_class", "ConfigTracebackHandler"]
+# this package
+from pyproject_parser.utils import PyProjectDeprecationWarning
+
+__all__ = ["resolve_class", "ConfigTracebackHandler", "prettify_deprecation_warning"]
 
 class_string_re: Pattern[str] = re.compile("([A-Za-z_][A-Za-z_0-9.]+):([A-Za-z_][A-Za-z_0-9]+)")
 
@@ -103,3 +109,31 @@ class ConfigTracebackHandler(TracebackHandler):
 
 	def handle_ImportError(self, e: ImportError) -> bool:  # noqa: D102
 		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
+
+
+def prettify_deprecation_warning() -> None:
+	"""
+	Catch :class:`PyProjectDeprecationWarnings <~.PyProjectDeprecationWarning>`
+	and format them prettily for the command line.
+
+	.. versionadded:: $VERSION
+	"""  # noqa: D400
+
+	orig_showwarning = warnings.showwarning
+
+	if orig_showwarning is prettify_deprecation_warning:
+		return
+
+	@functools.wraps(warnings.showwarning)
+	def showwarning(message, category, filename, lineno, file=None, line=None):
+		if isinstance(message, PyProjectDeprecationWarning):
+			if file is None:
+				file = sys.stderr
+
+			s = f"WARNING: {message.args[0]}\n"
+			file.write(s)
+
+		else:
+			orig_showwarning(message, category, filename, lineno, file, line)
+
+	warnings.showwarning = showwarning

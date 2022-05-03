@@ -3,6 +3,7 @@ import collections
 import email.headerregistry
 import re
 import sys
+import warnings
 
 # 3rd party
 import click
@@ -10,9 +11,11 @@ import pytest
 from consolekit.testing import CliRunner, Result
 from consolekit.tracebacks import handle_tracebacks
 from dom_toml.parser import BadConfigError
+from domdf_python_tools.utils import redirect_output
 
 # this package
-from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
+from pyproject_parser.cli import ConfigTracebackHandler, prettify_deprecation_warning, resolve_class
+from pyproject_parser.utils import PyProjectDeprecationWarning
 
 exceptions = pytest.mark.parametrize(
 		"exception",
@@ -105,3 +108,12 @@ def test_resolve_class():
 		resolve_class("collections.Counter", "class")
 
 	assert e.value.option_name == "class"
+
+
+def test_prettify_deprecation_warning():
+
+	with redirect_output() as (stdout, stderr):
+		prettify_deprecation_warning()
+		warnings.warn("This is a warning", PyProjectDeprecationWarning)
+
+	assert stderr.getvalue() == 'WARNING: This is a warning\n'

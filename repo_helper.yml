@@ -93,3 +93,6 @@ intersphinx_mapping:
 
 exclude_files:
  - contributing
+
+tox_unmanaged:
+ - coverage:report

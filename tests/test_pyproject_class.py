@@ -133,6 +133,12 @@ def test_valid_config_resolve_files(
 						id="invalid_optional_dependencies_type_dict_int",
 						),
 				pytest.param(
+						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nfoo = [123]',
+						TypeError,
+						r"Invalid type for 'project.optional-dependencies.foo\[0\]': expected <class 'str'>, got <class 'int'>",
+						id="invalid_optional_dependencies_type_dict_list_int",
+						),
+				pytest.param(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nfoo = "123"',
 						TypeError,
 						"Invalid type for 'project.optional-dependencies.foo': expected <class 'collections.abc.Sequence'>, got <class 'str'>",
@@ -162,24 +168,43 @@ def test_valid_config_resolve_files(
 						"'project.entry-points' may not contain a 'gui-scripts' sub-table. Use 'project.gui-scripts' instead.",
 						id="gui_scripts_hyphen_entry_point",
 						),
-				pytest.param(
-						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nwith-hyphen = []',
-						TypeError,
-						"Invalid extra name 'with-hyphen': must be a valid Python identifier",
-						id="extra_invalid_a",
-						),
+				# pytest.param(
+				# 		'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\nwith-hyphen = []',
+				# 		TypeError,
+				# 		"Invalid extra name 'with-hyphen'",
+				# 		id="extra_invalid_a",
+				# 		),
 				pytest.param(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"quoted?" = []',
 						TypeError,
-						r"Invalid extra name 'quoted\?': must be a valid Python identifier",
+						r"Invalid extra name 'quoted\?'",
 						id="extra_invalid_b",
 						),
 				pytest.param(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"number#1" = []',
 						TypeError,
-						"Invalid extra name 'number#1': must be a valid Python identifier",
+						"Invalid extra name 'number#1'",
 						id="extra_invalid_c",
 						),
+				# For Part 2
+				# pytest.param(
+				# 		'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev_test" = []\n"dev-test" = []',
+				# 		BadConfigError,
+				# 		"'project.optional-dependencies.dev-test': Multiple extras were defined with the same normalized name of 'dev-test'",
+				# 		id="duplicate_extra_1",
+				# 		),
+				# pytest.param(
+				# 		'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev-test" = []\n"dev_test" = []',
+				# 		BadConfigError,
+				# 		"'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'",
+				# 		id="duplicate_extra_2",
+				# 		),
+				# pytest.param(
+				# 		'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev.test" = []\n"dev_test" = []',
+				# 		BadConfigError,
+				# 		"'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'",
+				# 		id="duplicate_extra_3",
+				# 		),
 				]
 		)
 def test_bad_config(

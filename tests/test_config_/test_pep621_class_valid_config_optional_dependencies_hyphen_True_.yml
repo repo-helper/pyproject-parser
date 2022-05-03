@@ -1,0 +1,23 @@
+authors: []
+classifiers: []
+dependencies: []
+description: null
+dynamic: []
+entry-points: {}
+gui-scripts: {}
+keywords: []
+license: null
+maintainers: []
+name: spam
+optional-dependencies:
+  dev-test:
+  - black
+  test:
+  - matplotlib>=3.0.0; platform_machine != "aarch64" or python_version > "3.6"
+  - pytest<5.0.0
+  - pytest-cov[all]
+readme: null
+requires-python: null
+scripts: {}
+urls: {}
+version: 2020.0.0
