@@ -121,6 +121,9 @@ def prettify_deprecation_warning() -> None:
 
 	orig_showwarning = warnings.showwarning
 
+	if orig_showwarning is prettify_deprecation_warning:
+		return
+
 	@functools.wraps(warnings.showwarning)
 	def showwarning(message, category, filename, lineno, file=None, line=None):
 		if isinstance(message, PyProjectDeprecationWarning):
