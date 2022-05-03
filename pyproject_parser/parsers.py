@@ -944,7 +944,6 @@ class PEP621Parser(RequiredKeysConfigParser):
 		"""
 
 		parsed_optional_dependencies: Dict[str, Set[ComparableRequirement]] = dict()
-		normalized_names: Set[str] = set()  # remove for part 2
 
 		optional_dependencies: Mapping[str, Any] = config["optional-dependencies"]
 
@@ -961,32 +960,23 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 			path = ("project", "optional-dependencies", extra)
 
-			if normalized_extra in normalized_names:  # parsed_optional_dependencies for part 2
-				warnings.warn(
+			if normalized_extra in parsed_optional_dependencies:
+				raise BadConfigError(
 						f"{construct_path(path)!r}: "
 						f"Multiple extras were defined with the same normalized name of {normalized_extra!r}",
-						PyProjectDeprecationWarning,
 						)
-				# For part 2
-				# raise BadConfigError(
-				# 		f"{construct_path(path)!r}: "
-				# 		f"Multiple extras were defined with the same normalized name of {normalized_extra!r}",
-				# 		)
 
 			# https://packaging.python.org/specifications/core-metadata/#provides-extra-multiple-use
-			# if not extra_re.match(normalized_extra):
-			if not (extra.isidentifier() or extra_re.match(normalized_extra)):
+			if not extra_re.match(normalized_extra):
 				raise TypeError(f"Invalid extra name {extra!r} ({extra_re.match(normalized_extra)})")
 
 			self.assert_sequence_not_str(dependencies, path=path)
 
-			parsed_optional_dependencies[extra] = set()  # normalized_extra for part 2
-			normalized_names.add(normalized_extra)  # Remove for part 2
+			parsed_optional_dependencies[normalized_extra] = set()
 
 			for idx, dep in enumerate(dependencies):
 				if isinstance(dep, str):
-					# normalized_extra for part 2
-					parsed_optional_dependencies[extra].add(ComparableRequirement(dep))
+					parsed_optional_dependencies[normalized_extra].add(ComparableRequirement(dep))
 				else:
 					raise TypeError(
 							f"Invalid type for 'project.optional-dependencies.{extra}[{idx}]': "

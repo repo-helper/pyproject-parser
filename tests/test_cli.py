@@ -1,8 +1,6 @@
 # stdlib
 import json
 import re
-import subprocess
-import warnings
 from typing import Optional
 
 # 3rd party
@@ -109,51 +107,12 @@ def test_check_extra_deprecation(
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
 	cli_runner.mix_stderr = False
 
-	with in_directory(tmp_pathplus), warnings.catch_warnings():
-		warnings.simplefilter("error")
+	with in_directory(tmp_pathplus):
 		result: Result = cli_runner.invoke(check, catch_exceptions=False)
 
 	assert result.exit_code == 1
 	assert result.stdout == "Validating 'pyproject.toml'\n"
 	advanced_file_regression.check(result.stderr)
-
-
-@pytest.mark.parametrize(
-		"toml_string",
-		[
-				pytest.param(
-						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev_test" = []\n"dev-test" = []',
-						id="duplicate_extra_1",
-						),
-				pytest.param(
-						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev-test" = []\n"dev_test" = []',
-						id="duplicate_extra_2",
-						),
-				pytest.param(
-						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev.test" = []\n"dev_test" = []',
-						id="duplicate_extra_3",
-						),
-				]
-		)
-def test_check_extra_deprecation_warning(
-		toml_string: str,
-		tmp_pathplus: PathPlus,
-		cli_runner: CliRunner,
-		advanced_file_regression: AdvancedFileRegressionFixture,
-		):
-	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
-
-	args = ["pyproject-parser", "check"]
-
-	with in_directory(tmp_pathplus):
-		process = subprocess.run(
-				args,
-				stderr=subprocess.STDOUT,
-				stdout=subprocess.PIPE,
-				)
-	assert process.returncode == 0
-
-	advanced_file_regression.check(process.stdout.decode("UTF-8"))
 
 
 @pytest.mark.parametrize(

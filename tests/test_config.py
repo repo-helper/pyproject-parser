@@ -351,7 +351,7 @@ def test_extra_deprecation(
 
 	(tmp_pathplus / "pyproject.toml").write_clean(config)
 
-	with in_directory(tmp_pathplus), pytest.warns(PyProjectDeprecationWarning, match=match):
+	with in_directory(tmp_pathplus), pytest.raises(BadConfigError, match=match):
 		PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
 
 

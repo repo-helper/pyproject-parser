@@ -1,2 +1,3 @@
-An error occurred: 'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'
+BadConfigError: 'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'
+Use '--traceback' to view the full traceback.
 Aborted!
