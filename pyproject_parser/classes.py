@@ -242,7 +242,6 @@ class License:
 	.. latex:vspace:: 20px
 
 	.. autosummary-widths:: 6/16
-		:html: 3/10
 	"""
 
 	#: The path to the license file.

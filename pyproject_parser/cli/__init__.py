@@ -140,7 +140,7 @@ class ConfigTracebackHandler(TracebackHandler):
 
 def prettify_deprecation_warning() -> None:
 	"""
-	Catch :class:`PyProjectDeprecationWarnings <~.PyProjectDeprecationWarning>`
+	Catch :class:`PyProjectDeprecationWarnings <.PyProjectDeprecationWarning>`
 	and format them prettily for the command line.
 
 	.. versionadded:: 0.5.0

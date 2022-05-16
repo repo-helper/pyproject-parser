@@ -38,6 +38,7 @@ python_versions:
 sphinx_conf_epilogue:
  - nitpicky = True
  - toml_spec_version = "0.5.0"
+ - needspace_amount = r"5\baselineskip"
  - 'ignore_missing_xrefs = ["^toml\.(encoder\.)?TomlEncoder$"]'
  - ''
  - import pyproject_parser.utils
@@ -51,11 +52,10 @@ extra_sphinx_extensions:
  - sphinx_click
  - attr_utils.autoattrs
  - sphinx_toolbox.pre_commit
- - sphinx_toolbox_experimental.autosummary_widths
- - sphinx_toolbox_experimental.peps
- - sphinx_toolbox_experimental.toml
- - sphinx_toolbox_experimental.succinct_seealso
- - sphinx_toolbox_experimental.needspace
+ - sphinx_toolbox.more_autosummary.column_widths
+ - sphinx_packaging.peps
+ - sphinx_packaging.toml
+ - sphinx_toolbox.latex.succinct_seealso
  - sphinx_toolbox_experimental.missing_xref
  - local_extension
 

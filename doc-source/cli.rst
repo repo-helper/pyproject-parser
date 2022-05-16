@@ -11,15 +11,18 @@ and reformatting ``pyproject.toml`` files.
 	:pyproject:
 	:scope: CLI
 
+
 .. latex:vspace:: -9px
 
 Commands
 ---------
 
-.. latex:vspace:: -4px
+.. latex:vspace:: -10px
 
 check
 *********
+
+.. latex:vspace:: -5px
 
 .. latex:samepage::
 
@@ -28,13 +31,14 @@ check
 		:nested: none
 
 
-.. latex:vspace:: 20px
+.. latex:vspace:: 15px
 
 The :option:`-P / --parser-class <-P>` and :option:`-E / --encoder-class <-E>` options
 must be in the form ``<module_name>:<object_name>``.
 or example, ``pyproject_parser:PyProject``, which corresponds to :class:`pyproject_parser.PyProject`.
 The ``module_name`` may be any valid Python module, including those containing ``.`` .
 
+.. latex:clearpage::
 
 reformat
 *********

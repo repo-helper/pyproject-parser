@@ -3,7 +3,6 @@
 ==============================
 
 .. autosummary-widths:: 7/16
-	:html: 45/100
 
 .. automodule:: pyproject_parser.cli
 	:no-members:
@@ -27,3 +26,4 @@
 	.. autoattribute:: has_traceback_option
 
 .. autofunction:: pyproject_parser.cli.resolve_class
+.. autofunction:: pyproject_parser.cli.prettify_deprecation_warning

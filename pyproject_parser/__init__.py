@@ -73,7 +73,6 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 	.. _packaging: https://packaging.pypa.io/en/latest/
 
 	.. autosummary-widths:: 23/64
-		:html: 7/16
 	"""
 
 	def __init__(self, _dict=dict, preserve: bool = False) -> None:
@@ -106,16 +105,15 @@ class PyProject:
 	:param build_system:
 
 	.. autosummary-widths:: 23/64
-		:html: 6/16
-
-	.. autoclasssumm:: PyProject
-		:autosummary-sections: Attributes
-
-	.. clearpage::
 
 	.. autoclasssumm:: PyProject
 		:autosummary-sections: Methods
 		:autosummary-exclude-members: __ge__,__gt__,__le__,__lt__,__ne__,__init__
+
+	.. latex:clearpage::
+
+	.. autoclasssumm:: PyProject
+		:autosummary-sections: Attributes
 
 	.. latex:vspace:: 10px
 	"""
@@ -131,19 +129,19 @@ class PyProject:
 
 	build_system_table_parser: ClassVar[BuildSystemParser] = BuildSystemParser()
 	"""
-	The :class:`dom_toml.parser.AbstractConfigParser`
+	The :class:`~dom_toml.parser.AbstractConfigParser`
 	to parse the :pep:`build-system table <518#build-system-table>` with.
 	"""
 
 	project_table_parser: ClassVar[PEP621Parser] = PEP621Parser()
 	"""
-	The :class:`dom_toml.parser.AbstractConfigParser`
+	The :class:`~dom_toml.parser.AbstractConfigParser`
 	to parse the :pep621:`project table <table-name>` with.
 	"""
 
 	tool_parsers: ClassVar[Mapping[str, AbstractConfigParser]] = {}
 	"""
-	A mapping of subtable names to :class:`dom_toml.parser.AbstractConfigParser`
+	A mapping of subtable names to :class:`~dom_toml.parser.AbstractConfigParser` objects
 	to parse the :pep:`tool table <518#tool-table>` with.
 
 	For example, to parse ``[tool.whey]``:

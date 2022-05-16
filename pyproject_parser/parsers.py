@@ -85,7 +85,6 @@ class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
 	Abstract base class for TOML configuration parsers which have required keys.
 
 	.. autosummary-widths:: 17/32
-		:html: 1/2
 	"""
 
 	required_keys: ClassVar[List[str]]
@@ -148,7 +147,6 @@ class BuildSystemParser(RequiredKeysConfigParser):
 	Parser for the :pep:`build-system table <518#build-system-table>` table from ``pyproject.toml``.
 
 	.. autosummary-widths:: 17/32
-		:html: 4/10
 	"""  # noqa: RST399
 
 	table_name: ClassVar[str] = "build-system"
@@ -255,7 +253,6 @@ class PEP621Parser(RequiredKeysConfigParser):
 	Parser for :pep:`621` metadata from ``pyproject.toml``.
 
 	.. autosummary-widths:: 1/2
-		:html: 1/2
 	"""
 
 	table_name: ClassVar[str] = "project"
@@ -695,12 +692,16 @@ class PEP621Parser(RequiredKeysConfigParser):
 		* **Format**: :toml:`Array` of :toml:`strings <string>`
 		* **Core Metadata**: :core-meta:`Keywords`
 
+		.. latex:vspace:: -5px
+
 		:bold-title:`Example:`
 
 		.. code-block:: TOML
 
 			[project]
 			keywords = ["egg", "bacon", "sausage", "tomatoes", "Lobster Thermidor"]
+
+		.. latex:vspace:: -5px
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
@@ -803,6 +804,8 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		The keys are the names of the scripts and the values are the object references
 		in the form ``module.submodule:object``.
+
+		.. latex:vspace:: -5px
 
 		:bold-title:`Example:`
 

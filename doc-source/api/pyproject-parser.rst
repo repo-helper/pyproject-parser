@@ -2,18 +2,24 @@
 :mod:`pyproject_parser`
 =======================
 
+.. py:module:: pyproject_parser
+
 Parser for ``pyproject.toml``.
 
-.. autosummary-widths:: 1/2
-	:html: 7/16
+.. automodulesumm:: pyproject_parser
+	:autosummary-sections: Classes
+
+.. autosummary-widths:: 1/3
+.. latex:vspace:: -20px
 
 .. automodulesumm:: pyproject_parser
+	:autosummary-sections: Data
 
 .. autoattrs:: pyproject_parser.PyProject
 	:exclude-members: __ge__,__gt__,__le__,__lt__,__ne__
 	:no-autosummary:
 
-.. automodule:: pyproject_parser
-	:no-docstring:
-	:autosummary-exclude-members: PyProjectTomlEncoder,_PP,PyProject,__init__
-	:exclude-members: __eq__,__ge__,__gt__,__le__,__lt__,__ne__,__str__,__repr__,PyProject
+.. autoclass:: pyproject_parser.PyProjectTomlEncoder
+	:exclude-members: __eq__,__ge__,__gt__,__le__,__lt__,__ne__,__str__,__repr__
+
+.. autotypevar:: pyproject_parser._PP
