@@ -48,6 +48,10 @@ from dom_toml.parser import BadConfigError
 # this package
 from pyproject_parser.utils import PyProjectDeprecationWarning
 
+if sys.version_info >= (3, 7):
+	# stdlib
+	from typing import NoReturn
+
 __all__ = ["resolve_class", "ConfigTracebackHandler", "prettify_deprecation_warning"]
 
 class_string_re: Pattern[str] = re.compile("([A-Za-z_][A-Za-z_0-9.]+):([A-Za-z_][A-Za-z_0-9]+)")
@@ -86,29 +90,52 @@ class ConfigTracebackHandler(TracebackHandler):
 	Enabled by default.
 
 	.. versionadded:: 0.5.0  In previous versions this was effectively :py:obj:`False`.
+	.. versionchanged:: 0.6.0  The message is now indented with four spaces.
 	"""
 
 	@property
 	def _tb_option_msg(self) -> str:
 		if self.has_traceback_option:
-			return "\nUse '--traceback' to view the full traceback."
+			return "\n    Use '--traceback' to view the full traceback."
 		else:
 			return ''
 
+	def format_exception(self, e: Exception) -> "NoReturn":
+		"""
+		Format the exception, showing the explanatory note and documentation link if applicable.
+
+		.. versionadded:: 0.6.0
+
+		:param e:
+		"""
+
+		msg = [f"{e.__class__.__name__}: {e}"]
+		if getattr(e, "note", None) is not None:
+			msg.append(f"\n    Note: {e.note}")  # type: ignore[attr-defined]
+		if getattr(e, "documentation", None) is not None:
+			msg.append(f"\n    Documentation: {e.documentation}")  # type: ignore[attr-defined]
+		msg.append(self._tb_option_msg)
+
+		raise abort(''.join(msg), colour=False)
+
 	def handle_BadConfigError(self, e: "BadConfigError") -> bool:  # noqa: D102
-		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
+		self.format_exception(e)
+
+	def handle_ValueError(self, e: "ValueError") -> bool:  # noqa: D102
+		# Also covers InvalidVersion and InvalidRequirement
+		self.format_exception(e)
 
 	def handle_KeyError(self, e: KeyError) -> bool:  # noqa: D102
-		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
+		self.format_exception(e)
 
 	def handle_TypeError(self, e: TypeError) -> bool:  # noqa: D102
-		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
+		self.format_exception(e)
 
 	def handle_AttributeError(self, e: AttributeError) -> bool:  # noqa: D102
-		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
+		self.format_exception(e)
 
 	def handle_ImportError(self, e: ImportError) -> bool:  # noqa: D102
-		raise abort(f"{e.__class__.__name__}: {e}{self._tb_option_msg}", colour=False)
+		self.format_exception(e)
 
 
 def prettify_deprecation_warning() -> None:

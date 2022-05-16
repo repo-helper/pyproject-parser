@@ -1,0 +1,3 @@
+BadConfigError: Unknown keys in '[project]': 'bar' and 'foo'
+    Use '--traceback' to view the full traceback.
+Aborted!

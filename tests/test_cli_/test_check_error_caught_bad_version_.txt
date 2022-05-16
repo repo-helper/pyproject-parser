@@ -1,0 +1,5 @@
+InvalidVersion: Invalid version: '???????12345=============☃'
+    Note: versions must follow PEP 440
+    Documentation: https://peps.python.org/pep-0440/
+    Use '--traceback' to view the full traceback.
+Aborted!

@@ -1,0 +1,4 @@
+BadConfigError: The value '???????12345=============☃' for 'project.name' is invalid.
+    Documentation: https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.name
+    Use '--traceback' to view the full traceback.
+Aborted!

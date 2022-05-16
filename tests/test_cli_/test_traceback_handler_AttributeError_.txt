@@ -1,3 +1,3 @@
 AttributeError: type object 'list' has no attribute 'foo'
-Use '--traceback' to view the full traceback.
+    Use '--traceback' to view the full traceback.
 Aborted!

@@ -14,7 +14,13 @@ from consolekit.tracebacks import handle_tracebacks
 from dom_toml.parser import BadConfigError
 from domdf_python_tools.paths import PathPlus, in_directory
 from pyproject_examples import valid_buildsystem_config, valid_pep621_config
-from pyproject_examples.example_configs import COMPLETE_A, COMPLETE_A_WITH_FILES, COMPLETE_B, COMPLETE_PROJECT_A
+from pyproject_examples.example_configs import (
+		COMPLETE_A,
+		COMPLETE_A_WITH_FILES,
+		COMPLETE_B,
+		COMPLETE_PROJECT_A,
+		MINIMAL_CONFIG
+		)
 
 # this package
 from pyproject_parser.__main__ import check, info, reformat
@@ -196,6 +202,57 @@ def test_check_error(
 
 	with pytest.raises(BadConfigError, match=match), in_directory(tmp_pathplus):
 		cli_runner.invoke(check, catch_exceptions=False, args=["-T"])
+
+
+@pytest.mark.parametrize(
+		"toml_string",
+		[
+				pytest.param(
+						"[build-system]\nrequires = []\nfoo = 'bar'",
+						id="build-system",
+						),
+				pytest.param(
+						"[project]\nname = 'whey'\nfoo = 'bar'\nbar = 123\ndynamic = ['version']",
+						id="project",
+						),
+				pytest.param(
+						"[coverage]\nomit = 'demo.py'\n[flake8]\nselect = ['F401']",
+						id="top-level",
+						),
+				pytest.param(
+						"[build_system]\nbackend = 'whey'",
+						id="top_level_typo_underscore",
+						),
+				pytest.param(
+						"[Build-System]\nbackend = 'whey'",
+						id="top_level_typo_caps",
+						),
+				pytest.param(
+						'[project]\nname = "???????12345=============☃"\nversion = "2020.0.0"', id="bad_name"
+						),
+				pytest.param('[project]\nname = "spam"\nversion = "???????12345=============☃"', id="bad_version"),
+				pytest.param(
+						f'{MINIMAL_CONFIG}\nrequires-python = "???????12345=============☃"',
+						id="bad_requires_python"
+						),
+				pytest.param(f'{MINIMAL_CONFIG}\nauthors = [{{name = "Bob, Alice"}}]', id="author_comma"),
+				]
+		)
+def test_check_error_caught(
+		toml_string: str,
+		tmp_pathplus: PathPlus,
+		cli_runner: CliRunner,
+		advanced_file_regression: AdvancedFileRegressionFixture,
+		):
+	(tmp_pathplus / "pyproject.toml").write_clean(toml_string)
+	cli_runner.mix_stderr = False
+
+	with in_directory(tmp_pathplus):
+		result: Result = cli_runner.invoke(check)
+
+	assert result.exit_code == 1
+	assert result.stdout == "Validating 'pyproject.toml'\n"
+	advanced_file_regression.check(result.stderr)
 
 
 exceptions = pytest.mark.parametrize(

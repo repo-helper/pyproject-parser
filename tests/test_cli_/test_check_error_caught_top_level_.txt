@@ -1,0 +1,3 @@
+BadConfigError: Unexpected top-level key 'coverage'. Only 'build-system', 'project' and 'tool' are allowed.
+    Use '--traceback' to view the full traceback.
+Aborted!

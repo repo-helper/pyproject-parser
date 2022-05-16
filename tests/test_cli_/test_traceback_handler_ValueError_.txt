@@ -1,2 +1,3 @@
-An error occurred: 'age' must be >= 0
+ValueError: 'age' must be >= 0
+    Use '--traceback' to view the full traceback.
 Aborted!

@@ -28,6 +28,7 @@ TOML configuration parsers.
 
 # stdlib
 import collections.abc
+import functools
 import os
 import re
 import warnings
@@ -39,6 +40,7 @@ from apeye import URL
 from apeye.email_validator import EmailSyntaxError, validate_email
 from dom_toml.parser import TOML_TYPES, AbstractConfigParser, BadConfigError, construct_path
 from natsort import natsorted, ns
+from packaging.requirements import InvalidRequirement
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import InvalidVersion, Version
 from shippinglabel import normalize
@@ -58,6 +60,24 @@ __all__ = [
 
 name_re = re.compile("^([A-Z0-9]|[A-Z0-9][A-Z0-9._-]*[A-Z0-9])$", flags=re.IGNORECASE)
 extra_re = re.compile("^([a-z0-9]|[a-z0-9]([a-z0-9-](?!--))*[a-z0-9])$")
+
+
+def _documentation_url(__documentation_url: str):
+
+	def deco(f):
+
+		@functools.wraps(f)
+		def wrapper(*args, **kwds):
+			try:
+				return f(*args, **kwds)
+			except Exception as e:
+				if getattr(e, "documentation", None) is None:
+					e.documentation = __documentation_url  # type: ignore[attr-defined]
+				raise
+
+		return wrapper
+
+	return deco
 
 
 class RequiredKeysConfigParser(AbstractConfigParser, metaclass=ABCMeta):
@@ -137,6 +157,7 @@ class BuildSystemParser(RequiredKeysConfigParser):
 	factories: ClassVar[Dict[str, Callable[..., Any]]] = {"requires": list}
 	defaults: ClassVar[Dict[str, Any]] = {"build-backend": None, "backend-path": None}
 
+	@_documentation_url("https://peps.python.org/pep-0518/")
 	def parse_requires(self, config: Dict[str, TOML_TYPES]) -> List[ComparableRequirement]:
 		"""
 		Parse the :pep:`requires <518#build-system-table>` key.
@@ -149,12 +170,22 @@ class BuildSystemParser(RequiredKeysConfigParser):
 
 		self.assert_sequence_not_str(config["requires"], key_path)
 
-		for idx, keyword in enumerate(config["requires"]):
-			self.assert_indexed_type(keyword, str, key_path, idx=idx)
-			parsed_dependencies.add(ComparableRequirement(keyword))
+		for idx, raw_requirement in enumerate(config["requires"]):
+			self.assert_indexed_type(raw_requirement, str, key_path, idx=idx)
+
+			try:
+				requirement = ComparableRequirement(raw_requirement)
+			except InvalidRequirement as e:
+				e.args = (f"{raw_requirement!r}\n    {str(e)}", )
+				e.note = "requirements must follow PEP 508"  # type: ignore[attr-defined]
+				e.documentation = "https://peps.python.org/pep-0508/"  # type: ignore[attr-defined]
+				raise
+
+			parsed_dependencies.add(requirement)
 
 		return sorted(combine_requirements(parsed_dependencies))
 
+	@_documentation_url("https://peps.python.org/pep-0517/")
 	def parse_build_backend(self, config: Dict[str, TOML_TYPES]) -> str:
 		"""
 		Parse the ``build_backend`` key defined by :pep:`517`.
@@ -166,6 +197,7 @@ class BuildSystemParser(RequiredKeysConfigParser):
 		self.assert_type(build_backend, str, [self.table_name, "build-backend"])
 		return build_backend
 
+	@_documentation_url("https://peps.python.org/pep-0517/")
 	def parse_backend_path(self, config: Dict[str, TOML_TYPES]) -> List[str]:
 		"""
 		Parse the ``backend-path`` key defined by :pep:`517`.
@@ -267,6 +299,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 			}
 
 	@staticmethod
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.name")
 	def parse_name(config: Dict[str, TOML_TYPES]) -> str:
 		"""
 		Parse the :pep621:`name` key, giving the name of the project.
@@ -289,12 +322,13 @@ class PEP621Parser(RequiredKeysConfigParser):
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
 
-		normalized_name = _NormalisedName(normalize(config["name"]))
-		normalized_name.unnormalized = config["name"]
+		name = config["name"]
+		normalized_name = _NormalisedName(normalize(name))
+		normalized_name.unnormalized = name
 
 		# https://packaging.python.org/specifications/core-metadata/#name
 		if not name_re.match(normalized_name):
-			raise BadConfigError("The value for 'project.name' is invalid.")
+			raise BadConfigError(f"The value {name!r} for 'project.name' is invalid.")
 
 		return normalized_name
 
@@ -323,8 +357,11 @@ class PEP621Parser(RequiredKeysConfigParser):
 		try:
 			return Version(str(version))
 		except InvalidVersion as e:
-			raise BadConfigError(str(e))
+			e.note = "versions must follow PEP 440"  # type: ignore[attr-defined]
+			e.documentation = "https://peps.python.org/pep-0440/"  # type: ignore[attr-defined]
+			raise
 
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.description")
 	def parse_description(self, config: Dict[str, TOML_TYPES]) -> str:
 		"""
 		Parse the :pep621:`description` key, giving a summary description of the project.
@@ -349,6 +386,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		return description.strip()
 
 	@staticmethod
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.readme")
 	def parse_readme(config: Dict[str, TOML_TYPES]) -> Readme:
 		"""
 		Parse the :pep621:`readme` key, giving the full description of the project (i.e. the README).
@@ -494,9 +532,12 @@ class PEP621Parser(RequiredKeysConfigParser):
 		try:
 			return SpecifierSet(str(version))
 		except InvalidSpecifier as e:
-			raise BadConfigError(str(e))
+			e.note = "specifiers must follow PEP 508"  # type: ignore[attr-defined]
+			e.documentation = "https://peps.python.org/pep-0508/"  # type: ignore[attr-defined]
+			raise
 
 	@staticmethod
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.license")
 	def parse_license(config: Dict[str, TOML_TYPES]) -> License:
 		"""
 		Parse the :pep621:`license` key.
@@ -531,18 +572,18 @@ class PEP621Parser(RequiredKeysConfigParser):
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""  # noqa: D300,D301
 
-		license = config["license"]  # noqa: A001  # pylint: disable=redefined-builtin
+		project_license = config["license"]
 
-		if "text" in license and "file" in license:
+		if "text" in project_license and "file" in project_license:
 			raise BadConfigError(
 					"The 'project.license.file' and 'project.license.text' keys "
 					"are mutually exclusive."
 					)
-		elif "text" in license:
-			return License(text=str(license["text"]))
-		elif "file" in license:
-			os.stat(license["file"])
-			return License(license["file"])
+		elif "text" in project_license:
+			return License(text=str(project_license["text"]))
+		elif "file" in project_license:
+			os.stat(project_license["file"])
+			return License(project_license["file"])
 		else:
 			raise BadConfigError("The 'project.license' table should contain one of 'text' or 'file'.")
 
@@ -565,8 +606,11 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 			all_authors.append({"name": name, "email": email})
 
+		# TODO: error/warn on extra keys
+
 		return all_authors
 
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.authors")
 	def parse_authors(self, config: Dict[str, TOML_TYPES]) -> List[Author]:
 		"""
 		Parse the :pep621:`authors` key.
@@ -612,6 +656,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return self._parse_authors(config, "authors")
 
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.maintainers")
 	def parse_maintainers(self, config: Dict[str, TOML_TYPES]) -> List[Author]:
 		"""
 		Parse the :pep621:`maintainers` key.
@@ -642,6 +687,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return self._parse_authors(config, "maintainers")
 
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.keywords")
 	def parse_keywords(self, config: Dict[str, TOML_TYPES]) -> List[str]:
 		"""
 		Parse the :pep621:`keywords` key, giving the keywords for the project.
@@ -670,6 +716,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return natsorted(parsed_keywords, alg=ns.GROUPLETTERS)
 
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.classifiers")
 	def parse_classifiers(self, config: Dict[str, TOML_TYPES]) -> List[str]:
 		"""
 		Parse the :pep621:`classifiers` key, giving the `trove classifiers`_ which apply to the project.
@@ -705,6 +752,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return natsorted(parsed_classifiers)
 
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.urls")
 	def parse_urls(self, config: Dict[str, TOML_TYPES]) -> Dict[str, str]:
 		"""
 		Parse the :pep621:`urls` table.
@@ -744,6 +792,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return parsed_urls
 
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.scripts")
 	def parse_scripts(self, config: Dict[str, TOML_TYPES]) -> Dict[str, str]:
 		"""
 		Parse the :pep621:`scripts` table.
@@ -774,6 +823,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return scripts
 
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.gui-scripts")
 	def parse_gui_scripts(self, config: Dict[str, TOML_TYPES]) -> Dict[str, str]:
 		"""
 		Parse the :pep621:`gui-scripts` table.
@@ -804,6 +854,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return gui_scripts
 
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.entry-points")
 	def parse_entry_points(self, config: Dict[str, TOML_TYPES]) -> Dict[str, Dict[str, str]]:
 		"""
 		Parse the :pep621:`entry-points` table.
@@ -864,6 +915,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return entry_points
 
+	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.dependencies")
 	def parse_dependencies(self, config: Dict[str, TOML_TYPES]) -> List[ComparableRequirement]:
 		"""
 		Parse the :pep621:`dependencies` key, giving the dependencies of the project.
@@ -894,12 +946,24 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		self.assert_sequence_not_str(config["dependencies"], key_path)
 
-		for idx, keyword in enumerate(config["dependencies"]):
-			self.assert_indexed_type(keyword, str, key_path, idx=idx)
-			parsed_dependencies.add(ComparableRequirement(keyword))
+		for idx, raw_requirement in enumerate(config["dependencies"]):
+			self.assert_indexed_type(raw_requirement, str, key_path, idx=idx)
+
+			try:
+				requirement = ComparableRequirement(raw_requirement)
+			except InvalidRequirement as e:
+				e.args = (f"{raw_requirement!r}\n    {str(e)}", )
+				e.note = "requirements must follow PEP 508"  # type: ignore[attr-defined]
+				e.documentation = "https://peps.python.org/pep-0508/"  # type: ignore[attr-defined]
+				raise
+
+			parsed_dependencies.add(requirement)
 
 		return sorted(combine_requirements(parsed_dependencies))
 
+	@_documentation_url(
+			"https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.optional-dependencies"
+			)
 	def parse_optional_dependencies(
 			self,
 			config: Dict[str, TOML_TYPES],
@@ -985,8 +1049,16 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 			for idx, dep in enumerate(dependencies):
 				if isinstance(dep, str):
+					try:
+						requirement = ComparableRequirement(dep)
+					except InvalidRequirement as e:
+						e.args = (f"{dep!r}\n    {str(e)}", )
+						e.note = "requirements must follow PEP 508"  # type: ignore[attr-defined]
+						e.documentation = "https://peps.python.org/pep-0508/"  # type: ignore[attr-defined]
+						raise
+
 					# normalized_extra for part 2
-					parsed_optional_dependencies[extra].add(ComparableRequirement(dep))
+					parsed_optional_dependencies[extra].add(requirement)
 				else:
 					raise TypeError(
 							f"Invalid type for 'project.optional-dependencies.{extra}[{idx}]': "
