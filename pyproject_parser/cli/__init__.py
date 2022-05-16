@@ -37,7 +37,7 @@ import importlib
 import re
 import sys
 import warnings
-from typing import Pattern, Type
+from typing import TYPE_CHECKING, Pattern, Type
 
 # 3rd party
 import click  # nodep
@@ -48,7 +48,7 @@ from dom_toml.parser import BadConfigError
 # this package
 from pyproject_parser.utils import PyProjectDeprecationWarning
 
-if sys.version_info >= (3, 7):
+if sys.version_info >= (3, 7) or TYPE_CHECKING:
 	# stdlib
 	from typing import NoReturn
 
@@ -118,23 +118,23 @@ class ConfigTracebackHandler(TracebackHandler):
 
 		raise abort(''.join(msg), colour=False)
 
-	def handle_BadConfigError(self, e: "BadConfigError") -> bool:  # noqa: D102
+	def handle_BadConfigError(self, e: "BadConfigError") -> "NoReturn":  # noqa: D102
 		self.format_exception(e)
 
-	def handle_ValueError(self, e: "ValueError") -> bool:  # noqa: D102
+	def handle_ValueError(self, e: "ValueError") -> "NoReturn":  # noqa: D102
 		# Also covers InvalidVersion and InvalidRequirement
 		self.format_exception(e)
 
-	def handle_KeyError(self, e: KeyError) -> bool:  # noqa: D102
+	def handle_KeyError(self, e: KeyError) -> "NoReturn":  # noqa: D102
 		self.format_exception(e)
 
-	def handle_TypeError(self, e: TypeError) -> bool:  # noqa: D102
+	def handle_TypeError(self, e: TypeError) -> "NoReturn":  # noqa: D102
 		self.format_exception(e)
 
-	def handle_AttributeError(self, e: AttributeError) -> bool:  # noqa: D102
+	def handle_AttributeError(self, e: AttributeError) -> "NoReturn":  # noqa: D102
 		self.format_exception(e)
 
-	def handle_ImportError(self, e: ImportError) -> bool:  # noqa: D102
+	def handle_ImportError(self, e: ImportError) -> "NoReturn":  # noqa: D102
 		self.format_exception(e)
 
 
