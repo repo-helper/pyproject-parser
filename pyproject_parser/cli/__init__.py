@@ -44,6 +44,8 @@ import click  # nodep
 from consolekit.tracebacks import TracebackHandler  # nodep
 from consolekit.utils import abort  # nodep
 from dom_toml.parser import BadConfigError
+from packaging.specifiers import InvalidSpecifier
+from packaging.version import InvalidVersion
 
 # this package
 from pyproject_parser.utils import PyProjectDeprecationWarning
@@ -121,8 +123,18 @@ class ConfigTracebackHandler(TracebackHandler):
 	def handle_BadConfigError(self, e: "BadConfigError") -> "NoReturn":  # noqa: D102
 		self.format_exception(e)
 
-	def handle_ValueError(self, e: "ValueError") -> "NoReturn":  # noqa: D102
-		# Also covers InvalidVersion and InvalidRequirement
+	def handle_ValueError(self, e: ValueError) -> "NoReturn":  # noqa: D102
+		# Also covers InvalidRequirement
+		self.format_exception(e)
+
+	def handle_InvalidSpecifier(self, e: InvalidSpecifier) -> "NoReturn":  # noqa: D102
+		if str(e).startswith("Invalid specifier: "):
+			e.args = (str(e)[len("Invalid specifier: "):], )
+		self.format_exception(e)
+
+	def handle_InvalidVersion(self, e: InvalidVersion) -> "NoReturn":  # noqa: D102
+		if str(e).startswith("Invalid version: "):
+			e.args = (str(e)[len("Invalid version: "):], )
 		self.format_exception(e)
 
 	def handle_KeyError(self, e: KeyError) -> "NoReturn":  # noqa: D102

@@ -1,4 +1,4 @@
-InvalidSpecifier: Invalid specifier: '???????12345=============☃'
+InvalidSpecifier: '???????12345=============☃'
     Note: specifiers must follow PEP 508
     Documentation: https://peps.python.org/pep-0508/
     Use '--traceback' to view the full traceback.
