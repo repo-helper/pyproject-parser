@@ -165,7 +165,8 @@ class ConfigTracebackHandler(TracebackHandler):
 
 		else:
 			# Probably from 3rd party code.
-			super().handle_FileNotFoundError(e)
+			# mypy thinks there should be a return here; it doesn't realise the function always raises.
+			super().handle_FileNotFoundError(e)  # type: ignore[misc]
 
 
 def prettify_deprecation_warning() -> None:
