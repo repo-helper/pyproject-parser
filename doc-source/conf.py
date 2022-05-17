@@ -79,7 +79,7 @@ def setup(app):
 
 
 nitpicky = True
-toml_spec_version = "0.5.0"
+toml_spec_version = "0.6.0b1"
 needspace_amount = r"5\baselineskip"
 ignore_missing_xrefs = ["^toml\\.(encoder\\.)?TomlEncoder$"]
 
