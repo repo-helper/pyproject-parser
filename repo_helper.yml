@@ -16,6 +16,7 @@ sphinx_html_theme: furo
 preserve_custom_theme: true
 tox_testenv_extras: readme,cli
 min_coverage: 97.5
+on_conda_forge: true
 
 mypy_plugins:
  - attr_utils.mypy_plugin

@@ -86,12 +86,12 @@ pyproject-parser
 	:target: https://pypi.org/project/pyproject-parser/
 	:alt: PyPI - Wheel
 
-.. |conda-version| image:: https://img.shields.io/conda/v/domdfcoding/pyproject-parser?logo=anaconda
-	:target: https://anaconda.org/domdfcoding/pyproject-parser
+.. |conda-version| image:: https://img.shields.io/conda/v/conda-forge/pyproject-parser?logo=anaconda
+	:target: https://anaconda.org/conda-forge/pyproject-parser
 	:alt: Conda - Package Version
 
-.. |conda-platform| image:: https://img.shields.io/conda/pn/domdfcoding/pyproject-parser?label=conda%7Cplatform
-	:target: https://anaconda.org/domdfcoding/pyproject-parser
+.. |conda-platform| image:: https://img.shields.io/conda/pn/conda-forge/pyproject-parser?label=conda%7Cplatform
+	:target: https://anaconda.org/conda-forge/pyproject-parser
 	:alt: Conda - Platform
 
 .. |license| image:: https://img.shields.io/github/license/repo-helper/pyproject-parser
@@ -138,7 +138,6 @@ To install with ``conda``:
 	.. code-block:: bash
 
 		$ conda config --add channels https://conda.anaconda.org/conda-forge
-		$ conda config --add channels https://conda.anaconda.org/domdfcoding
 
 	* Then install
 

@@ -90,12 +90,12 @@ pyproject-parser
 		:wheel:
 		:alt: PyPI - Wheel
 
-	.. |conda-version| image:: https://img.shields.io/conda/v/domdfcoding/pyproject-parser?logo=anaconda
-		:target: https://anaconda.org/domdfcoding/pyproject-parser
+	.. |conda-version| image:: https://img.shields.io/conda/v/conda-forge/pyproject-parser?logo=anaconda
+		:target: https://anaconda.org/conda-forge/pyproject-parser
 		:alt: Conda - Package Version
 
-	.. |conda-platform| image:: https://img.shields.io/conda/pn/domdfcoding/pyproject-parser?label=conda%7Cplatform
-		:target: https://anaconda.org/domdfcoding/pyproject-parser
+	.. |conda-platform| image:: https://img.shields.io/conda/pn/conda-forge/pyproject-parser?label=conda%7Cplatform
+		:target: https://anaconda.org/conda-forge/pyproject-parser
 		:alt: Conda - Platform
 
 	.. |license| github-shield::
@@ -133,7 +133,7 @@ Installation
 	:pypi:
 	:github:
 	:anaconda:
-	:conda-channels: conda-forge, domdfcoding
+	:conda-channels: conda-forge
 
 .. end installation
 
