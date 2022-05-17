@@ -37,6 +37,7 @@ import importlib
 import re
 import sys
 import warnings
+from pathlib import Path
 from typing import TYPE_CHECKING, Pattern, Type
 
 # 3rd party
@@ -148,6 +149,23 @@ class ConfigTracebackHandler(TracebackHandler):
 
 	def handle_ImportError(self, e: ImportError) -> "NoReturn":  # noqa: D102
 		self.format_exception(e)
+
+	def handle_FileNotFoundError(self, e: FileNotFoundError) -> "NoReturn":  # noqa: D102
+		if e.strerror == "No such file or directory":
+			# Probably from Python itself.
+			msg = e.strerror
+
+			if e.filename is not None:
+				msg += f": {Path(e.filename).as_posix()!r}"
+
+				if e.filename2 is not None:
+					msg += f" -> {Path(e.filename2).as_posix()!r}"
+
+			raise abort(msg, colour=False)
+
+		else:
+			# Probably from 3rd party code.
+			super().handle_FileNotFoundError(e)
 
 
 def prettify_deprecation_warning() -> None:

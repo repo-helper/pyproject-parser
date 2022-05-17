@@ -258,7 +258,15 @@ def test_check_error_caught(
 exceptions = pytest.mark.parametrize(
 		"exception",
 		[
-				pytest.param(FileNotFoundError("foo.txt"), id="FileNotFoundError"),
+				pytest.param(FileNotFoundError(2, "No such file or directory", "foo.txt"), id="FileNotFoundError"),
+				pytest.param(
+						FileNotFoundError(2, "No such file or directory", PathPlus("foo.txt")),
+						id="FileNotFoundError_path"
+						),
+				pytest.param(
+						FileNotFoundError(2, "No such file or directory", PathPlus("foo.txt"), -1, "bar.md"),
+						id="FileNotFoundError_path_move_etc"
+						),
 				pytest.param(FileExistsError("foo.txt"), id="FileExistsError"),
 				pytest.param(Exception("Something's awry!"), id="Exception"),
 				pytest.param(ValueError("'age' must be >= 0"), id="ValueError"),
