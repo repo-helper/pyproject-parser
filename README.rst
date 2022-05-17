@@ -101,7 +101,7 @@ pyproject-parser
 .. |language| image:: https://img.shields.io/github/languages/top/repo-helper/pyproject-parser
 	:alt: GitHub top language
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/repo-helper/pyproject-parser/v0.5.0
+.. |commits-since| image:: https://img.shields.io/github/commits-since/repo-helper/pyproject-parser/v0.6.0b1
 	:target: https://github.com/repo-helper/pyproject-parser/pulse
 	:alt: GitHub commits since tagged version
 
