@@ -150,7 +150,8 @@ class ConfigTracebackHandler(TracebackHandler):
 	def handle_ImportError(self, e: ImportError) -> "NoReturn":  # noqa: D102
 		self.format_exception(e)
 
-	def handle_FileNotFoundError(self, e: FileNotFoundError) -> "NoReturn":  # noqa: D102
+	# mypy thinks there should be a return here; it doesn't realise the super'd function always raises.
+	def handle_FileNotFoundError(self, e: FileNotFoundError) -> "NoReturn":  # type: ignore[misc]  # noqa: D102
 		if e.strerror == "No such file or directory":
 			# Probably from Python itself.
 			msg = e.strerror
