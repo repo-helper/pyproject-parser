@@ -152,9 +152,15 @@ class ConfigTracebackHandler(TracebackHandler):
 
 	# mypy thinks there should be a return here; it doesn't realise the super'd function always raises.
 	def handle_FileNotFoundError(self, e: FileNotFoundError) -> "NoReturn":  # type: ignore[misc]  # noqa: D102
-		if e.strerror == "No such file or directory":
+		msg = e.strerror
+
+		no_such_file = "No such file or directory"
+
+		if msg == "The system cannot find the file specified":
+			msg = no_such_file
+
+		if msg == no_such_file:
 			# Probably from Python itself.
-			msg = e.strerror
 
 			if e.filename is not None:
 				msg += f": {Path(e.filename).as_posix()!r}"

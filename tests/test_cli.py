@@ -258,7 +258,10 @@ def test_check_error_caught(
 exceptions = pytest.mark.parametrize(
 		"exception",
 		[
-				pytest.param(FileNotFoundError(2, "No such file or directory", "foo.txt"), id="FileNotFoundError"),
+				pytest.param(
+						FileNotFoundError(2, "No such file or directory", "foo.txt"),
+						id="FileNotFoundError",
+						),
 				pytest.param(
 						FileNotFoundError(2, "No such file or directory", PathPlus("foo.txt")),
 						id="FileNotFoundError_path"
@@ -266,6 +269,24 @@ exceptions = pytest.mark.parametrize(
 				pytest.param(
 						FileNotFoundError(2, "No such file or directory", PathPlus("foo.txt"), -1, "bar.md"),
 						id="FileNotFoundError_path_move_etc"
+						),
+				pytest.param(
+						FileNotFoundError(2, "The system cannot find the file specified", "foo.txt"),
+						id="FileNotFoundError_win",
+						),
+				pytest.param(
+						FileNotFoundError(2, "The system cannot find the file specified", PathPlus("foo.txt")),
+						id="FileNotFoundError_path_win"
+						),
+				pytest.param(
+						FileNotFoundError(
+								2,
+								"The system cannot find the file specified",
+								PathPlus("foo.txt"),
+								-1,
+								"bar.md",
+								),
+						id="FileNotFoundError_path_move_etc_win"
 						),
 				pytest.param(FileExistsError("foo.txt"), id="FileExistsError"),
 				pytest.param(Exception("Something's awry!"), id="Exception"),
