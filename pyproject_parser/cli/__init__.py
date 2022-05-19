@@ -119,7 +119,7 @@ class ConfigTracebackHandler(TracebackHandler):
 			msg.append(f"\n    Documentation: {e.documentation}")  # type: ignore[attr-defined]
 		msg.append(self._tb_option_msg)
 
-		raise abort(''.join(msg), colour=False)
+		self.abort(msg)
 
 	def handle_BadConfigError(self, e: "BadConfigError") -> "NoReturn":  # noqa: D102
 		self.format_exception(e)
@@ -150,8 +150,7 @@ class ConfigTracebackHandler(TracebackHandler):
 	def handle_ImportError(self, e: ImportError) -> "NoReturn":  # noqa: D102
 		self.format_exception(e)
 
-	# mypy thinks there should be a return here; it doesn't realise the super'd function always raises.
-	def handle_FileNotFoundError(self, e: FileNotFoundError) -> "NoReturn":  # type: ignore[misc]  # noqa: D102
+	def handle_FileNotFoundError(self, e: FileNotFoundError) -> "NoReturn":  # noqa: D102
 		msg = e.strerror
 
 		no_such_file = "No such file or directory"
@@ -168,7 +167,7 @@ class ConfigTracebackHandler(TracebackHandler):
 				if e.filename2 is not None:
 					msg += f" -> {Path(e.filename2).as_posix()!r}"
 
-			raise abort(msg, colour=False)
+			self.abort(msg)
 
 		else:
 			# Probably from 3rd party code.

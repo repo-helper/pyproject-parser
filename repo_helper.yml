@@ -79,7 +79,7 @@ extras_require:
   - readme-renderer[md]>=27.0
   - docutils==0.16
  cli:
-  - consolekit>=1.2.0
+  - consolekit>=1.4.1
   - click>=7.1.2
   - sdjson>=0.3.1
 
