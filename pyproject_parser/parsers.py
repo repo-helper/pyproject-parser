@@ -36,8 +36,8 @@ from abc import ABCMeta
 from typing import Any, Callable, ClassVar, Dict, Iterable, List, Mapping, Set, Union, cast
 
 # 3rd party
-from apeye import URL
-from apeye.email_validator import EmailSyntaxError, validate_email
+from apeye_core import URL
+from apeye_core.email_validator import EmailSyntaxError, validate_email
 from dom_toml.parser import TOML_TYPES, AbstractConfigParser, BadConfigError, construct_path
 from natsort import natsorted, ns
 from packaging.requirements import InvalidRequirement
