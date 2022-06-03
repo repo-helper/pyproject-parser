@@ -5,7 +5,7 @@ exclude: ^$
 
 repos:
  - repo: https://github.com/repo-helper/pyproject-parser
-   rev: v0.5.0
+   rev: v0.6.1
    hooks:
     - id: reformat-pyproject
 
@@ -67,7 +67,7 @@ repos:
        - --keep-runtime-typing
 
  - repo: https://github.com/Lucas-C/pre-commit-hooks
-   rev: v1.1.14
+   rev: v1.2.0
    hooks:
     - id: remove-crlf
     - id: forbid-crlf
