@@ -344,7 +344,7 @@ class _NormalisedName(str):
 
 	_unnormalized: Optional[str]
 
-	def __new__(cls, o, **kwargs):
+	def __new__(cls, o, **kwargs):  # noqa: MAN001
 		self = super().__new__(cls, o, **kwargs)
 		self._unnormalized = None
 		return self

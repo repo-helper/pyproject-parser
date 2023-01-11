@@ -58,7 +58,7 @@ __all__ = ["main", "reformat", "check"]
 
 
 @click_group()
-def main():  # pragma: no cover  # noqa: D103
+def main() -> None:  # pragma: no cover  # noqa: D103
 	pass
 
 
@@ -93,7 +93,7 @@ def check(
 		pyproject_file: "PathLike" = "pyproject.toml",
 		parser_class: str = "pyproject_parser:PyProject",
 		show_traceback: bool = False,
-		):
+		) -> None:
 	"""
 	Validate the given ``pyproject.toml`` file.
 	"""
@@ -188,7 +188,7 @@ def info(
 		resolve: bool = False,
 		show_traceback: bool = False,
 		indent: Optional[int] = None,
-		):
+		) -> None:
 	"""
 	Extract information from the given ``pyproject.toml`` file and print the JSON representation.
 	"""
@@ -285,7 +285,7 @@ def reformat(
 		show_traceback: bool = False,
 		show_diff: bool = False,
 		colour: "ColourTrilean" = None,
-		):
+		) -> None:
 	"""
 	Reformat the given ``pyproject.toml`` file.
 	"""

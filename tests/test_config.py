@@ -108,7 +108,7 @@ def test_pep621_class_valid_config_readme(
 				]
 		)
 def test_pep621_class_valid_config_readme_dict(
-		readme,
+		readme: str,
 		tmp_pathplus: PathPlus,
 		advanced_data_regression: AdvancedDataRegressionFixture,
 		):

@@ -28,7 +28,7 @@ def _representer_for(*data_type: Type) -> Callable[[_C], _C]:
 
 
 @_representer_for(Version, Requirement, Marker, SpecifierSet)
-def represent_packaging_types(
+def represent_packaging_types(  # noqa: MAN002
 		dumper: RegressionYamlDumper,
 		data: Union[Version, Requirement, Marker, SpecifierSet],
 		):
@@ -36,12 +36,12 @@ def represent_packaging_types(
 
 
 @_representer_for(str)
-def represent_string_subclasses(dumper: RegressionYamlDumper, data: str):
+def represent_string_subclasses(dumper: RegressionYamlDumper, data: str):  # noqa: MAN002
 	return dumper.represent_str(str(data))
 
 
 @_representer_for(Readme, License)
-def represent_readme_or_license(
+def represent_readme_or_license(  # noqa: MAN002
 		dumper: RegressionYamlDumper,
 		data: Union[Readme, License],
 		):

@@ -62,12 +62,12 @@ name_re = re.compile("^([A-Z0-9]|[A-Z0-9][A-Z0-9._-]*[A-Z0-9])$", flags=re.IGNOR
 extra_re = re.compile("^([a-z0-9]|[a-z0-9]([a-z0-9-](?!--))*[a-z0-9])$")
 
 
-def _documentation_url(__documentation_url: str):
+def _documentation_url(__documentation_url: str) -> Callable:
 
-	def deco(f):
+	def deco(f) -> Callable:  # noqa: MAN001
 
 		@functools.wraps(f)
-		def wrapper(*args, **kwds):
+		def wrapper(*args, **kwds):  # noqa: MAN002
 			try:
 				return f(*args, **kwds)
 			except Exception as e:

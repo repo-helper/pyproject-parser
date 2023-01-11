@@ -75,7 +75,7 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 	.. autosummary-widths:: 23/64
 	"""
 
-	def __init__(self, _dict=dict, preserve: bool = False) -> None:
+	def __init__(self, _dict=dict, preserve: bool = False) -> None:  # noqa: MAN001
 		super().__init__(_dict=_dict, preserve=preserve)
 		self.dump_funcs[str] = _dump_str
 		self.dump_funcs[_NormalisedName] = _dump_str

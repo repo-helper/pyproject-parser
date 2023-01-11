@@ -139,7 +139,7 @@ def test_dumps(
 	advanced_file_regression.check(config.dumps(), extension=".toml")
 
 
-def _param(readme_block: str, **kwargs):
+def _param(readme_block: str, **kwargs):  # noqa: MAN002
 	return pytest.param(DUMPS_README_TEMPLATE.format(readme_block=readme_block), **kwargs)
 
 

@@ -4,10 +4,12 @@ import email.headerregistry
 import re
 import sys
 import warnings
+from typing import Type
 
 # 3rd party
 import click
 import pytest
+from coincidence.regressions import AdvancedFileRegressionFixture
 from consolekit.testing import CliRunner, Result
 from consolekit.tracebacks import handle_tracebacks
 from dom_toml.parser import BadConfigError
@@ -35,27 +37,27 @@ exceptions = pytest.mark.parametrize(
 
 @exceptions
 def test_traceback_handler(
-		exception,
-		file_regression,
+		exception: Exception,
+		advabced_file_regression: AdvancedFileRegressionFixture,
 		cli_runner: CliRunner,
 		):
 
 	@click.command()
-	def demo():
+	def demo():  # noqa: MAN002
 
 		with handle_tracebacks(False, ConfigTracebackHandler):
 			raise exception
 
 	result: Result = cli_runner.invoke(demo, catch_exceptions=False)
-	result.check_stdout(file_regression)
+	result.check_stdout(advabced_file_regression)
 	assert result.exit_code == 1
 
 
 @exceptions
-def test_traceback_handler_show_traceback(exception, cli_runner: CliRunner):
+def test_traceback_handler_show_traceback(exception: Exception, cli_runner: CliRunner):
 
 	@click.command()
-	def demo():
+	def demo():  # noqa: MAN002
 
 		with handle_tracebacks(True, ConfigTracebackHandler):
 			raise exception
@@ -66,12 +68,12 @@ def test_traceback_handler_show_traceback(exception, cli_runner: CliRunner):
 
 @pytest.mark.parametrize("exception", [EOFError(), KeyboardInterrupt(), click.Abort()])
 def test_handle_tracebacks_ignored_exceptions_click(
-		exception,
+		exception: Exception,
 		cli_runner: CliRunner,
 		):
 
 	@click.command()
-	def demo():
+	def demo():  # noqa: MAN002
 
 		with handle_tracebacks(False, ConfigTracebackHandler):
 			raise exception
@@ -83,7 +85,7 @@ def test_handle_tracebacks_ignored_exceptions_click(
 
 
 @pytest.mark.parametrize("exception", [EOFError, KeyboardInterrupt, click.Abort, SystemExit])
-def test_handle_tracebacks_ignored_exceptions(exception, ):
+def test_handle_tracebacks_ignored_exceptions(exception: Type[Exception]):
 
 	with pytest.raises(exception):  # noqa: PT012
 		with handle_tracebacks(False, ConfigTracebackHandler):
