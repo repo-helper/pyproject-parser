@@ -38,7 +38,7 @@ exceptions = pytest.mark.parametrize(
 @exceptions
 def test_traceback_handler(
 		exception: Exception,
-		advabced_file_regression: AdvancedFileRegressionFixture,
+		advanced_file_regression: AdvancedFileRegressionFixture,
 		cli_runner: CliRunner,
 		):
 
@@ -49,7 +49,7 @@ def test_traceback_handler(
 			raise exception
 
 	result: Result = cli_runner.invoke(demo, catch_exceptions=False)
-	result.check_stdout(advabced_file_regression)
+	result.check_stdout(advanced_file_regression)
 	assert result.exit_code == 1
 
 
