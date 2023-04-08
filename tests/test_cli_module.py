@@ -112,6 +112,7 @@ def test_resolve_class():
 	assert e.value.option_name == "class"
 
 
+@pytest.mark.filterwarnings("default")
 def test_prettify_deprecation_warning():
 
 	with redirect_output() as (stdout, stderr):
