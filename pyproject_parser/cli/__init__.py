@@ -38,7 +38,7 @@ import re
 import sys
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, Pattern, Type
+from typing import TYPE_CHECKING, Optional, Pattern, TextIO, Type, Union
 
 # 3rd party
 import click  # nodep
@@ -188,7 +188,14 @@ def prettify_deprecation_warning() -> None:
 		return
 
 	@functools.wraps(warnings.showwarning)
-	def showwarning(message, category, filename, lineno, file=None, line=None) -> None:
+	def showwarning(
+			message: Union[Warning, str],
+			category: Type[Warning],
+			filename: str,
+			lineno: int,
+			file: Optional[TextIO] = None,
+			line: Optional[str] = None,
+			) -> None:
 		if isinstance(message, PyProjectDeprecationWarning):
 			if file is None:
 				file = sys.stderr
