@@ -36,6 +36,19 @@ def test_render_rst_error(capsys, advanced_data_regression: AdvancedDataRegressi
 	pytest.importorskip("readme_renderer")
 
 	with pytest.raises(BadConfigError, match="Error rendering README."):
-		render_rst(".. seealso::")  # A sphinx directive
+		render_rst(".. seealso::", "README.rst")  # A sphinx directive
 
-	advanced_data_regression.check(capsys.readouterr())
+	outerr = capsys.readouterr()
+	assert outerr.err == 'README.rst:1: (ERROR/3) Unknown directive type "seealso".\n\n.. seealso::\n'
+	assert outerr.out == ''
+
+
+def test_render_rst_error_filename(capsys, advanced_data_regression: AdvancedDataRegressionFixture):
+	pytest.importorskip("readme_renderer")
+
+	with pytest.raises(BadConfigError, match="Error rendering README."):
+		render_rst(".. seealso::", "Different_filename.rst")  # A sphinx directive
+
+	outerr = capsys.readouterr()
+	assert outerr.err == 'Different_filename.rst:1: (ERROR/3) Unknown directive type "seealso".\n\n.. seealso::\n'
+	assert outerr.out == ''

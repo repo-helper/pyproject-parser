@@ -5,7 +5,7 @@
 Utility functions.
 """
 #
-#  Copyright © 2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright © 2021-2023 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ Utility functions.
 
 # stdlib
 import functools
+import io
 import os
 import sys
 from typing import TYPE_CHECKING, Optional
@@ -68,7 +69,7 @@ def render_markdown(content: str) -> None:
 		raise BadConfigError("Error rendering README.")
 
 
-def render_rst(content: str) -> None:
+def render_rst(content: str, filename: PathLike = "<string>") -> None:
 	"""
 	Attempt to render the given content as :wikipedia:`ReStructuredText`.
 
@@ -77,17 +78,40 @@ def render_rst(content: str) -> None:
 		:scope: function
 
 	:param content:
+	:param filename: The original filename.
+
+	.. versionchanged:: 0.8.0  Added the ``filename`` argument.
 	"""
 
 	try:
 		# 3rd party
+		import docutils.core
 		import readme_renderer.rst  # type: ignore[import]
+		from docutils.utils import SystemMessage
+		from docutils.writers.html4css1 import Writer
+
 	except ImportError:  # pragma: no cover
 		return
 
-	rendering_result = readme_renderer.rst.render(content, stream=sys.stderr)
+	# Adapted from https://github.com/pypa/readme_renderer/blob/main/readme_renderer/rst.py#L106
+	settings = readme_renderer.rst.SETTINGS.copy()
+	settings["warning_stream"] = io.StringIO()
 
-	if rendering_result is None:
+	writer = Writer()
+	writer.translator_class = readme_renderer.rst.ReadMeHTMLTranslator
+
+	try:
+		parts = docutils.core.publish_parts(content, str(filename), writer=writer, settings_overrides=settings)
+		if parts.get("docinfo", '') + parts.get("fragment", ''):
+			# Success!
+			return
+	except SystemMessage:
+		pass
+
+	if not settings["warning_stream"].tell():
+		raise BadConfigError("Error rendering README: No content rendered from RST source.")
+	else:
+		sys.stderr.write(settings["warning_stream"].getvalue())
 		raise BadConfigError("Error rendering README.")
 
 
@@ -136,7 +160,7 @@ def render_readme(
 		if content_type == "text/markdown":
 			render_markdown(content)
 		elif content_type == "text/x-rst":
-			render_rst(content)
+			render_rst(content, readme_file)
 
 
 class PyProjectDeprecationWarning(Warning):

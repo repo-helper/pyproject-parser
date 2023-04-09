@@ -1,5 +1,0 @@
-err:
-- '<string>:1: (ERROR/3) Unknown directive type "seealso".'
-- ''
-- '.. seealso::'
-out: []
