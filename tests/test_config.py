@@ -18,7 +18,7 @@ from pyproject_examples import (
 
 # this package
 from pyproject_parser.parsers import BuildSystemParser, PEP621Parser, RequiredKeysConfigParser
-from pyproject_parser.utils import PyProjectDeprecationWarning
+from pyproject_parser.utils import PyProjectDeprecationWarning, _load_toml
 
 
 @pytest.mark.parametrize("set_defaults", [True, False])
@@ -40,7 +40,7 @@ def test_pep621_class_valid_config(
 
 	with in_directory(tmp_pathplus):
 		config = PEP621Parser().parse(
-				dom_toml.load(tmp_pathplus / "pyproject.toml")["project"],
+				_load_toml(tmp_pathplus / "pyproject.toml")["project"],
 				set_defaults=set_defaults,
 				)
 
@@ -61,7 +61,7 @@ def test_pep621_subclass(
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_config)
 
 	with in_directory(tmp_pathplus):
-		config = ReducedPEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+		config = ReducedPEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
 
 	advanced_data_regression.check(config)
 
@@ -82,7 +82,7 @@ def test_pep621_class_valid_config_readme(
 	(tmp_pathplus / filename).write_text("This is the readme.")
 
 	with in_directory(tmp_pathplus):
-		config = PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+		config = PEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
 
 	advanced_data_regression.check(config)
 
@@ -125,7 +125,7 @@ def test_pep621_class_valid_config_readme_dict(
 	(tmp_pathplus / "README").write_text("This is the README.")
 
 	with in_directory(tmp_pathplus):
-		config = PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+		config = PEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
 
 	advanced_data_regression.check(config)
 
@@ -213,7 +213,7 @@ def test_pep621_class_bad_config_readme(
 			])
 
 	with in_directory(tmp_pathplus), pytest.raises(exception, match=expected):
-		PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+		PEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
 
 
 @pytest.mark.parametrize("filename", ["LICENSE.rst", "LICENSE.md", "LICENSE.txt", "LICENSE"])
@@ -232,7 +232,7 @@ def test_pep621_class_valid_config_license(
 	(tmp_pathplus / filename).write_text("This is the license.")
 
 	with in_directory(tmp_pathplus):
-		config = PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+		config = PEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
 
 	advanced_data_regression.check(config)
 
@@ -250,7 +250,7 @@ def test_pep621_class_valid_config_license_dict(
 			])
 
 	with in_directory(tmp_pathplus):
-		config = PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+		config = PEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
 
 	advanced_data_regression.check(config)
 
@@ -284,7 +284,7 @@ def test_pep621_class_bad_config_license(
 			])
 
 	with in_directory(tmp_pathplus), pytest.raises(BadConfigError, match=expected):
-		PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+		PEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
 
 
 @pytest.mark.parametrize(
@@ -320,7 +320,7 @@ def test_pep621_class_bad_config(
 	(tmp_pathplus / "pyproject.toml").write_clean(config)
 
 	with in_directory(tmp_pathplus), pytest.raises(expects, match=match):
-		PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+		PEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
 
 
 @pytest.mark.parametrize(
@@ -352,7 +352,7 @@ def test_extra_deprecation(
 	(tmp_pathplus / "pyproject.toml").write_clean(config)
 
 	with in_directory(tmp_pathplus), pytest.warns(PyProjectDeprecationWarning, match=match):
-		PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+		PEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
 
 
 @pytest.mark.parametrize("filename", ["README", "README.rtf"])
@@ -367,7 +367,7 @@ readme = "{filename}"
 	(tmp_pathplus / filename).write_text("This is the readme.")
 
 	with in_directory(tmp_pathplus), pytest.raises(ValueError, match=f"Unsupported extension for '{filename}'"):
-		PEP621Parser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["project"])
+		PEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
 
 
 @pytest.mark.parametrize("set_defaults", [True, False])
@@ -380,7 +380,7 @@ def test_buildsystem_parser_valid_config(
 		):
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_config)
 	config = BuildSystemParser().parse(
-			dom_toml.load(tmp_pathplus / "pyproject.toml")["build-system"],
+			_load_toml(tmp_pathplus / "pyproject.toml")["build-system"],
 			set_defaults=set_defaults,
 			)
 
@@ -394,7 +394,7 @@ def test_buildsystem_parser_errors(config: str, expects: Type[Exception], match:
 	(tmp_pathplus / "pyproject.toml").write_clean(config)
 
 	with in_directory(tmp_pathplus), pytest.raises(expects, match=match):
-		BuildSystemParser().parse(dom_toml.load(tmp_pathplus / "pyproject.toml")["build-system"])
+		BuildSystemParser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["build-system"])
 
 
 def test_RequiredKeysConfigParser():

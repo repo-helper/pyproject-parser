@@ -31,12 +31,19 @@ import functools
 import io
 import os
 import sys
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 # 3rd party
 from dom_toml.parser import BadConfigError
 from domdf_python_tools.paths import PathPlus
 from domdf_python_tools.typing import PathLike
+
+if sys.version_info < (3, 11):
+	# 3rd party
+	import tomli as tomllib
+else:
+	# 3rd party
+	import tomllib
 
 if TYPE_CHECKING:
 	# this package
@@ -173,3 +180,15 @@ class PyProjectDeprecationWarning(Warning):
 
 	.. versionadded:: 0.5.0
 	"""
+
+
+def _load_toml(filename: PathLike, ) -> Dict[str, Any]:
+	r"""
+	Parse TOML from the given file.
+
+	:param filename: The filename to read from to.
+
+	:returns: A mapping containing the ``TOML`` data.
+	"""
+
+	return tomllib.loads(PathPlus(filename).read_text())

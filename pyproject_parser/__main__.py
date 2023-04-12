@@ -7,7 +7,7 @@ CLI entry point.
 .. versionadded:: 0.2.0
 """
 #
-#  Copyright © 2021-2022 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright © 2021-2023 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -53,6 +53,7 @@ if TYPE_CHECKING:
 	# 3rd party
 	from consolekit.terminal_colours import ColourTrilean
 	from domdf_python_tools.typing import PathLike
+	from toml import TomlEncoder
 
 __all__ = ["main", "reformat", "check"]
 
@@ -99,7 +100,6 @@ def check(
 	"""
 
 	# 3rd party
-	import dom_toml
 	from dom_toml.parser import BadConfigError
 	from domdf_python_tools.paths import PathPlus
 	from domdf_python_tools.words import Plural, word_join
@@ -108,6 +108,7 @@ def check(
 	from pyproject_parser import PyProject
 	from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
 	from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
+	from pyproject_parser.utils import _load_toml
 
 	if not show_traceback:
 		prettify_deprecation_warning()
@@ -120,7 +121,7 @@ def check(
 		parser: Type[PyProject] = resolve_class(parser_class, "parser-class")
 		parser.load(filename=pyproject_file)
 
-		raw_config = dom_toml.load(pyproject_file)
+		raw_config = _load_toml(pyproject_file)
 
 		_keys = Plural("key", "keys")
 
@@ -198,7 +199,6 @@ def info(
 	import re
 
 	# 3rd party
-	import dom_toml
 	import sdjson  # nodep
 	from domdf_python_tools.paths import PathPlus, in_directory
 
@@ -207,6 +207,7 @@ def info(
 	from pyproject_parser.cli import _json_encoders  # noqa: F401
 	from pyproject_parser.cli import ConfigTracebackHandler, resolve_class
 	from pyproject_parser.type_hints import Readme
+	from pyproject_parser.utils import _load_toml
 
 	if not show_traceback:
 		prettify_deprecation_warning()
@@ -229,7 +230,7 @@ def info(
 				with in_directory(pyproject_file.parent):
 					config.resolve_files()
 
-			raw_config = dom_toml.load(pyproject_file)
+			raw_config = _load_toml(pyproject_file)
 
 			output: Any
 
@@ -294,7 +295,6 @@ def reformat(
 	from consolekit.terminal_colours import resolve_color_default  # nodep
 	from consolekit.utils import coloured_diff  # nodep
 	from domdf_python_tools.paths import PathPlus
-	from toml import TomlEncoder
 
 	# this package
 	from pyproject_parser import PyProject, _NormalisedName
@@ -309,7 +309,7 @@ def reformat(
 
 	with handle_tracebacks(show_traceback, ConfigTracebackHandler):
 		parser: Type[PyProject] = resolve_class(parser_class, "parser-class")
-		encoder: Type[TomlEncoder] = resolve_class(encoder_class, "encoder-class")
+		encoder: Type["TomlEncoder"] = resolve_class(encoder_class, "encoder-class")
 
 		original_content: List[str] = pyproject_file.read_lines()
 

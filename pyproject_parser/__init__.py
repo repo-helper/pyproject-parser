@@ -54,6 +54,7 @@ from pyproject_parser.type_hints import (  # noqa: F401
 		ProjectDict,
 		_PyProjectAsTomlDict
 		)
+from pyproject_parser.utils import _load_toml
 
 __author__: str = "Dominic Davis-Foster"
 __copyright__: str = "2021 Dominic Davis-Foster"
@@ -173,7 +174,7 @@ class PyProject:
 		filename = PathPlus(filename)
 
 		project_dir = filename.parent
-		config = dom_toml.load(filename)
+		config = _load_toml(filename)
 
 		keys = set(config.keys())
 
