@@ -3,7 +3,6 @@ from textwrap import dedent
 from typing import Type
 
 # 3rd party
-import dom_toml
 import pytest
 from coincidence.regressions import AdvancedDataRegressionFixture
 from dom_toml.parser import BadConfigError
@@ -15,6 +14,8 @@ from pyproject_examples import (
 		valid_buildsystem_config,
 		valid_pep621_config
 		)
+from pyproject_examples.example_configs import MINIMAL_CONFIG
+from shippinglabel import normalize_keep_dot
 
 # this package
 from pyproject_parser.parsers import BuildSystemParser, PEP621Parser, RequiredKeysConfigParser
@@ -62,6 +63,78 @@ def test_pep621_subclass(
 
 	with in_directory(tmp_pathplus):
 		config = ReducedPEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
+
+	advanced_data_regression.check(config)
+
+
+class NormalizingPEP621Parser(PEP621Parser, inherit_defaults=True):
+	keys = ["name", "dependencies", "optional-dependencies"]
+
+
+class NormalizingWithDotPEP621Parser(PEP621Parser, inherit_defaults=True):
+	keys = ["name", "dependencies", "optional-dependencies"]
+
+	@staticmethod
+	def normalize_requirement_name(name: str) -> str:
+		return normalize_keep_dot(name)
+
+
+class UnNormalizingPEP621Parser(PEP621Parser, inherit_defaults=True):
+	keys = ["name", "dependencies", "optional-dependencies"]
+
+	@staticmethod
+	def normalize_requirement_name(name: str) -> str:
+		return name
+
+
+pep621_config_for_normalize_test = [
+		MINIMAL_CONFIG,
+		'dependencies = ["whey", "A.b", "domdf_python_tools"]',
+		'',
+		"[project.optional-dependencies]",
+		"test = [",
+		'  "Pytest",',
+		'  "d.e.f",',
+		'  "chemistry_tools",',
+		']'
+		]
+
+
+def test_pep621_unnormalized(
+		tmp_pathplus: PathPlus,
+		advanced_data_regression: AdvancedDataRegressionFixture,
+		):
+
+	(tmp_pathplus / "pyproject.toml").write_lines(pep621_config_for_normalize_test)
+
+	with in_directory(tmp_pathplus):
+		config = UnNormalizingPEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
+
+	advanced_data_regression.check(config)
+
+
+def test_pep621_normalize(
+		tmp_pathplus: PathPlus,
+		advanced_data_regression: AdvancedDataRegressionFixture,
+		):
+
+	(tmp_pathplus / "pyproject.toml").write_lines(pep621_config_for_normalize_test)
+
+	with in_directory(tmp_pathplus):
+		config = NormalizingPEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
+
+	advanced_data_regression.check(config)
+
+
+def test_pep621_normalize_keep_dot(
+		tmp_pathplus: PathPlus,
+		advanced_data_regression: AdvancedDataRegressionFixture,
+		):
+
+	(tmp_pathplus / "pyproject.toml").write_lines(pep621_config_for_normalize_test)
+
+	with in_directory(tmp_pathplus):
+		config = NormalizingWithDotPEP621Parser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["project"])
 
 	advanced_data_regression.check(config)
 
@@ -395,6 +468,78 @@ def test_buildsystem_parser_errors(config: str, expects: Type[Exception], match:
 
 	with in_directory(tmp_pathplus), pytest.raises(expects, match=match):
 		BuildSystemParser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["build-system"])
+
+
+class NormalizingBuildSystemParser(BuildSystemParser, inherit_defaults=True):
+	keys = ["requires"]
+
+
+class NormalizingWithDotBuildSystemParser(BuildSystemParser, inherit_defaults=True):
+	keys = ["requires"]
+
+	@staticmethod
+	def normalize_requirement_name(name: str) -> str:
+		return normalize_keep_dot(name)
+
+
+class UnNormalizingBuildSystemParser(BuildSystemParser, inherit_defaults=True):
+	keys = ["requires"]
+
+	@staticmethod
+	def normalize_requirement_name(name: str) -> str:
+		return name
+
+
+def test_buildsystem_normalize(
+		tmp_pathplus: PathPlus,
+		advanced_data_regression: AdvancedDataRegressionFixture,
+		):
+
+	(tmp_pathplus / "pyproject.toml").write_lines([
+			"[build-system]",
+			'requires = ["whey", "Foo.bar", "domdf_python_tools"]',
+			])
+
+	with in_directory(tmp_pathplus):
+		config = NormalizingBuildSystemParser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["build-system"])
+
+	advanced_data_regression.check(config)
+
+
+def test_buildsystem_normalize_keep_dot(
+		tmp_pathplus: PathPlus,
+		advanced_data_regression: AdvancedDataRegressionFixture,
+		):
+
+	(tmp_pathplus / "pyproject.toml").write_lines([
+			"[build-system]",
+			'requires = ["whey", "Foo.bar", "domdf_python_tools"]',
+			])
+
+	with in_directory(tmp_pathplus):
+		config = NormalizingWithDotBuildSystemParser().parse(
+				_load_toml(tmp_pathplus / "pyproject.toml")["build-system"]
+				)
+
+	advanced_data_regression.check(config)
+
+
+def test_buildsystem_unnormalized(
+		tmp_pathplus: PathPlus,
+		advanced_data_regression: AdvancedDataRegressionFixture,
+		):
+
+	(tmp_pathplus / "pyproject.toml").write_lines([
+			"[build-system]",
+			'requires = ["whey", "Foo.bar", "domdf_python_tools"]',
+			])
+
+	with in_directory(tmp_pathplus):
+		config = UnNormalizingBuildSystemParser().parse(
+				_load_toml(tmp_pathplus / "pyproject.toml")["build-system"]
+				)
+
+	advanced_data_regression.check(config)
 
 
 def test_RequiredKeysConfigParser():

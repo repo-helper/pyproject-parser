@@ -1,0 +1,11 @@
+dependencies:
+- A.b
+- domdf_python_tools
+- whey
+dynamic: []
+name: spam
+optional-dependencies:
+  test:
+  - Pytest
+  - chemistry_tools
+  - d.e.f

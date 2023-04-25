@@ -155,6 +155,16 @@ class BuildSystemParser(RequiredKeysConfigParser):
 	factories: ClassVar[Dict[str, Callable[..., Any]]] = {"requires": list}
 	defaults: ClassVar[Dict[str, Any]] = {"build-backend": None, "backend-path": None}
 
+	@staticmethod
+	def normalize_requirement_name(name: str) -> str:
+		"""
+		Function to normalize a requirement name per e.g. :pep:`503` (where underscores are replaced by hyphens).
+
+		.. versionadded:: 0.9.0
+		"""
+
+		return normalize(name)
+
 	@_documentation_url("https://peps.python.org/pep-0518/")
 	def parse_requires(self, config: Dict[str, TOML_TYPES]) -> List[ComparableRequirement]:
 		"""
@@ -181,7 +191,7 @@ class BuildSystemParser(RequiredKeysConfigParser):
 
 			parsed_dependencies.add(requirement)
 
-		return sorted(combine_requirements(parsed_dependencies))
+		return sorted(combine_requirements(parsed_dependencies, normalize_func=self.normalize_requirement_name))
 
 	@_documentation_url("https://peps.python.org/pep-0517/")
 	def parse_build_backend(self, config: Dict[str, TOML_TYPES]) -> str:
@@ -918,6 +928,16 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		return entry_points
 
+	@staticmethod
+	def normalize_requirement_name(name: str) -> str:
+		"""
+		Function to normalize a requirement name per e.g. :pep:`503` (where underscores are replaced by hyphens).
+
+		.. versionadded:: 0.9.0
+		"""
+
+		return normalize(name)
+
 	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.dependencies")
 	def parse_dependencies(self, config: Dict[str, TOML_TYPES]) -> List[ComparableRequirement]:
 		"""
@@ -962,7 +982,10 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 			parsed_dependencies.add(requirement)
 
-		return sorted(combine_requirements(parsed_dependencies))
+		return sorted(combine_requirements(
+				parsed_dependencies,
+				normalize_func=self.normalize_requirement_name,
+				))
 
 	@_documentation_url(
 			"https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.optional-dependencies"
@@ -1068,7 +1091,13 @@ class PEP621Parser(RequiredKeysConfigParser):
 							f"expected {str!r}, got {type(dep)!r}"
 							)
 
-		return {e: sorted(combine_requirements(d)) for e, d in parsed_optional_dependencies.items()}
+		combined_requirements = {}
+		for extra, deps in parsed_optional_dependencies.items():
+			combined_requirements[extra] = sorted(
+					combine_requirements(deps, normalize_func=self.normalize_requirement_name)
+					)
+
+		return combined_requirements
 
 	def parse(  # type: ignore[override]
 		self,
