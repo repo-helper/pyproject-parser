@@ -43,7 +43,6 @@ from typing import TYPE_CHECKING, Optional, Pattern, TextIO, Type, Union
 # 3rd party
 import click  # nodep
 from consolekit.tracebacks import TracebackHandler  # nodep
-from consolekit.utils import abort  # nodep
 from dom_toml.parser import BadConfigError
 from packaging.specifiers import InvalidSpecifier
 from packaging.version import InvalidVersion
