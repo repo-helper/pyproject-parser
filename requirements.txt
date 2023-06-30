@@ -7,4 +7,4 @@ packaging>=20.9
 shippinglabel>=1.0.0
 toml>=0.10.2
 tomli>=1.2.3; python_version < "3.11"
-typing-extensions>=3.7.4.3
+typing-extensions!=4.7.0,>=3.7.4.3
