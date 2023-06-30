@@ -52,6 +52,7 @@ known_third_party = [
     "pytest_timeout",
     "shippinglabel",
     "toml",
+    "tomli",
     "typing_extensions",
 ]
 known_first_party = "pyproject_parser"
