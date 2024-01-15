@@ -66,7 +66,7 @@ def render_markdown(content: str) -> None:
 	try:
 		# 3rd party
 		import cmarkgfm  # type: ignore[import]  # noqa: F401
-		import readme_renderer.markdown  # type: ignore[import]
+		import readme_renderer.markdown
 	except ImportError:  # pragma: no cover
 		return
 
@@ -93,7 +93,7 @@ def render_rst(content: str, filename: PathLike = "<string>") -> None:
 	try:
 		# 3rd party
 		import docutils.core
-		import readme_renderer.rst  # type: ignore[import]
+		import readme_renderer.rst
 		from docutils.utils import SystemMessage
 		from docutils.writers.html4css1 import Writer
 
@@ -105,7 +105,7 @@ def render_rst(content: str, filename: PathLike = "<string>") -> None:
 	settings["warning_stream"] = io.StringIO()
 
 	writer = Writer()
-	writer.translator_class = readme_renderer.rst.ReadMeHTMLTranslator
+	writer.translator_class = readme_renderer.rst.ReadMeHTMLTranslator  # type: ignore[assignment]
 
 	try:
 		parts = docutils.core.publish_parts(content, str(filename), writer=writer, settings_overrides=settings)
@@ -115,10 +115,11 @@ def render_rst(content: str, filename: PathLike = "<string>") -> None:
 	except SystemMessage:
 		pass
 
-	if not settings["warning_stream"].tell():
+	warning_stream: io.StringIO = settings["warning_stream"]  # type: ignore[assignment]
+	if not warning_stream.tell():
 		raise BadConfigError("Error rendering README: No content rendered from RST source.")
 	else:
-		sys.stderr.write(settings["warning_stream"].getvalue())
+		sys.stderr.write(warning_stream.getvalue())
 		raise BadConfigError("Error rendering README.")
 
 
