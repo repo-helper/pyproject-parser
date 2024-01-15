@@ -11,7 +11,7 @@ version: '0.9.1'
 license: 'MIT'
 short_desc: "Parser for 'pyproject.toml'"
 
-python_deploy_version: 3.6
+python_deploy_version: 3.8
 sphinx_html_theme: furo
 preserve_custom_theme: true
 tox_testenv_extras: readme,cli
