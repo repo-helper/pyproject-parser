@@ -42,7 +42,7 @@ if sys.version_info < (3, 11):
 	# 3rd party
 	import tomli as tomllib
 else:
-	# 3rd party
+	# stdlib
 	import tomllib
 
 if TYPE_CHECKING:
