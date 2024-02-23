@@ -56,4 +56,4 @@ known_third_party = [
     "tomli",
     "typing_extensions",
 ]
-known_first_party = "pyproject_parser"
+known_first_party = [ "pyproject_parser",]
