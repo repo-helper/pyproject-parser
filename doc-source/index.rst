@@ -107,7 +107,7 @@ pyproject-parser
 		:alt: GitHub top language
 
 	.. |commits-since| github-shield::
-		:commits-since: v0.11.0b1
+		:commits-since: v0.11.0
 		:alt: GitHub commits since tagged version
 
 	.. |commits-latest| github-shield::
