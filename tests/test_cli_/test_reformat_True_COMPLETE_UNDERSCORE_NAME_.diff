@@ -1,7 +1,7 @@
 Reformatting 'pyproject.toml'
 --- pyproject.toml	(original)
 +++ pyproject.toml	(reformatted)
-@@ -6,18 +6,14 @@
+@@ -6,18 +6,13 @@
  name = "toctree_plus"
  version = "2021.0.0"
  description = "A simple Python wheel builder for simple projects."
@@ -20,7 +20,6 @@ Reformatting 'pyproject.toml'
 +name = "Dominic Davis-Foster"
  email = "dominic@davis-foster.co.uk"
 -name = "Dominic Davis-Foster"
-+
 
  [project.urls]
  Homepage = "https://whey.readthedocs.io/en/latest"

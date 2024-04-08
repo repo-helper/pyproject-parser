@@ -52,8 +52,8 @@ from pyproject_parser.cli import prettify_deprecation_warning
 if TYPE_CHECKING:
 	# 3rd party
 	from consolekit.terminal_colours import ColourTrilean
+	from dom_toml.encoder import TomlEncoder
 	from domdf_python_tools.typing import PathLike
-	from toml import TomlEncoder
 
 __all__ = ["main", "reformat", "check"]
 

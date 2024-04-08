@@ -1,7 +1,7 @@
 Reformatting 'pyproject.toml'
 --- pyproject.toml	(original)
 +++ pyproject.toml	(reformatted)
-@@ -1,22 +1,18 @@
+@@ -1,29 +1,25 @@
 -[project]
 -keywords = [ "pep517", "pep621", "build", "sdist", "wheel", "packaging", "distribution",]
 -version = "2021.0.0"
@@ -28,13 +28,13 @@ Reformatting 'pyproject.toml'
 +dynamic = [ "classifiers", "requires-python",]
 
 -
+-
 +[[project.authors]]
 +name = "Dominic Davis-Foster"
 +email = "dominic@davis-foster.co.uk"
 
-
  [project.urls]
-@@ -24,6 +20,7 @@
+ Homepage = "https://whey.readthedocs.io/en/latest"
  Documentation = "https://whey.readthedocs.io/en/latest"
  "Issue Tracker" = "https://github.com/repo-helper/whey/issues"
  "Source Code" = "https://github.com/repo-helper/whey"
@@ -42,7 +42,7 @@ Reformatting 'pyproject.toml'
  [tool.whey]
  base-classifiers = [ "Development Status :: 4 - Beta",]
  python-versions = [ "3.6", "3.7", "3.8", "3.9", "3.10",]
-@@ -31,7 +28,3 @@
+@@ -31,7 +27,3 @@
  platforms = [ "Windows", "macOS", "Linux",]
  license-key = "MIT"
 

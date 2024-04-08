@@ -14,7 +14,6 @@ dynamic = [ "classifiers", "requires-python",]
 name = "Dominic Davis-Foster"
 email = "dominic@davis-foster.co.uk"
 
-
 [project.urls]
 Homepage = "https://whey.readthedocs.io/en/latest"
 Documentation = "https://whey.readthedocs.io/en/latest"

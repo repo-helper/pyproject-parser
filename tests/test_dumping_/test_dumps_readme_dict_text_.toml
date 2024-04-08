@@ -10,19 +10,18 @@ keywords = [ "build", "distribution", "packaging", "pep517", "pep621", "sdist", 
 dependencies = [ 'django>2.1; os_name != "nt"', 'django>2.0; os_name == "nt"', "gidgethub[httpx]>4.0.0", "httpx",]
 dynamic = [ "classifiers", "requires-python",]
 
-[[project.authors]]
-name = "Dominic Davis-Foster"
-email = "dominic@davis-foster.co.uk"
-
-
-[tool]
-
 [project.readme]
 content-type = "text/x-rst"
 text = "This is the README"
+
+[[project.authors]]
+name = "Dominic Davis-Foster"
+email = "dominic@davis-foster.co.uk"
 
 [project.urls]
 Homepage = "https://whey.readthedocs.io/en/latest"
 Documentation = "https://whey.readthedocs.io/en/latest"
 "Issue Tracker" = "https://github.com/repo-helper/whey/issues"
 "Source Code" = "https://github.com/repo-helper/whey"
+
+[tool]

@@ -1,7 +1,7 @@
 Reformatting 'pyproject.toml'
 --- pyproject.toml	(original)
 +++ pyproject.toml	(reformatted)
-@@ -3,31 +3,23 @@
+@@ -3,31 +3,20 @@
  version = "2020.0.0"
  description = "Lovely Spam! Wonderful Spam!"
  requires-python = ">=3.8"
@@ -42,18 +42,15 @@ Reformatting 'pyproject.toml'
 +[[project.maintainers]]
 +name = "Brett Cannon"
 +email = "brett@python.org"
-+
-+
-+[tool]
 
  [project.urls]
  homepage = "example.com"
-@@ -41,6 +33,9 @@
- [project.gui-scripts]
- spam-gui = "spam:main_gui"
+@@ -44,3 +33,8 @@
+ [project.entry-points."spam.magical"]
+ tomatoes = "spam:main_tomatoes"
 
 +[project.optional-dependencies]
 +test = [ "pytest<5.0.0", "pytest-cov[all]",]
 +
- [project.entry-points."spam.magical"]
- tomatoes = "spam:main_tomatoes"
++[tool]
++

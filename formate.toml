@@ -48,7 +48,6 @@ known_third_party = [
     "pytest_randomly",
     "pytest_timeout",
     "shippinglabel",
-    "toml",
     "tomli",
     "typing_extensions",
 ]

@@ -7,6 +7,10 @@ Parser for ``pyproject.toml``.
 #
 #  Copyright © 2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
+#  PyProjectTomlEncoder.dumps based on https://github.com/hukkin/tomli-w
+#  MIT Licensed
+#  Copyright (c) 2021 Taneli Hukkinen
+#
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
 #  in the Software without restriction, including without limitation the rights
@@ -27,13 +31,26 @@ Parser for ``pyproject.toml``.
 #
 
 # stdlib
-from typing import Any, ClassVar, Dict, Mapping, MutableMapping, Optional, Type, TypeVar, Union
+from typing import (
+		Any,
+		ClassVar,
+		Dict,
+		Iterator,
+		List,
+		Mapping,
+		MutableMapping,
+		Optional,
+		Tuple,
+		Type,
+		TypeVar,
+		Union
+		)
 
 # 3rd party
 import attr
 import dom_toml
-import toml
-from dom_toml.encoder import _dump_str
+from dom_toml.decoder import InlineTableDict
+from dom_toml.encoder import TomlEncoder
 from dom_toml.parser import AbstractConfigParser, BadConfigError
 from domdf_python_tools.paths import PathPlus, in_directory
 from domdf_python_tools.typing import PathLike
@@ -66,6 +83,29 @@ __all__ = ["PyProject", "PyProjectTomlEncoder", "_PP"]
 
 _PP = TypeVar("_PP", bound="PyProject")
 
+_translation_table = {
+		8: "\\b",
+		9: "\\t",
+		10: "\\n",
+		12: "\\f",
+		13: "\\r",
+		92: "\\\\",
+		}
+
+
+def _dump_str(v: str) -> str:
+	v = str(v).translate(_translation_table)
+
+	if "'" in v and '"' not in v:
+		quote_char = '"'
+	elif '"' in v and "'" not in v:
+		quote_char = "'"
+	else:
+		quote_char = '"'
+		v = v.replace('"', '\\"')
+
+	return f"{quote_char}{v}{quote_char}"
+
 
 class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 	"""
@@ -76,14 +116,108 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 	.. autosummary-widths:: 23/64
 	"""
 
-	def __init__(self, _dict=dict, preserve: bool = False) -> None:  # noqa: MAN001
-		super().__init__(_dict=_dict, preserve=preserve)
-		self.dump_funcs[str] = _dump_str
-		self.dump_funcs[_NormalisedName] = _dump_str
-		self.dump_funcs[Version] = self.dump_packaging_types
-		self.dump_funcs[Requirement] = self.dump_packaging_types
-		self.dump_funcs[Marker] = self.dump_packaging_types
-		self.dump_funcs[SpecifierSet] = self.dump_packaging_types
+	def __init__(self, preserve: bool = False) -> None:
+		super().__init__(preserve=preserve)
+
+	def dumps(
+			self,
+			table: Mapping[str, Any],
+			*,
+			name: str,
+			inside_aot: bool = False,
+			) -> Iterator[str]:
+		"""
+		Serialise the given table.
+
+		:param name: The table name.
+		:param inside_aot:
+
+		:rtype:
+
+		.. versionadded:: 0.11.0
+		"""
+
+		yielded = False
+		literals = []
+		tables: List[Tuple[str, Any, bool]] = []
+		for k, v in table.items():
+			if v is None:
+				continue
+			if self.preserve and isinstance(v, InlineTableDict):
+				literals.append((k, v))
+			elif isinstance(v, dict):
+				tables.append((k, v, False))
+			elif self._is_aot(v):
+				tables.extend((k, t, True) for t in v)
+			else:
+				literals.append((k, v))
+
+		if inside_aot or name and (literals or not tables):
+			yielded = True
+			yield f"[[{name}]]\n" if inside_aot else f"[{name}]\n"
+
+		if literals:
+			yielded = True
+			for k, v in literals:
+				yield f"{self.format_key_part(k)} = {self.format_literal(v)}\n"
+
+		for k, v, in_aot in tables:
+			if yielded:
+				yield '\n'
+			else:
+				yielded = True
+			key_part = self.format_key_part(k)
+			display_name = f"{name}.{key_part}" if name else key_part
+
+			yield from self.dumps(v, name=display_name, inside_aot=in_aot)
+
+	def format_literal(self, obj: object, *, nest_level: int = 0) -> str:
+		"""
+		Format a literal value.
+
+		:param obj:
+		:param nest_level:
+
+		:rtype:
+
+		.. versionadded:: 0.11.0
+		"""
+
+		if isinstance(obj, (str, _NormalisedName)):
+			return _dump_str(obj)
+		elif isinstance(obj, (Version, Requirement, Marker, SpecifierSet)):
+			return self.dump_packaging_types(obj)
+		else:
+			return super().format_literal(obj, nest_level=nest_level)
+
+	def format_inline_array(self, obj: Union[Tuple, List], nest_level: int) -> str:
+		"""
+		Format an inline array.
+
+		:param obj:
+		:param nest_level:
+
+		:rtype:
+
+		.. versionadded:: 0.11.0
+		"""
+
+		if not len(obj):
+			return "[]"
+
+		item_indent = "    " * (1 + nest_level)
+		closing_bracket_indent = "    " * nest_level
+		single_line = "[ " + ", ".join(
+				self.format_literal(item, nest_level=nest_level + 1) for item in obj
+				) + f",]"
+
+		if len(single_line) <= self.max_width:
+			return single_line
+		else:
+			start = "[\n"
+			body = ",\n".join(item_indent + self.format_literal(item, nest_level=nest_level + 1) for item in obj)
+			end = f",\n{closing_bracket_indent}]"
+			return start + body + end
 
 	@staticmethod
 	def dump_packaging_types(obj: Union[Version, Requirement, Marker, SpecifierSet]) -> str:
@@ -227,12 +361,12 @@ class PyProject:
 
 	def dumps(
 			self,
-			encoder: Union[Type[toml.TomlEncoder], toml.TomlEncoder] = PyProjectTomlEncoder,
+			encoder: Union[Type[TomlEncoder], TomlEncoder] = PyProjectTomlEncoder,
 			) -> str:
 		"""
 		Serialise to TOML.
 
-		:param encoder: The :class:`toml.TomlEncoder` to use for constructing the output string.
+		:param encoder: The :class:`~dom_toml.encoder.TomlEncoder` to use for constructing the output string.
 		"""
 
 		# TODO: filter out default values (lists and dicts)
@@ -250,7 +384,6 @@ class PyProject:
 					"license": toml_dict["project"]["license"].to_pep621_dict()
 					}
 
-		if toml_dict["project"] is not None:
 			if "readme" in toml_dict["project"] and toml_dict["project"]["readme"] is not None:
 				readme_dict = toml_dict["project"]["readme"].to_pep621_dict()
 
@@ -268,13 +401,13 @@ class PyProject:
 	def dump(
 			self,
 			filename: PathLike,
-			encoder: Union[Type[toml.TomlEncoder], toml.TomlEncoder] = PyProjectTomlEncoder,
+			encoder: Union[Type[TomlEncoder], TomlEncoder] = PyProjectTomlEncoder,
 			) -> str:
 		"""
 		Write as TOML to the given file.
 
 		:param filename: The filename to write to.
-		:param encoder: The :class:`toml.TomlEncoder` to use for constructing the output string.
+		:param encoder: The :class:`~dom_toml.encoder.TomlEncoder` to use for constructing the output string.
 
 		:returns: A string containing the TOML representation.
 		"""
@@ -288,13 +421,13 @@ class PyProject:
 	def reformat(
 			cls: Type[_PP],
 			filename: PathLike,
-			encoder: Union[Type[toml.TomlEncoder], toml.TomlEncoder] = PyProjectTomlEncoder,
+			encoder: Union[Type[TomlEncoder], TomlEncoder] = PyProjectTomlEncoder,
 			) -> str:
 		"""
 		Reformat the given ``pyproject.toml`` file.
 
 		:param filename: The file to reformat.
-		:param encoder: The :class:`toml.TomlEncoder` to use for constructing the output string.
+		:param encoder: The :class:`~dom_toml.encoder.TomlEncoder` to use for constructing the output string.
 
 		:returns: A string containing the reformatted TOML.
 
