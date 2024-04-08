@@ -11,13 +11,12 @@ keywords = [ "build", "distribution", "packaging", "pep517", "pep621", "sdist", 
 dependencies = [ 'django>2.1; os_name != "nt"', 'django>2.0; os_name == "nt"', "gidgethub[httpx]>4.0.0", "httpx",]
 dynamic = [ "classifiers", "requires-python",]
 
+[project.license]
+file = "LICENSE"
+
 [[project.authors]]
 name = "Dominic Davis-Foster"
 email = "dominic@davis-foster.co.uk"
-
-
-[project.license]
-file = "LICENSE"
 
 [project.urls]
 Homepage = "https://whey.readthedocs.io/en/latest"

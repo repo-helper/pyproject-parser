@@ -34,16 +34,10 @@ import sys
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
 # 3rd party
+import dom_toml
 from dom_toml.parser import BadConfigError
 from domdf_python_tools.paths import PathPlus
 from domdf_python_tools.typing import PathLike
-
-if sys.version_info < (3, 11):
-	# 3rd party
-	import tomli as tomllib
-else:
-	# stdlib
-	import tomllib
 
 if TYPE_CHECKING:
 	# this package
@@ -192,4 +186,4 @@ def _load_toml(filename: PathLike, ) -> Dict[str, Any]:
 	:returns: A mapping containing the ``TOML`` data.
 	"""
 
-	return tomllib.loads(PathPlus(filename).read_text())
+	return dom_toml.load(filename)
