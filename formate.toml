@@ -33,16 +33,12 @@ remove_redundant_aliases = true
 default_section = "THIRDPARTY"
 known_third_party = [
     "apeye_core",
-    "attr_utils",
     "attrs",
-    "backports_entry_points_selectable",
     "coincidence",
-    "consolekit",
     "coverage",
     "coverage_pyver_pragma",
     "dom_toml",
     "domdf_python_tools",
-    "email_validator",
     "importlib_metadata",
     "natsort",
     "packaging",
