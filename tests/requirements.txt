@@ -3,6 +3,7 @@ coincidence>=0.2.0
 coverage>=5.1
 coverage-pyver-pragma>=0.2.1
 importlib-metadata>=3.6.0
+nh3<=0.2.14; python_version < "3.9" and implementation_name == "pypy"
 pyproject-examples>=2023.6.30
 pytest>=6.0.0
 pytest-cov>=2.8.1
