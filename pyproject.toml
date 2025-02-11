@@ -1,6 +1,6 @@
 [build-system]
-requires = [ "setuptools!=61.*,<=67.1.0,>=40.6.0", "wheel>=0.34.2",]
-build-backend = "setuptools.build_meta"
+requires = [ "hatch-requirements-txt",]
+build-backend = "hatchling.build"
 
 [project]
 name = "pyproject-parser"
@@ -207,3 +207,22 @@ include = false
 [tool.dependency-dash."doc-source/requirements.txt"]
 order = 30
 include = false
+
+[tool.hatch.build]
+exclude = [
+    "/*",
+    "!/pyproject_parser",
+    "!/pyproject_parser/**/requirements.txt",
+    "!/requirements.txt",
+    "tests",
+    "doc-source",
+]
+
+[tool.hatch.build.sdist]
+include = [ "pyproject_parser", "requirements.txt",]
+
+[tool.hatch.build.wheel]
+include = [ "pyproject_parser",]
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = [ "requirements.txt",]
