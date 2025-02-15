@@ -63,11 +63,12 @@ from shippinglabel import normalize
 
 # this package
 from pyproject_parser.classes import License, Readme, _NormalisedName
-from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
+from pyproject_parser.parsers import BuildSystemParser, DependencyGroupsParser, PEP621Parser
 from pyproject_parser.type_hints import (  # noqa: F401
 		Author,
 		BuildSystemDict,
 		ContentTypes,
+		DependencyGroupsDict,
 		ProjectDict,
 		_PyProjectAsTomlDict
 		)
@@ -256,6 +257,9 @@ class PyProject:
 	#: Represents the :pep:`build-system table <518#build-system-table>` defined in :pep:`517` and :pep:`518`.
 	build_system: Optional[BuildSystemDict] = attr.ib(default=None)
 
+	#: Represents the :pep:`dependency groups table <735#specification>` defined in :pep:`735`.
+	dependency_groups: Optional[DependencyGroupsDict] = attr.ib(default=None)
+
 	#: Represents the :pep621:`project table <table-name>` defined in :pep:`621`.
 	project: Optional[ProjectDict] = attr.ib(default=None)
 
@@ -266,6 +270,12 @@ class PyProject:
 	"""
 	The :class:`~dom_toml.parser.AbstractConfigParser`
 	to parse the :pep:`build-system table <518#build-system-table>` with.
+	"""
+
+	dependency_groups_table_parser: ClassVar[DependencyGroupsParser] = DependencyGroupsParser()
+	"""
+	The :class:`~dom_toml.parser.AbstractConfigParser`
+	to parse the :pep:`dependency groups table <735#specification>` with.
 	"""
 
 	project_table_parser: ClassVar[PEP621Parser] = PEP621Parser()
@@ -323,6 +333,12 @@ class PyProject:
 						)
 				keys.remove("build-system")
 
+			if "dependency-groups" in config:
+				dependency_groups_table = cls.dependency_groups_table_parser.parse(
+						config["dependency-groups"], set_defaults=set_defaults
+						)
+				keys.remove("dependency-groups")
+
 			if "project" in config:
 				project_table = cls.project_table_parser.parse(config["project"], set_defaults=set_defaults)
 				keys.remove("project")
@@ -336,7 +352,7 @@ class PyProject:
 						tool_table[tool_name] = cls.tool_parsers[tool_name].parse(tool_subtable)
 
 		if keys:
-			allowed_top_level = ("build-system", "project", "tool")
+			allowed_top_level = ("build-system", "dependency-groups", "project", "tool")
 
 			for top_level_key in sorted(keys):
 				if top_level_key in allowed_top_level:
@@ -355,6 +371,7 @@ class PyProject:
 
 		return cls(
 				build_system=build_system_table,
+				dependency_groups=dependency_groups_table,
 				project=project_table,
 				tool=tool_table,
 				)

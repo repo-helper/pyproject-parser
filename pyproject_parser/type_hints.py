@@ -27,7 +27,7 @@ Type hints for :mod:`pyproject_parser`.
 #
 
 # stdlib
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 # 3rd party
 from packaging.markers import Marker
@@ -56,6 +56,16 @@ BuildSystemDict = TypedDict(
 				"backend-path": Optional[List[str]]
 				}
 		)
+
+IncludeGroupDict = TypedDict(
+	    "IncludeGroupDict",
+	    {
+			    "include-group": str
+	            }
+        )
+
+#: :class:`typing.TypedDict` representing the output from the :class:`~.DependencyGroupsParser` class.
+DependencyGroupsDict = Dict[str, List[Union[str, IncludeGroupDict]]]
 
 #: Type hint for the :pep621:`dynamic` field defined in :pep:`621`.
 Dynamic = Literal[
