@@ -57,12 +57,7 @@ BuildSystemDict = TypedDict(
 				}
 		)
 
-IncludeGroupDict = TypedDict(
-	    "IncludeGroupDict",
-	    {
-			    "include-group": str
-	            }
-        )
+IncludeGroupDict = TypedDict("IncludeGroupDict", {"include-group": str})
 
 #: :class:`typing.TypedDict` representing the output from the :class:`~.DependencyGroupsParser` class.
 DependencyGroupsDict = Dict[str, List[Union[str, IncludeGroupDict]]]
