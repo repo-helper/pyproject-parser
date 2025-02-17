@@ -263,7 +263,7 @@ class DependencyGroupsParser(AbstractConfigParser):
 	"""
 	Parser for the :pep:`dependency groups table <735#specification>` table from ``pyproject.toml``.
 
-	.. autosummary-widths:: 17/32
+	.. versionadded:: 0.13.0
 	"""  # noqa: RST399
 
 	table_name: ClassVar[str] = "dependency-groups"
@@ -951,10 +951,6 @@ class PEP621Parser(RequiredKeysConfigParser):
 			nbval = "nbval.plugin"
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
-
-		:rtype:
-
-		.. latex:clearpage::
 		"""
 
 		entry_points = config["entry-points"]

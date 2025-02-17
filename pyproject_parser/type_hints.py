@@ -60,9 +60,18 @@ BuildSystemDict = TypedDict(
 		)
 
 IncludeGroupDict = TypedDict("IncludeGroupDict", {"include-group": str})
+"""
+:class:`typing.TypedDict`.
 
-#: :class:`typing.TypedDict` representing the output from the :class:`~.DependencyGroupsParser` class.
+.. versionadded:: 0.13.0
+"""
+
 DependencyGroupsDict = Dict[str, List[Union[str, IncludeGroupDict]]]
+"""
+The return type from the :class:`~.DependencyGroupsParser` class.
+
+.. versionadded:: 0.13.0
+"""
 
 #: Type hint for the :pep621:`dynamic` field defined in :pep:`621`.
 Dynamic = Literal[

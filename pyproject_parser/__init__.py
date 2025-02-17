@@ -240,18 +240,21 @@ class PyProject:
 
 	:param build_system:
 
-	.. autosummary-widths:: 23/64
+	.. versionchanged:: 0.13.0  Added ``dependency_groups`` and ``dependency_groups_table_parser`` properties.
+
+	.. autosummary-widths:: 4/10
 
 	.. autoclasssumm:: PyProject
 		:autosummary-sections: Methods
-		:autosummary-exclude-members: __ge__,__gt__,__le__,__lt__,__ne__,__init__
+		:autosummary-exclude-members: __ge__,__gt__,__le__,__lt__,__ne__,__init__,__repr__,__eq__
 
 	.. latex:clearpage::
+
+	.. autosummary-widths:: 1/2
 
 	.. autoclasssumm:: PyProject
 		:autosummary-sections: Attributes
 
-	.. latex:vspace:: 10px
 	"""
 
 	#: Represents the :pep:`build-system table <518#build-system-table>` defined in :pep:`517` and :pep:`518`.
@@ -276,6 +279,8 @@ class PyProject:
 	"""
 	The :class:`~dom_toml.parser.AbstractConfigParser`
 	to parse the :pep:`dependency groups table <735#specification>` with.
+
+	.. versionadded:: 0.13.0
 	"""
 
 	project_table_parser: ClassVar[PEP621Parser] = PEP621Parser()

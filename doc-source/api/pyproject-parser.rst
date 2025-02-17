@@ -16,7 +16,7 @@ Parser for ``pyproject.toml``.
 	:autosummary-sections: Data
 
 .. autoattrs:: pyproject_parser.PyProject
-	:exclude-members: __ge__,__gt__,__le__,__lt__,__ne__
+	:exclude-members: __ge__,__gt__,__le__,__lt__,__ne__,__repr__,__eq__
 	:no-autosummary:
 
 .. autoclass:: pyproject_parser.PyProjectTomlEncoder
