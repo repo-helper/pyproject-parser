@@ -323,6 +323,7 @@ class PyProject:
 		keys = set(config.keys())
 
 		build_system_table: Optional[BuildSystemDict] = None
+		dependency_groups_table: Optional[DependencyGroupsDict] = None
 		project_table: Optional[ProjectDict] = None
 		tool_table: Dict[str, Dict[str, Any]] = {}
 
@@ -392,6 +393,7 @@ class PyProject:
 				"build-system": self.build_system,
 				"project": self.project,
 				"tool": self.tool,
+				"dependency-groups": self.dependency_groups,
 				}
 
 		if toml_dict["project"] is not None:
@@ -495,6 +497,8 @@ class PyProject:
 		for key, value in d.items():
 			if key == "build-system":
 				key = "build_system"
+			elif key == "dependency-groups":
+				key = "dependency_groups"
 
 			kwargs[key] = value
 
@@ -511,4 +515,5 @@ class PyProject:
 				"build_system": self.build_system,
 				"project": self.project,
 				"tool": self.tool,
+				"dependency_groups": self.dependency_groups,
 				}

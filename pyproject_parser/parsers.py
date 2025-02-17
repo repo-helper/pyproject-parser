@@ -55,6 +55,7 @@ from pyproject_parser.utils import PyProjectDeprecationWarning, content_type_fro
 __all__ = [
 		"RequiredKeysConfigParser",
 		"BuildSystemParser",
+		"DependencyGroupsParser",
 		"PEP621Parser",
 		]
 
@@ -286,13 +287,13 @@ class DependencyGroupsParser(AbstractConfigParser):
 		if isinstance(config, list):
 			return config
 
-		raise BadConfigError("A group must be a list.")
+		raise BadConfigError("A dependency group must be an array.")
 
-	def parse(  # type: ignore[override]
-		self,
-		config: Dict[str, TOML_TYPES],
-		set_defaults: bool = False,
-		) -> BuildSystemDict:
+	def parse(
+			self,
+			config: Dict[str, TOML_TYPES],
+			set_defaults: bool = False,
+			) -> DependencyGroupsDict:
 		"""
 		Parse the TOML configuration.
 

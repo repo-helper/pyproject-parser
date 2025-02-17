@@ -40,6 +40,8 @@ from pyproject_parser.classes import License, Readme
 
 __all__ = [
 		"BuildSystemDict",
+		"IncludeGroupDict",
+		"DependencyGroupsDict",
 		"Dynamic",
 		"ProjectDict",
 		"Author",
@@ -135,5 +137,10 @@ class ReadmeDict(TypedDict, total=False):
 
 _PyProjectAsTomlDict = TypedDict(
 		"_PyProjectAsTomlDict",
-		{"build-system": Optional[BuildSystemDict], "project": Optional[ProjectDict], "tool": Dict[str, Any]},
+		{
+				"build-system": Optional[BuildSystemDict],
+				"project": Optional[ProjectDict],
+				"tool": Dict[str, Any],
+				"dependency-groups": Optional[DependencyGroupsDict]
+				},
 		)

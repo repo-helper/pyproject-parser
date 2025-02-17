@@ -2,7 +2,20 @@ build_system:
   build-backend: whey
   requires:
   - whey
-dependency_groups: null
+dependency_groups:
+  docs:
+  - sphinx
+  - sphinx-rtd-theme
+  test:
+  - pytest
+  - coverage
+  typing:
+  - mypy
+  - types-requests
+  typing-test:
+  - include-group: typing
+  - include-group: test
+  - useful-types
 project:
   authors:
   - email: dominic@davis-foster.co.uk
@@ -33,12 +46,9 @@ project:
   version: 2021.0.0
 tool:
   whey:
-    additional-files:
-    - include whey/style.css
     base-classifiers:
     - 'Development Status :: 4 - Beta'
     license-key: MIT
-    package: whey
     platforms:
     - Windows
     - macOS

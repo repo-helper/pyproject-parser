@@ -2,5 +2,6 @@ build_system:
   build-backend: whey
   requires:
   - whey
+dependency_groups: null
 project: null
 tool: {}
