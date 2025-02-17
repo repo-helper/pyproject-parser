@@ -18,7 +18,12 @@ from pyproject_examples.example_configs import MINIMAL_CONFIG
 from shippinglabel import normalize_keep_dot
 
 # this package
-from pyproject_parser.parsers import BuildSystemParser, PEP621Parser, RequiredKeysConfigParser
+from pyproject_parser.parsers import (
+		BuildSystemParser,
+		DependencyGroupsParser,
+		PEP621Parser,
+		RequiredKeysConfigParser
+		)
 from pyproject_parser.utils import PyProjectDeprecationWarning, _load_toml
 
 
@@ -555,3 +560,46 @@ def test_RequiredKeysConfigParser():
 
 	assert MyConfigParser().parse({}, set_defaults=True) == {"foo": "foo-default", "bar": "bar-defaults"}
 	assert MyConfigParser().parse({"foo": "baz"}, set_defaults=True) == {"foo": "baz", "bar": "bar-defaults"}
+
+
+valid_dependency_groups_config = [
+		pytest.param("[dependency-groups]", id="empty"),
+		pytest.param('[dependency-groups]\ngroup-a = ["foo"]', id="one-group"),
+		pytest.param(
+				'[dependency-groups]\ngroup-a = ["foo"]\ngroup-b = ["foo>1.0"]\ngroup-c = ["foo<1.0"]\nall = ["foo", {include-group = "group-a"}, {include-group = "group-b"}, {include-group = "group-c"}]',
+				id="full-example"
+				),
+		]
+
+bad_dependency_groups_config = [
+		pytest.param(
+				'[dependency-groups]\ngroup-a = "foo"', BadConfigError, "A dependency group must be an array"
+				),
+		]
+
+
+@pytest.mark.parametrize("set_defaults", [True, False])
+@pytest.mark.parametrize("toml_config", valid_dependency_groups_config)
+def test_dependency_groups_parser_valid_config(
+		toml_config: str,
+		tmp_pathplus: PathPlus,
+		advanced_data_regression: AdvancedDataRegressionFixture,
+		set_defaults: bool,
+		):
+	(tmp_pathplus / "pyproject.toml").write_clean(toml_config)
+	config = DependencyGroupsParser().parse(
+			_load_toml(tmp_pathplus / "pyproject.toml")["dependency-groups"],
+			set_defaults=set_defaults,
+			)
+
+	advanced_data_regression.check(config)
+
+
+@pytest.mark.parametrize("config, expects, match", bad_dependency_groups_config)
+def test_dependency_groups_parser_errors(
+		config: str, expects: Type[Exception], match: str, tmp_pathplus: PathPlus
+		):
+	(tmp_pathplus / "pyproject.toml").write_clean(config)
+
+	with in_directory(tmp_pathplus), pytest.raises(expects, match=match):
+		DependencyGroupsParser().parse(_load_toml(tmp_pathplus / "pyproject.toml")["dependency-groups"])

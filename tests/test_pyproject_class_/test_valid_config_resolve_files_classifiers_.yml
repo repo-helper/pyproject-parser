@@ -1,4 +1,5 @@
 build_system: null
+dependency_groups: null
 project:
   classifiers:
   - 'Development Status :: 4 - Beta'

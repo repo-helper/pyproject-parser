@@ -49,12 +49,13 @@ from shippinglabel.requirements import ComparableRequirement, combine_requiremen
 
 # this package
 from pyproject_parser.classes import License, Readme, _NormalisedName
-from pyproject_parser.type_hints import Author, BuildSystemDict, ProjectDict
+from pyproject_parser.type_hints import Author, BuildSystemDict, DependencyGroupsDict, ProjectDict
 from pyproject_parser.utils import PyProjectDeprecationWarning, content_type_from_filename, render_readme
 
 __all__ = [
 		"RequiredKeysConfigParser",
 		"BuildSystemParser",
+		"DependencyGroupsParser",
 		"PEP621Parser",
 		]
 
@@ -256,6 +257,60 @@ class BuildSystemParser(RequiredKeysConfigParser):
 					)
 
 		return cast(BuildSystemDict, parsed_config)
+
+
+class DependencyGroupsParser(AbstractConfigParser):
+	"""
+	Parser for the :pep:`dependency groups table <735#specification>` table from ``pyproject.toml``.
+
+	.. versionadded:: 0.13.0
+	"""  # noqa: RST399
+
+	table_name: ClassVar[str] = "dependency-groups"
+
+	@property
+	def keys(self) -> List[str]:
+		"""
+		The keys to parse from the TOML file.
+		"""
+
+		return []
+
+	@staticmethod
+	def parse_group(config: TOML_TYPES) -> List[Union[str, Dict[str, str]]]:
+		"""
+		Parse a group from the TOML configuration.
+
+		:param config:
+		"""
+
+		if isinstance(config, list):
+			return config
+
+		raise BadConfigError("A dependency group must be an array.")
+
+	def parse(
+			self,
+			config: Dict[str, TOML_TYPES],
+			set_defaults: bool = False,
+			) -> DependencyGroupsDict:
+		"""
+		Parse the TOML configuration.
+
+		:param config:
+		:param set_defaults: If :py:obj:`True`, the values in
+			:attr:`self.defaults <dom_toml.parser.AbstractConfigParser.defaults>` and
+			:attr:`self.factories <dom_toml.parser.AbstractConfigParser.factories>`
+			will be set as defaults for the returned mapping.
+
+		:rtype:
+
+		.. latex:clearpage::
+		"""
+
+		parsed_config = {key: self.parse_group(value) for key, value in config.items()}
+
+		return cast(DependencyGroupsDict, parsed_config)
 
 
 class PEP621Parser(RequiredKeysConfigParser):
@@ -896,10 +951,6 @@ class PEP621Parser(RequiredKeysConfigParser):
 			nbval = "nbval.plugin"
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
-
-		:rtype:
-
-		.. latex:clearpage::
 		"""
 
 		entry_points = config["entry-points"]

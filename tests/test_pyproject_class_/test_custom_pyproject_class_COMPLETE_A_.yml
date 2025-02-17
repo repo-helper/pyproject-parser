@@ -2,6 +2,7 @@ build_system:
   build-backend: whey
   requires:
   - whey
+dependency_groups: null
 project:
   authors:
   - email: dominic@davis-foster.co.uk
