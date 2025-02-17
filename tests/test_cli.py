@@ -27,6 +27,15 @@ from pyproject_parser.__main__ import check, info, reformat
 from pyproject_parser.cli import ConfigTracebackHandler
 from tests.test_dumping import COMPLETE_UNDERSCORE_NAME, UNORDERED
 
+COMPLETE_DEPENDENCY_GROUPS = COMPLETE_A + """
+
+[dependency-groups]
+test = ["pytest", "coverage"]
+docs = ["sphinx", "sphinx-rtd-theme"]
+typing = ["mypy", "types-requests"]
+typing-test = [{include-group = "typing"}, {include-group = "test"}, "useful-types"]
+"""
+
 
 @pytest.mark.parametrize(
 		"toml_string",
@@ -37,6 +46,7 @@ from tests.test_dumping import COMPLETE_UNDERSCORE_NAME, UNORDERED
 				pytest.param(COMPLETE_PROJECT_A, id="COMPLETE_PROJECT_A"),
 				pytest.param(UNORDERED, id="UNORDERED"),
 				pytest.param(COMPLETE_UNDERSCORE_NAME, id="COMPLETE_UNDERSCORE_NAME"),
+				pytest.param(COMPLETE_DEPENDENCY_GROUPS, id="COMPLETE_DEPENDENCY_GROUPS"),
 				]
 		)
 @pytest.mark.parametrize("show_diff", [True, False])
@@ -177,7 +187,7 @@ def test_check_extra_deprecation_warning(
 						),
 				pytest.param(
 						"[coverage]\nomit = 'demo.py'\n[flake8]\nselect = ['F401']",
-						"Unexpected top-level key 'coverage'. Only 'build-system', 'project' and 'tool' are allowed.",
+						"Unexpected top-level key 'coverage'. Only 'build-system', 'dependency-groups', 'project' and 'tool' are allowed.",
 						id="top-level",
 						),
 				pytest.param(

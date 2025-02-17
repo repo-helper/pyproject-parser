@@ -27,7 +27,7 @@ Type hints for :mod:`pyproject_parser`.
 #
 
 # stdlib
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 # 3rd party
 from packaging.markers import Marker
@@ -40,6 +40,8 @@ from pyproject_parser.classes import License, Readme
 
 __all__ = [
 		"BuildSystemDict",
+		"IncludeGroupDict",
+		"DependencyGroupsDict",
 		"Dynamic",
 		"ProjectDict",
 		"Author",
@@ -56,6 +58,20 @@ BuildSystemDict = TypedDict(
 				"backend-path": Optional[List[str]]
 				}
 		)
+
+IncludeGroupDict = TypedDict("IncludeGroupDict", {"include-group": str})
+"""
+:class:`typing.TypedDict`.
+
+.. versionadded:: 0.13.0
+"""
+
+DependencyGroupsDict = Dict[str, List[Union[str, IncludeGroupDict]]]
+"""
+The return type from the :class:`~.DependencyGroupsParser` class.
+
+.. versionadded:: 0.13.0
+"""
 
 #: Type hint for the :pep621:`dynamic` field defined in :pep:`621`.
 Dynamic = Literal[
@@ -130,5 +146,10 @@ class ReadmeDict(TypedDict, total=False):
 
 _PyProjectAsTomlDict = TypedDict(
 		"_PyProjectAsTomlDict",
-		{"build-system": Optional[BuildSystemDict], "project": Optional[ProjectDict], "tool": Dict[str, Any]},
+		{
+				"build-system": Optional[BuildSystemDict],
+				"project": Optional[ProjectDict],
+				"tool": Dict[str, Any],
+				"dependency-groups": Optional[DependencyGroupsDict]
+				},
 		)

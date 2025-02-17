@@ -17,8 +17,24 @@ from pyproject_examples.example_configs import COMPLETE_A, COMPLETE_A_WITH_FILES
 # this package
 from pyproject_parser import PyProject
 
+COMPLETE_DEPENDENCY_GROUPS = COMPLETE_A + """
 
-@pytest.mark.parametrize("toml_config", [*valid_pep621_config, *valid_buildsystem_config])
+[dependency-groups]
+test = ["pytest", "coverage"]
+docs = ["sphinx", "sphinx-rtd-theme"]
+typing = ["mypy", "types-requests"]
+typing-test = [{include-group = "typing"}, {include-group = "test"}, "useful-types"]
+"""
+
+
+@pytest.mark.parametrize(
+		"toml_config",
+		[
+				*valid_pep621_config,
+				*valid_buildsystem_config,
+				pytest.param(COMPLETE_DEPENDENCY_GROUPS, id="complete-dependency-groups"),
+				]
+		)
 def test_valid_config(
 		toml_config: str,
 		tmp_pathplus: PathPlus,
@@ -81,13 +97,13 @@ def test_valid_config_resolve_files(
 				pytest.param(
 						'banana = "fruit"\n[project]\nname = "food"',
 						BadConfigError,
-						"Unexpected top-level key 'banana'. Only 'build-system', 'project' and 'tool' are allowed.",
+						"Unexpected top-level key 'banana'. Only 'build-system', 'dependency-groups', 'project' and 'tool' are allowed.",
 						id="unexpected_top_level"
 						),
 				pytest.param(
 						"[coverage]\nomit = 'demo.py'\n[flake8]\nselect = ['F401']",
 						BadConfigError,
-						"Unexpected top-level key 'coverage'. Only 'build-system', 'project' and 'tool' are allowed.",
+						"Unexpected top-level key 'coverage'. Only 'build-system', 'dependency-groups', 'project' and 'tool' are allowed.",
 						id="top-level",
 						),
 				pytest.param(

@@ -63,11 +63,12 @@ from shippinglabel import normalize
 
 # this package
 from pyproject_parser.classes import License, Readme, _NormalisedName
-from pyproject_parser.parsers import BuildSystemParser, PEP621Parser
+from pyproject_parser.parsers import BuildSystemParser, DependencyGroupsParser, PEP621Parser
 from pyproject_parser.type_hints import (  # noqa: F401
 		Author,
 		BuildSystemDict,
 		ContentTypes,
+		DependencyGroupsDict,
 		ProjectDict,
 		_PyProjectAsTomlDict
 		)
@@ -239,22 +240,28 @@ class PyProject:
 
 	:param build_system:
 
-	.. autosummary-widths:: 23/64
+	.. versionchanged:: 0.13.0  Added ``dependency_groups`` and ``dependency_groups_table_parser`` properties.
+
+	.. autosummary-widths:: 4/10
 
 	.. autoclasssumm:: PyProject
 		:autosummary-sections: Methods
-		:autosummary-exclude-members: __ge__,__gt__,__le__,__lt__,__ne__,__init__
+		:autosummary-exclude-members: __ge__,__gt__,__le__,__lt__,__ne__,__init__,__repr__,__eq__
 
 	.. latex:clearpage::
+
+	.. autosummary-widths:: 1/2
 
 	.. autoclasssumm:: PyProject
 		:autosummary-sections: Attributes
 
-	.. latex:vspace:: 10px
 	"""
 
 	#: Represents the :pep:`build-system table <518#build-system-table>` defined in :pep:`517` and :pep:`518`.
 	build_system: Optional[BuildSystemDict] = attr.ib(default=None)
+
+	#: Represents the :pep:`dependency groups table <735#specification>` defined in :pep:`735`.
+	dependency_groups: Optional[DependencyGroupsDict] = attr.ib(default=None)
 
 	#: Represents the :pep621:`project table <table-name>` defined in :pep:`621`.
 	project: Optional[ProjectDict] = attr.ib(default=None)
@@ -266,6 +273,14 @@ class PyProject:
 	"""
 	The :class:`~dom_toml.parser.AbstractConfigParser`
 	to parse the :pep:`build-system table <518#build-system-table>` with.
+	"""
+
+	dependency_groups_table_parser: ClassVar[DependencyGroupsParser] = DependencyGroupsParser()
+	"""
+	The :class:`~dom_toml.parser.AbstractConfigParser`
+	to parse the :pep:`dependency groups table <735#specification>` with.
+
+	.. versionadded:: 0.13.0
 	"""
 
 	project_table_parser: ClassVar[PEP621Parser] = PEP621Parser()
@@ -313,6 +328,7 @@ class PyProject:
 		keys = set(config.keys())
 
 		build_system_table: Optional[BuildSystemDict] = None
+		dependency_groups_table: Optional[DependencyGroupsDict] = None
 		project_table: Optional[ProjectDict] = None
 		tool_table: Dict[str, Dict[str, Any]] = {}
 
@@ -322,6 +338,12 @@ class PyProject:
 						config["build-system"], set_defaults=set_defaults
 						)
 				keys.remove("build-system")
+
+			if "dependency-groups" in config:
+				dependency_groups_table = cls.dependency_groups_table_parser.parse(
+						config["dependency-groups"], set_defaults=set_defaults
+						)
+				keys.remove("dependency-groups")
 
 			if "project" in config:
 				project_table = cls.project_table_parser.parse(config["project"], set_defaults=set_defaults)
@@ -336,7 +358,7 @@ class PyProject:
 						tool_table[tool_name] = cls.tool_parsers[tool_name].parse(tool_subtable)
 
 		if keys:
-			allowed_top_level = ("build-system", "project", "tool")
+			allowed_top_level = ("build-system", "dependency-groups", "project", "tool")
 
 			for top_level_key in sorted(keys):
 				if top_level_key in allowed_top_level:
@@ -355,6 +377,7 @@ class PyProject:
 
 		return cls(
 				build_system=build_system_table,
+				dependency_groups=dependency_groups_table,
 				project=project_table,
 				tool=tool_table,
 				)
@@ -375,6 +398,7 @@ class PyProject:
 				"build-system": self.build_system,
 				"project": self.project,
 				"tool": self.tool,
+				"dependency-groups": self.dependency_groups,
 				}
 
 		if toml_dict["project"] is not None:
@@ -478,6 +502,8 @@ class PyProject:
 		for key, value in d.items():
 			if key == "build-system":
 				key = "build_system"
+			elif key == "dependency-groups":
+				key = "dependency_groups"
 
 			kwargs[key] = value
 
@@ -494,4 +520,5 @@ class PyProject:
 				"build_system": self.build_system,
 				"project": self.project,
 				"tool": self.tool,
+				"dependency_groups": self.dependency_groups,
 				}

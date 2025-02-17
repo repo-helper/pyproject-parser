@@ -2,6 +2,7 @@
 from typing import Callable, Type, TypeVar, Union
 
 # 3rd party
+from dom_toml.decoder import InlineTableDict
 from packaging.markers import Marker
 from packaging.requirements import Requirement
 from packaging.specifiers import SpecifierSet
@@ -46,3 +47,11 @@ def represent_readme_or_license(  # noqa: MAN002
 		data: Union[Readme, License],
 		):
 	return dumper.represent_dict(data.to_dict())
+
+
+@_representer_for(InlineTableDict)
+def represent_inline_table(  # noqa: MAN002
+		dumper: RegressionYamlDumper,
+		data: InlineTableDict,
+		):
+	return dumper.represent_dict(dict(data))
