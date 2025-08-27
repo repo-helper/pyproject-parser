@@ -33,6 +33,12 @@ from pyproject_parser.utils import PyProjectDeprecationWarning, _load_toml
 		[
 				*valid_pep621_config,
 				pytest.param(f"{OPTIONAL_DEPENDENCIES}dev-test = ['black']\n", id="optional-dependencies-hyphen"),
+				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'GPL-3.0-or-later'\n", id="pep639-gpl"),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\n",
+						id="pep639-and-or",
+						),
+				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'LicenseRef-My-Custom-License'\n", id="pep639-custom"),
 				]
 		)
 def test_pep621_class_valid_config(
@@ -57,7 +63,18 @@ class ReducedPEP621Parser(PEP621Parser, inherit_defaults=True):
 	keys = ["name", "version", "dependencies"]
 
 
-@pytest.mark.parametrize("toml_config", valid_pep621_config)
+@pytest.mark.parametrize(
+		"toml_config",
+		[
+				*valid_pep621_config,
+				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'GPL-3.0-or-later'\n", id="pep639-gpl"),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\n",
+						id="pep639-and-or",
+						),
+				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'LicenseRef-My-Custom-License'\n", id="pep639-custom"),
+				]
+		)
 def test_pep621_subclass(
 		toml_config: str,
 		tmp_pathplus: PathPlus,
@@ -386,6 +403,24 @@ def test_pep621_class_bad_config_license(
 						TypeError,
 						"Invalid extra name 'number#1'",
 						id="extra_invalid_c",
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense = 'GPL-4.0'\n",
+						BadConfigError,
+						r"'project.license-key' is not a valid SPDX Expression: \tUnknown license key\(s\): GPL-4.0",
+						id="pep639-gpl4",
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense = 'MIX an (Apache-2.0'\n",
+						BadConfigError,
+						r"'project.license-key' is not a valid SPDX Expression: \tInvalid expression nesting such as \(AND xx\) for token: \"\(\" at position: 7",
+						id="pep639-mangled",
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense = 'My-Custom-License'\n",
+						BadConfigError,
+						r"'project.license-key' is not a valid SPDX Expression: \tUnknown license key\(s\): My-Custom-License",
+						id="pep639-custom",
 						),
 				]
 		)

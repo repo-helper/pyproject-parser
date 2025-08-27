@@ -242,6 +242,8 @@ class License:
 	.. latex:vspace:: 20px
 
 	.. autosummary-widths:: 6/16
+
+	.. versionchanged:: 0.14.0  Add ``expression`` option.
 	"""
 
 	#: The path to the license file.
@@ -250,10 +252,19 @@ class License:
 	#: The content of the license.
 	text: Optional[str] = attr.ib(default=None)
 
+	#: An SPDX License Expression (for :pep:`639`).
+	expression: Optional[str] = attr.ib(default=None)
+
 	def __attrs_post_init__(self) -> None:
 		# Sanity checks the supplied arguments
-		if self.text is None and self.file is None:
-			raise TypeError(f"At least one of 'text' and 'file' must be supplied to {self.__class__!r}")
+		if self.expression:
+			if self.text is not None or self.file is not None:
+				raise TypeError(
+						f"Cannot supply a licence expression alongside 'text' and/or 'file' to {self.__class__!r}"
+						)
+		else:
+			if self.text is None and self.file is None:
+				raise TypeError(f"At least one of 'text' and 'file' must be supplied to {self.__class__!r}")
 
 		# if self.text is not None and self.file is not None:
 		# 	raise TypeError("'text' and 'filename' are mutually exclusive.")
@@ -294,6 +305,8 @@ class License:
 			as_dict["file"] = self.file.as_posix()
 		if self.text is not None:
 			as_dict["text"] = self.text
+		if self.expression is not None:
+			as_dict["expression"] = self.expression
 
 		return as_dict
 

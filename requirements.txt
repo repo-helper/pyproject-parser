@@ -2,6 +2,7 @@ apeye-core>=1.0.0
 attrs>=20.3.0
 dom-toml>=2.0.0
 domdf-python-tools>=2.8.0
+license-expression>=30.0.0
 natsort>=7.1.1
 packaging>=20.9
 shippinglabel>=1.0.0

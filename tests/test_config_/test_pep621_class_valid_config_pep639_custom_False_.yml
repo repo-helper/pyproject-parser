@@ -1,0 +1,5 @@
+dynamic: []
+license:
+  expression: LicenseRef-My-Custom-License
+name: spam
+version: 2020.0.0

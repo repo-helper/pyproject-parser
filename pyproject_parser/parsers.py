@@ -36,6 +36,7 @@ from abc import ABCMeta
 from typing import Any, Callable, ClassVar, Dict, Iterable, List, Mapping, Set, Union, cast
 
 # 3rd party
+import license_expression  # type: ignore[import]
 from apeye_core import URL
 from apeye_core.email_validator import EmailSyntaxError, validate_email
 from dom_toml.parser import TOML_TYPES, AbstractConfigParser, BadConfigError, construct_path
@@ -50,7 +51,12 @@ from shippinglabel.requirements import ComparableRequirement, combine_requiremen
 # this package
 from pyproject_parser.classes import License, Readme, _NormalisedName
 from pyproject_parser.type_hints import Author, BuildSystemDict, DependencyGroupsDict, ProjectDict
-from pyproject_parser.utils import PyProjectDeprecationWarning, content_type_from_filename, render_readme
+from pyproject_parser.utils import (
+		PyProjectDeprecationWarning,
+		content_type_from_filename,
+		indent_join,
+		render_readme
+		)
 
 __all__ = [
 		"RequiredKeysConfigParser",
@@ -599,13 +605,13 @@ class PEP621Parser(RequiredKeysConfigParser):
 			raise
 
 	@staticmethod
-	@_documentation_url("https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.license")
+	@_documentation_url("https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license")
 	def parse_license(config: Dict[str, TOML_TYPES]) -> License:
 		"""
 		Parse the :pep621:`license` key.
 
-		* **Format**: :toml:`Table`
-		* **Core Metadata**: :core-meta:`License`
+		* **Format**: :toml:`Table` or :toml:`String`
+		* **Core Metadata**: :core-meta:`License` or :core-meta:`License-Expression`
 
 		The table may have one of two keys:
 
@@ -614,6 +620,9 @@ class PEP621Parser(RequiredKeysConfigParser):
 		* ``text`` -- string value which is the license of the project.
 
 		These keys are mutually exclusive,  so a tool MUST raise an error if the metadata specifies both keys.
+
+		Alternatively, for :pep:`639` support, the value may be a string giving an
+		`SPDX License Expression <https://packaging.python.org/en/latest/glossary/#term-License-Expression>`_.
 
 		:bold-title:`Example:`
 
@@ -631,11 +640,31 @@ class PEP621Parser(RequiredKeysConfigParser):
 			and then the user promises not to redistribute it.
 			\"\"\"
 
+			[project]
+			license = "MIT AND (Apache-2.0 OR BSD-2-Clause)"
+
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""  # noqa: D300,D301
 
 		project_license = config["license"]
 
+		if isinstance(project_license, str):
+			# PEP 639
+			if project_license.startswith("LicenseRef-"):
+				return License(expression=project_license)
+			else:
+				licensing = license_expression.get_spdx_licensing()
+				validated_spdx = licensing.validate(project_license)
+				if validated_spdx.errors:
+					# validated_spdx.errors.append("Another Error")
+					warning_msg = "'project.license-key' is not a valid SPDX Expression: "
+					warning_msg += indent_join(validated_spdx.errors)
+					raise BadConfigError(warning_msg)
+				else:
+					# TODO: normalise, maybe from validated_spdx object
+					return License(expression=project_license)
+
+		# Traditional PEP 621
 		if "text" in project_license and "file" in project_license:
 			raise BadConfigError(
 					"The 'project.license.file' and 'project.license.text' keys "

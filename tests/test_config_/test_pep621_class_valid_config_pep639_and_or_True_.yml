@@ -1,0 +1,18 @@
+authors: []
+classifiers: []
+dependencies: []
+description: null
+dynamic: []
+entry-points: {}
+gui-scripts: {}
+keywords: []
+license:
+  expression: MIT AND (Apache-2.0 OR BSD-2-Clause)
+maintainers: []
+name: spam
+optional-dependencies: {}
+readme: null
+requires-python: null
+scripts: {}
+urls: {}
+version: 2020.0.0

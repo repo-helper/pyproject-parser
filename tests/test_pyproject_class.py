@@ -12,7 +12,13 @@ from pyproject_examples import (
 		valid_buildsystem_config,
 		valid_pep621_config
 		)
-from pyproject_examples.example_configs import COMPLETE_A, COMPLETE_A_WITH_FILES, COMPLETE_B, COMPLETE_PROJECT_A
+from pyproject_examples.example_configs import (
+		COMPLETE_A,
+		COMPLETE_A_WITH_FILES,
+		COMPLETE_B,
+		COMPLETE_PROJECT_A,
+		MINIMAL_CONFIG
+		)
 
 # this package
 from pyproject_parser import PyProject
@@ -32,6 +38,12 @@ typing-test = [{include-group = "typing"}, {include-group = "test"}, "useful-typ
 		[
 				*valid_pep621_config,
 				*valid_buildsystem_config,
+				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'GPL-3.0-or-later'\n", id="pep639-gpl"),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\n",
+						id="pep639-and-or",
+						),
+				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'LicenseRef-My-Custom-License'\n", id="pep639-custom"),
 				pytest.param(COMPLETE_DEPENDENCY_GROUPS, id="complete-dependency-groups"),
 				]
 		)
@@ -69,7 +81,13 @@ def test_from_dict(toml_config: str, tmp_pathplus: PathPlus):
 		[
 				*valid_pep621_config,
 				*valid_buildsystem_config,
-				pytest.param(COMPLETE_A_WITH_FILES, id="COMPLETE_A_WITH_FILES")
+				pytest.param(COMPLETE_A_WITH_FILES, id="COMPLETE_A_WITH_FILES"),
+				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'GPL-3.0-or-later'\n", id="pep639-gpl"),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\n",
+						id="pep639-and-or",
+						),
+				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'LicenseRef-My-Custom-License'\n", id="pep639-custom"),
 				]
 		)
 def test_valid_config_resolve_files(
@@ -201,6 +219,24 @@ def test_valid_config_resolve_files(
 						TypeError,
 						"Invalid extra name 'number#1'",
 						id="extra_invalid_c",
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense = 'GPL-4.0'\n",
+						BadConfigError,
+						r"'project.license-key' is not a valid SPDX Expression: \tUnknown license key\(s\): GPL-4.0",
+						id="pep639-gpl4",
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense = 'MIX an (Apache-2.0'\n",
+						BadConfigError,
+						r"'project.license-key' is not a valid SPDX Expression: \tInvalid expression nesting such as \(AND xx\) for token: \"\(\" at position: 7",
+						id="pep639-mangled",
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense = 'My-Custom-License'\n",
+						BadConfigError,
+						r"'project.license-key' is not a valid SPDX Expression: \tUnknown license key\(s\): My-Custom-License",
+						id="pep639-custom",
 						),
 				# For Part 2
 				# pytest.param(

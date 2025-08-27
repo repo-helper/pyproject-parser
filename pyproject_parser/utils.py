@@ -31,7 +31,8 @@ import functools
 import io
 import os
 import sys
-from typing import TYPE_CHECKING, Any, Dict, Optional
+import textwrap
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Optional
 
 # 3rd party
 import dom_toml
@@ -43,7 +44,14 @@ if TYPE_CHECKING:
 	# this package
 	from pyproject_parser.type_hints import ContentTypes
 
-__all__ = ["render_markdown", "render_rst", "content_type_from_filename", "PyProjectDeprecationWarning"]
+__all__ = [
+		"render_markdown",
+		"render_rst",
+		"content_type_from_filename",
+		"PyProjectDeprecationWarning",
+		"indent_join",
+		"indent_with_tab"
+		]
 
 
 def render_markdown(content: str) -> None:
@@ -187,3 +195,44 @@ def _load_toml(filename: PathLike, ) -> Dict[str, Any]:
 	"""
 
 	return dom_toml.load(filename)
+
+
+def indent_join(iterable: Iterable[str]) -> str:
+	"""
+	Join an iterable of strings with newlines, and indent each line with a tab if there is more then one element.
+
+	:param iterable:
+
+	:rtype:
+
+	.. versionadded:: 0.14.0
+	"""
+
+	iterable = list(iterable)
+	if len(iterable) > 1:
+		if not iterable[0] == '':
+			iterable.insert(0, '')
+
+	return indent_with_tab(textwrap.dedent('\n'.join(iterable)))
+
+
+def indent_with_tab(
+		text: str,
+		depth: int = 1,
+		predicate: Optional[Callable[[str], bool]] = None,
+		) -> str:
+	r"""
+	Adds ``'\t'`` to the beginning of selected lines in 'text'.
+
+	:param text: The text to indent.
+	:param depth: The depth of the indentation.
+	:param predicate: If given, ``'\t'``  will only be added to the lines where ``predicate(line)``
+		is :py:obj`True`. If ``predicate`` is not provided, it will default to adding ``'\t'``
+		to all non-empty lines that do not consist solely of whitespace characters.
+
+	:rtype:
+
+	.. versionadded:: 0.14.0
+	"""
+
+	return textwrap.indent(text, '\t' * depth, predicate=predicate)
