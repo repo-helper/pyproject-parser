@@ -4,7 +4,6 @@ from typing import Union
 
 # 3rd party
 import pytest
-from coincidence.regressions import AdvancedDataRegressionFixture
 from dom_toml.parser import BadConfigError
 
 # this package
@@ -32,7 +31,7 @@ def test_content_type_from_filename(filename: Union[str, pathlib.Path], expected
 	assert content_type_from_filename(filename) == expected
 
 
-def test_render_rst_error(capsys, advanced_data_regression: AdvancedDataRegressionFixture):
+def test_render_rst_error(capsys):
 	pytest.importorskip("readme_renderer")
 
 	with pytest.raises(BadConfigError, match="Error rendering README."):
@@ -43,7 +42,7 @@ def test_render_rst_error(capsys, advanced_data_regression: AdvancedDataRegressi
 	assert outerr.out == ''
 
 
-def test_render_rst_error_filename(capsys, advanced_data_regression: AdvancedDataRegressionFixture):
+def test_render_rst_error_filename(capsys):
 	pytest.importorskip("readme_renderer")
 
 	with pytest.raises(BadConfigError, match="Error rendering README."):

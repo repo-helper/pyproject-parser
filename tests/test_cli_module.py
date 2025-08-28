@@ -4,7 +4,7 @@ import email.headerregistry
 import re
 import sys
 import warnings
-from typing import Type
+from typing import Type, cast
 
 # 3rd party
 import click
@@ -109,7 +109,7 @@ def test_resolve_class():
 	with pytest.raises(click.BadOptionUsage, match="Invalid syntax for '--class'") as e:
 		resolve_class("collections.Counter", "class")
 
-	assert e.value.option_name == "class"
+	assert cast(click.BadOptionUsage, e.value).option_name == "class"
 
 
 @pytest.mark.filterwarnings("default")
