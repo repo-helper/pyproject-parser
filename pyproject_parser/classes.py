@@ -296,7 +296,10 @@ class License:
 		"""
 		Construct a dictionary containing the keys of the :class:`~.License` object.
 
+		:rtype:
+
 		.. seealso:: :meth:`~.License.to_pep621_dict` and :meth:`~.License.from_dict`
+		.. latex:clearpage::
 		"""
 
 		as_dict = {}
@@ -337,7 +340,6 @@ class License:
 		:rtype:
 
 		.. seealso:: :meth:`~.Readme.from_dict`
-		.. latex:clearpage::
 		"""  # noqa: D400
 
 		as_dict = self.to_dict()

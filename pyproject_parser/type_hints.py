@@ -103,6 +103,7 @@ ProjectDict = TypedDict(
 				"readme": Optional[Readme],
 				"requires-python": Optional[Marker],
 				"license": Optional[License],
+				"license-files": List[str],
 				"authors": List["Author"],
 				"maintainers": List["Author"],
 				"keywords": List[str],

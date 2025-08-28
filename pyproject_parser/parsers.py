@@ -614,6 +614,8 @@ class PEP621Parser(RequiredKeysConfigParser):
 		* **Format**: :toml:`Table` or :toml:`String`
 		* **Core Metadata**: :core-meta:`License` or :core-meta:`License-Expression`
 
+		.. versionchanged:: 0.14.0  Added support for :pep:`639` license expressions.
+
 		The table may have one of two keys:
 
 		* ``file`` -- a string value that is a relative file path to the file which contains
@@ -812,6 +814,8 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		Both keys are optional.
 
+		.. latex:clearpage::
+
 		1. If only ``name`` is provided, the value goes in :core-meta:`Maintainer`.
 		2. If only ``email`` is provided, the value goes in :core-meta:`Maintainer-email`.
 		3. If both ``email`` and ``name`` are provided, the value goes in :core-meta:`Maintainer-email`,
@@ -878,6 +882,10 @@ class PEP621Parser(RequiredKeysConfigParser):
 			]
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
+
+		:rtype:
+
+		.. latex:clearpage::
 		"""
 
 		parsed_classifiers = set()
