@@ -1,0 +1,20 @@
+authors: []
+classifiers: []
+dependencies: []
+description: null
+dynamic: []
+entry-points: {}
+gui-scripts: {}
+keywords: []
+license: null
+license-files:
+- AUTHORS*
+- LICEN[CS]E*
+maintainers: []
+name: spam
+optional-dependencies: {}
+readme: null
+requires-python: null
+scripts: {}
+urls: {}
+version: 2020.0.0

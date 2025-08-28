@@ -334,6 +334,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 			"readme",
 			"requires-python",
 			"license",
+			"license-files",
 			"authors",
 			"maintainers",
 			"keywords",
@@ -677,6 +678,51 @@ class PEP621Parser(RequiredKeysConfigParser):
 			return License(project_license["file"])
 		else:
 			raise BadConfigError("The 'project.license' table should contain one of 'text' or 'file'.")
+
+	# TODO: equivalent of PEP 621 direcrive for 639
+	@_documentation_url("https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license-files")
+	def parse_license_files(self, config: Dict[str, TOML_TYPES]) -> List[str]:
+		"""
+		Parse the ``license-files`` key, giving paths to the licence(s) for the project.
+
+		* **Format**: :toml:`Array` of :toml:`strings <string>`
+		* **Core Metadata**: :core-meta:`License-Files`
+
+		.. versionadded:: 0.14.0
+
+		.. latex:vspace:: -5px
+
+		:bold-title:`Example:`
+
+		.. code-block:: TOML
+
+			[project]
+			license-files = ["LICEN[CS]E*", "vendored/licenses/*.txt", "AUTHORS.md"]
+
+		.. latex:vspace:: -5px
+
+		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
+		"""
+
+		parsed_paths = set()
+		key_path = [self.table_name, "license-files"]
+
+		license_files: List[str] = config["license-files"]
+		self.assert_sequence_not_str(license_files, key_path)
+
+		for idx, pattern in enumerate(license_files):
+			name = construct_path(key_path) + f"[{idx}]"
+			self.assert_indexed_type(pattern, str, key_path, idx=idx)
+			if pattern.startswith('/'):
+				raise BadConfigError(f"{name!r}: pattern cannot start with '/'")
+			if '\\' in pattern:
+				raise BadConfigError(f"{name!r}: pattern cannot contain '\\'")
+			if ".." in pattern:
+				raise BadConfigError(f"{name!r}: pattern cannot contain '..'")
+
+			parsed_paths.add(pattern)
+
+		return natsorted(parsed_paths, alg=ns.GROUPLETTERS)
 
 	@staticmethod
 	def _parse_authors(config: Dict[str, TOML_TYPES], key_name: str = "authors") -> List[Author]:

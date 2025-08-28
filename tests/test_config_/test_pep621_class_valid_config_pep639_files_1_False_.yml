@@ -1,0 +1,6 @@
+dynamic: []
+license-files:
+- AUTHORS*
+- LICEN[CS]E*
+name: spam
+version: 2020.0.0

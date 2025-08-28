@@ -51,6 +51,10 @@ typing-test = [{include-group = "typing"}, {include-group = "test"}, "useful-typ
 						f"[project]\nname = 'spam'\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\nversion = '2020.0.0'\n",
 						id="PEP639"
 						),
+				pytest.param(
+						f"[project]\nname = 'spam'\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\nversion = '2020.0.0'\n",
+						id="PEP639-FILES"
+						),
 				]
 		)
 @pytest.mark.parametrize("show_diff", [True, False])
@@ -82,7 +86,7 @@ def test_reformat(
 	with in_directory(tmp_pathplus):
 		result = cli_runner.invoke(reformat, args=args, catch_exceptions=False)
 
-	assert result.exit_code == 0
+	assert result.exit_code == 0, result.stdout
 
 	advanced_file_regression.check_file(tmp_pathplus / "pyproject.toml")
 	assert result.stdout == "Reformatting 'pyproject.toml'\n"

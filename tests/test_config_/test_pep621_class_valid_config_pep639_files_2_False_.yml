@@ -1,0 +1,6 @@
+dynamic: []
+license-files:
+- licenses/LICENSE.CC0
+- licenses/LICENSE.MIT
+name: spam
+version: 2020.0.0

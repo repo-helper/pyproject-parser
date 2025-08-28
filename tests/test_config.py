@@ -39,6 +39,17 @@ from pyproject_parser.utils import PyProjectDeprecationWarning, _load_toml
 						id="pep639-and-or",
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'LicenseRef-My-Custom-License'\n", id="pep639-custom"),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\n", id="pep639-files-1"
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense-files = ['licenses/LICENSE.MIT', 'licenses/LICENSE.CC0']\n",
+						id="pep639-files-2"
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense-files = ['LICENSE.txt', 'licenses/*']\n", id="pep639-files-3"
+						),
+				pytest.param(f"{MINIMAL_CONFIG}\nlicense-files = []\n", id="pep639-files-empty"),
 				]
 		)
 def test_pep621_class_valid_config(
@@ -421,6 +432,30 @@ def test_pep621_class_bad_config_license(
 						BadConfigError,
 						r"'project.license-key' is not a valid SPDX Expression: \tUnknown license key\(s\): My-Custom-License",
 						id="pep639-custom",
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense-files = 'LICENSE'\n",
+						TypeError,
+						"Invalid type for 'project.license-files': expected <class 'collections.abc.Sequence'>, got <class 'str'>",
+						id="pep639-files-string",
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense-files = ['../LICENSE']\n",
+						BadConfigError,
+						r"'project.license-files\[0\]': pattern cannot contain '..'",
+						id="pep639-files-1",
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense-files = ['/home/user/project/LICENSE']\n",
+						BadConfigError,
+						r"'project.license-files\[0\]': pattern cannot start with '/'",
+						id="pep639-files-2",
+						),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense-files = ['vendor\\LICENSE.MIT']\n",
+						BadConfigError,
+						r"'project.license-files\[0\]': pattern cannot contain '\\'",
+						id="pep639-files-3",
 						),
 				]
 		)

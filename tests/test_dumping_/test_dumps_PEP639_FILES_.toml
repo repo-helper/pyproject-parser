@@ -1,0 +1,7 @@
+[project]
+name = "spam"
+version = "2020.0.0"
+license-files = [ "AUTHORS*", "LICEN[CS]E*",]
+dynamic = []
+
+[tool]
