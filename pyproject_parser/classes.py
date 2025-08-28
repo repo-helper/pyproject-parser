@@ -37,7 +37,7 @@ Classes to represent readme and license files.
 # stdlib
 import pathlib
 from contextlib import suppress
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Optional, Type, TypeVar, Union
 
 # 3rd party
 import attr
@@ -345,6 +345,23 @@ class License:
 			as_dict.pop("text")
 
 		return as_dict
+
+	def to_pep639(self) -> Union[Dict[str, str], str]:
+		"""
+		Construct a dictionary or string representing the :class:`~.License` object,
+		suitable for use in :pep:`639`-compatible ``pyproject.toml`` configuration.
+
+		:rtype:
+
+		.. versionadded:: 0.14.0
+		.. seealso:: :meth:`~.Readme.from_dict`, :meth:`~.License.to_pep621_dict`
+		.. latex:clearpage::
+		"""  # noqa: D400
+
+		if self.expression is not None:
+			return self.expression
+
+		return self.to_pep621_dict()
 
 
 class _NormalisedName(str):

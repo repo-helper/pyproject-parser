@@ -47,6 +47,10 @@ typing-test = [{include-group = "typing"}, {include-group = "test"}, "useful-typ
 				pytest.param(UNORDERED, id="UNORDERED"),
 				pytest.param(COMPLETE_UNDERSCORE_NAME, id="COMPLETE_UNDERSCORE_NAME"),
 				pytest.param(COMPLETE_DEPENDENCY_GROUPS, id="COMPLETE_DEPENDENCY_GROUPS"),
+				pytest.param(
+						f"[project]\nname = 'spam'\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\nversion = '2020.0.0'\n",
+						id="PEP639"
+						),
 				]
 		)
 @pytest.mark.parametrize("show_diff", [True, False])
@@ -84,7 +88,19 @@ def test_reformat(
 	assert result.stdout == "Reformatting 'pyproject.toml'\n"
 
 
-@pytest.mark.parametrize("toml_string", [*valid_pep621_config, *valid_buildsystem_config])
+@pytest.mark.parametrize(
+		"toml_string",
+		[
+				*valid_pep621_config,
+				*valid_buildsystem_config,
+				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'GPL-3.0-or-later'\n", id="PEP639-GPL"),
+				pytest.param(
+						f"{MINIMAL_CONFIG}\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\n",
+						id="PEP639-AND-OR",
+						),
+				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'LicenseRef-My-Custom-License'\n", id="PEP639-CUSTOM"),
+				]
+		)
 def test_check(
 		toml_string: str,
 		tmp_pathplus: PathPlus,

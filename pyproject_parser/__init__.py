@@ -405,7 +405,7 @@ class PyProject:
 			if "license" in toml_dict["project"] and toml_dict["project"]["license"] is not None:
 				toml_dict["project"] = {  # type: ignore[typeddict-item]
 					**toml_dict["project"],  # type: ignore[misc,arg-type]
-					"license": toml_dict["project"]["license"].to_pep621_dict()
+					"license": toml_dict["project"]["license"].to_pep639()
 					}
 
 			if "readme" in toml_dict["project"] and toml_dict["project"]["readme"] is not None:

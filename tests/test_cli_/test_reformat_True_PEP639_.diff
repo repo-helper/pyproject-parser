@@ -1,0 +1,15 @@
+Reformatting 'pyproject.toml'
+--- pyproject.toml	(original)
++++ pyproject.toml	(reformatted)
+@@ -1,5 +1,8 @@
+ [project]
+-name = 'spam'
+-license = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'
+-version = '2020.0.0'
++name = "spam"
++version = "2020.0.0"
++license = "MIT AND (Apache-2.0 OR BSD-2-Clause)"
++dynamic = []
+
++[tool]
++
