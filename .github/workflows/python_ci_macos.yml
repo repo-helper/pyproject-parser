@@ -22,7 +22,7 @@ jobs:
     runs-on: "macos-${{ matrix.config.os-ver }}"
     continue-on-error: ${{ matrix.config.experimental }}
     env:
-      USING_COVERAGE: '3.7,3.8,3.9,3.10,3.11,3.12,3.13,pypy-3.7,pypy-3.8,pypy-3.9'
+      USING_COVERAGE: '3.7,3.8,3.9,3.10,3.11,3.12,3.13,pypy-3.7,pypy-3.8'
 
     strategy:
       fail-fast: False
@@ -37,7 +37,6 @@ jobs:
           - {python-version: "3.13", os-ver: "14", testenvs: "py313,build", experimental: False}
           - {python-version: "pypy-3.7", os-ver: "13", testenvs: "pypy37,build", experimental: False}
           - {python-version: "pypy-3.8", os-ver: "14", testenvs: "pypy38,build", experimental: False}
-          - {python-version: "pypy-3.9", os-ver: "14", testenvs: "pypy39,build", experimental: True}
 
     steps:
       - name: Checkout 🛎️
