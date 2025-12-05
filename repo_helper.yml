@@ -78,7 +78,7 @@ keywords:
 extras_require:
  readme:
   - readme-renderer[md]>=27.0
-  - docutils>=0.16
+  - docutils>=0.16,<0.22
  cli:
   - consolekit>=1.4.1
   - click>=7.1.2
