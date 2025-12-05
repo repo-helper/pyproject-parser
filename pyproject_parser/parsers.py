@@ -36,7 +36,7 @@ from abc import ABCMeta
 from typing import Any, Callable, ClassVar, Dict, Iterable, List, Mapping, Set, Union, cast
 
 # 3rd party
-import license_expression  # type: ignore[import]
+import license_expression  # type: ignore[import-untyped]
 from apeye_core import URL
 from apeye_core.email_validator import EmailSyntaxError, validate_email
 from dom_toml.parser import TOML_TYPES, AbstractConfigParser, BadConfigError, construct_path
@@ -1256,6 +1256,6 @@ class PEP621Parser(RequiredKeysConfigParser):
 		super_parsed_config = super().parse(config, set_defaults=set_defaults)
 
 		return {
-				**super_parsed_config,  # type: ignore[misc]
+				**super_parsed_config,  # type: ignore[typeddict-item]
 				"dynamic": dynamic_fields,
 				}

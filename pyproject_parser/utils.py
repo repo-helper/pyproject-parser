@@ -67,7 +67,7 @@ def render_markdown(content: str) -> None:
 
 	try:
 		# 3rd party
-		import cmarkgfm  # type: ignore[import]  # noqa: F401
+		import cmarkgfm  # type: ignore[import-untyped]  # noqa: F401
 		import readme_renderer.markdown
 	except ImportError:  # pragma: no cover
 		return
