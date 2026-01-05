@@ -27,28 +27,6 @@ lines_between_types = 0
 use_parentheses = true
 remove_redundant_aliases = true
 default_section = "THIRDPARTY"
-known_third_party = [
-    "apeye_core",
-    "attrs",
-    "coincidence",
-    "coverage",
-    "coverage_pyver_pragma",
-    "dom_toml",
-    "domdf_python_tools",
-    "importlib_metadata",
-    "license_expression",
-    "natsort",
-    "nh3",
-    "packaging",
-    "pyproject_examples",
-    "pytest",
-    "pytest_cov",
-    "pytest_randomly",
-    "pytest_timeout",
-    "shippinglabel",
-    "tomli",
-    "typing_extensions",
-]
 known_first_party = [ "pyproject_parser",]
 
 [config]
