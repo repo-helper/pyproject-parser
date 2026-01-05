@@ -124,11 +124,11 @@ package = "whey"
 				pytest.param(COMPLETE_PROJECT_A, id="COMPLETE_PROJECT_A"),
 				pytest.param(
 						f"[project]\nname = 'spam'\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\nversion = '2020.0.0'\n",
-						id="PEP639"
+						id="PEP639",
 						),
 				pytest.param(
 						f"[project]\nname = 'spam'\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\nversion = '2020.0.0'\n",
-						id="PEP639-FILES"
+						id="PEP639-FILES",
 						),
 				]
 		)
@@ -157,11 +157,11 @@ def _param(readme_block: str, **kwargs):  # noqa: MAN002
 				_param(readme_block="readme = 'README.rst'", id="string"),
 				_param(
 						readme_block="[project.readme]\ntext = 'This is the README'\ncontent-type = 'text/x-rst'",
-						id="dict_text"
+						id="dict_text",
 						),
 				_param(
 						readme_block="[project.readme]\nfile = 'README.rst'\ncontent-type = 'text/x-rst'",
-						id="dict_file"
+						id="dict_file",
 						),
 				]
 		)
@@ -192,11 +192,11 @@ def test_dumps_readme(
 				pytest.param(COMPLETE_UNDERSCORE_NAME, id="COMPLETE_UNDERSCORE_NAME"),
 				pytest.param(
 						f"[project]\nname = 'spam'\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\nversion = '2020.0.0'\n",
-						id="PEP639"
+						id="PEP639",
 						),
 				pytest.param(
 						f"[project]\nname = 'spam'\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\nversion = '2020.0.0'\n",
-						id="PEP639-FILES"
+						id="PEP639-FILES",
 						),
 				]
 		)

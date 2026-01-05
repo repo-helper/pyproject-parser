@@ -55,7 +55,7 @@ BuildSystemDict = TypedDict(
 		{
 				"requires": List[ComparableRequirement],
 				"build-backend": Optional[str],
-				"backend-path": Optional[List[str]]
+				"backend-path": Optional[List[str]],
 				}
 		)
 
@@ -115,7 +115,7 @@ ProjectDict = TypedDict(
 				"dependencies": List[ComparableRequirement],
 				"optional-dependencies": Dict[str, List[ComparableRequirement]],
 				"dynamic": List[Dynamic],
-				}
+				},
 		)
 
 
@@ -151,6 +151,6 @@ _PyProjectAsTomlDict = TypedDict(
 				"build-system": Optional[BuildSystemDict],
 				"project": Optional[ProjectDict],
 				"tool": Dict[str, Any],
-				"dependency-groups": Optional[DependencyGroupsDict]
+				"dependency-groups": Optional[DependencyGroupsDict],
 				},
 		)

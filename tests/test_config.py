@@ -40,14 +40,16 @@ from pyproject_parser.utils import PyProjectDeprecationWarning, _load_toml
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'LicenseRef-My-Custom-License'\n", id="pep639-custom"),
 				pytest.param(
-						f"{MINIMAL_CONFIG}\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\n", id="pep639-files-1"
+						f"{MINIMAL_CONFIG}\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\n",
+						id="pep639-files-1",
 						),
 				pytest.param(
 						f"{MINIMAL_CONFIG}\nlicense-files = ['licenses/LICENSE.MIT', 'licenses/LICENSE.CC0']\n",
-						id="pep639-files-2"
+						id="pep639-files-2",
 						),
 				pytest.param(
-						f"{MINIMAL_CONFIG}\nlicense-files = ['LICENSE.txt', 'licenses/*']\n", id="pep639-files-3"
+						f"{MINIMAL_CONFIG}\nlicense-files = ['LICENSE.txt', 'licenses/*']\n",
+						id="pep639-files-3",
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense-files = []\n", id="pep639-files-empty"),
 				]
@@ -129,7 +131,7 @@ pep621_config_for_normalize_test = [
 		'  "Pytest",',
 		'  "d.e.f",',
 		'  "chemistry_tools",',
-		']'
+		']',
 		]
 
 
@@ -201,15 +203,15 @@ def test_pep621_class_valid_config_readme(
 				pytest.param('readme = {file = "README.txt"}', id="txt_file"),
 				pytest.param(
 						'readme = {text = "This is the inline README README.", content-type = "text/x-rst"}',
-						id="text_content_type_rst"
+						id="text_content_type_rst",
 						),
 				pytest.param(
 						'readme = {text = "This is the inline markdown README.", content-type = "text/markdown"}',
-						id="text_content_type_md"
+						id="text_content_type_md",
 						),
 				pytest.param(
 						'readme = {text = "This is the inline README.", content-type = "text/plain"}',
-						id="text_content_type_plain"
+						id="text_content_type_plain",
 						),
 				]
 		)
@@ -255,34 +257,34 @@ def test_pep621_class_valid_config_readme_dict(
 						'readme = {text = "This is the inline README."}',
 						"The 'project.readme.content-type' key must be provided when 'project.readme.text' is given.",
 						BadConfigError,
-						id="text_only"
+						id="text_only",
 						),
 				pytest.param(
 						'readme = {content-type = "text/x-rst"}',
 						"The 'project.readme.content-type' key cannot be provided on its own; "
 						"Please provide the 'project.readme.text' key too.",
 						BadConfigError,
-						id="content_type_only"
+						id="content_type_only",
 						),
 				pytest.param(
 						'readme = {charset = "cp1252"}',
 						"The 'project.readme.charset' key cannot be provided on its own; "
 						"Please provide the 'project.readme.text' key too.",
 						BadConfigError,
-						id="charset_only"
+						id="charset_only",
 						),
 				pytest.param(
 						'readme = {charset = "cp1252", content-type = "text/x-rst"}',
 						"The 'project.readme.content-type' key cannot be provided on its own; "
 						"Please provide the 'project.readme.text' key too.",
 						BadConfigError,
-						id="content_type_charset"
+						id="content_type_charset",
 						),
 				pytest.param(
 						'readme = {text = "This is the inline README", content-type = "application/x-abiword"}',
 						"Unrecognised value for 'project.readme.content-type': 'application/x-abiword'",
 						BadConfigError,
-						id="bad_content_type"
+						id="bad_content_type",
 						),
 				pytest.param(
 						'readme = {file = "README"}',
@@ -294,13 +296,13 @@ def test_pep621_class_valid_config_readme_dict(
 						'readme = {file = "README.doc"}',
 						"Unsupported extension for 'README.doc'",
 						ValueError,
-						id="bad_extension"
+						id="bad_extension",
 						),
 				pytest.param(
 						'readme = {file = "README.doc", text = "This is the README"}',
 						"The 'project.readme.file' and 'project.readme.text' keys are mutually exclusive.",
 						BadConfigError,
-						id="file_and_readme"
+						id="file_and_readme",
 						),
 				]
 		)
@@ -367,12 +369,12 @@ def test_pep621_class_valid_config_license_dict(
 				pytest.param(
 						"license = {}",
 						"The 'project.license' table should contain one of 'text' or 'file'.",
-						id="empty"
+						id="empty",
 						),
 				pytest.param(
 						'license = {text = "MIT", file = "LICENSE.txt"}',
 						"The 'project.license.file' and 'project.license.text' keys are mutually exclusive.",
-						id="double_license"
+						id="double_license",
 						),
 				]
 		)
@@ -637,13 +639,15 @@ valid_dependency_groups_config = [
 		pytest.param('[dependency-groups]\ngroup-a = ["foo"]', id="one-group"),
 		pytest.param(
 				'[dependency-groups]\ngroup-a = ["foo"]\ngroup-b = ["foo>1.0"]\ngroup-c = ["foo<1.0"]\nall = ["foo", {include-group = "group-a"}, {include-group = "group-b"}, {include-group = "group-c"}]',
-				id="full-example"
+				id="full-example",
 				),
 		]
 
 bad_dependency_groups_config = [
 		pytest.param(
-				'[dependency-groups]\ngroup-a = "foo"', BadConfigError, "A dependency group must be an array"
+				'[dependency-groups]\ngroup-a = "foo"',
+				BadConfigError,
+				"A dependency group must be an array",
 				),
 		]
 
@@ -667,7 +671,10 @@ def test_dependency_groups_parser_valid_config(
 
 @pytest.mark.parametrize("config, expects, match", bad_dependency_groups_config)
 def test_dependency_groups_parser_errors(
-		config: str, expects: Type[Exception], match: str, tmp_pathplus: PathPlus
+		config: str,
+		expects: Type[Exception],
+		match: str,
+		tmp_pathplus: PathPlus,
 		):
 	(tmp_pathplus / "pyproject.toml").write_clean(config)
 

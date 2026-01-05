@@ -49,11 +49,11 @@ typing-test = [{include-group = "typing"}, {include-group = "test"}, "useful-typ
 				pytest.param(COMPLETE_DEPENDENCY_GROUPS, id="COMPLETE_DEPENDENCY_GROUPS"),
 				pytest.param(
 						f"[project]\nname = 'spam'\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\nversion = '2020.0.0'\n",
-						id="PEP639"
+						id="PEP639",
 						),
 				pytest.param(
 						f"[project]\nname = 'spam'\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\nversion = '2020.0.0'\n",
-						id="PEP639-FILES"
+						id="PEP639-FILES",
 						),
 				]
 		)
@@ -258,12 +258,13 @@ def test_check_error(
 						id="top_level_typo_caps",
 						),
 				pytest.param(
-						'[project]\nname = "???????12345=============☃"\nversion = "2020.0.0"', id="bad_name"
+						'[project]\nname = "???????12345=============☃"\nversion = "2020.0.0"',
+						id="bad_name",
 						),
 				pytest.param('[project]\nname = "spam"\nversion = "???????12345=============☃"', id="bad_version"),
 				pytest.param(
 						f'{MINIMAL_CONFIG}\nrequires-python = "???????12345=============☃"',
-						id="bad_requires_python"
+						id="bad_requires_python",
 						),
 				pytest.param(f'{MINIMAL_CONFIG}\nauthors = [{{name = "Bob, Alice"}}]', id="author_comma"),
 				]
@@ -294,11 +295,11 @@ exceptions = pytest.mark.parametrize(
 						),
 				pytest.param(
 						FileNotFoundError(2, "No such file or directory", PathPlus("foo.txt")),
-						id="FileNotFoundError_path"
+						id="FileNotFoundError_path",
 						),
 				pytest.param(
 						FileNotFoundError(2, "No such file or directory", PathPlus("foo.txt"), -1, "bar.md"),
-						id="FileNotFoundError_path_move_etc"
+						id="FileNotFoundError_path_move_etc",
 						),
 				pytest.param(
 						FileNotFoundError(2, "The system cannot find the file specified", "foo.txt"),
@@ -306,7 +307,7 @@ exceptions = pytest.mark.parametrize(
 						),
 				pytest.param(
 						FileNotFoundError(2, "The system cannot find the file specified", PathPlus("foo.txt")),
-						id="FileNotFoundError_path_win"
+						id="FileNotFoundError_path_win",
 						),
 				pytest.param(
 						FileNotFoundError(
@@ -316,7 +317,7 @@ exceptions = pytest.mark.parametrize(
 								-1,
 								"bar.md",
 								),
-						id="FileNotFoundError_path_move_etc_win"
+						id="FileNotFoundError_path_move_etc_win",
 						),
 				pytest.param(FileExistsError("foo.txt"), id="FileExistsError"),
 				pytest.param(Exception("Something's awry!"), id="Exception"),
@@ -402,7 +403,7 @@ def test_handle_tracebacks_ignored_exceptions(exception: Type[Exception]):
 				pytest.param("project.authors.[0]", id="first_author"),
 				pytest.param("project.keywords.[3]", id="fourth_keyword"),
 				"project.urls.Source Code",  # Written as `python3 -m pyproject_parser info project.urls."Source Code"`
-				"tool.whey.base-classifiers"
+				"tool.whey.base-classifiers",
 				]
 		)
 @pytest.mark.parametrize("indent", [None, 0, 2, 4])

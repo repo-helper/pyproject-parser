@@ -168,6 +168,8 @@ class BuildSystemParser(RequiredKeysConfigParser):
 		Function to normalize a requirement name per e.g. :pep:`503` (where underscores are replaced by hyphens).
 
 		.. versionadded:: 0.9.0
+
+		:param name:
 		"""
 
 		return normalize(name)
@@ -520,10 +522,8 @@ class PEP621Parser(RequiredKeysConfigParser):
 				raise BadConfigError("The 'project.readme' table cannot be empty.")
 
 			if "file" in readme and "text" in readme:
-				raise BadConfigError(
-						"The 'project.readme.file' and 'project.readme.text' keys "
-						"are mutually exclusive."
-						)
+				msg = "The 'project.readme.file' and 'project.readme.text' keys are mutually exclusive."
+				raise BadConfigError(msg)
 
 			elif set(readme.keys()) in ({"file"}, {"file", "charset"}):
 				readme_encoding = readme.get("charset", "UTF-8")
@@ -537,33 +537,24 @@ class PEP621Parser(RequiredKeysConfigParser):
 				return Readme(file=readme["file"], content_type=readme["content-type"], charset=readme_encoding)
 
 			elif "content-type" in readme and "text" not in readme:
-				raise BadConfigError(
-						"The 'project.readme.content-type' key cannot be provided on its own; "
-						"Please provide the 'project.readme.text' key too."
-						)
+				msg = "The 'project.readme.content-type' key cannot be provided on its own; Please provide the 'project.readme.text' key too."
+				raise BadConfigError(msg)
 
 			elif "charset" in readme and "text" not in readme:
-				raise BadConfigError(
-						"The 'project.readme.charset' key cannot be provided on its own; "
-						"Please provide the 'project.readme.text' key too."
-						)
+				msg = "The 'project.readme.charset' key cannot be provided on its own; Please provide the 'project.readme.text' key too."
+				raise BadConfigError(msg)
 
 			elif "text" in readme:
 				if "content-type" not in readme:
-					raise BadConfigError(
-							"The 'project.readme.content-type' key must be provided "
-							"when 'project.readme.text' is given."
-							)
+					msg = "The 'project.readme.content-type' key must be provided when 'project.readme.text' is given."
+					raise BadConfigError(msg)
 				elif readme["content-type"] not in {"text/markdown", "text/x-rst", "text/plain"}:
-					raise BadConfigError(
-							f"Unrecognised value for 'project.readme.content-type': {readme['content-type']!r}"
-							)
+					msg = f"Unrecognised value for 'project.readme.content-type': {readme['content-type']!r}"
+					raise BadConfigError(msg)
 
 				if "charset" in readme:
-					raise BadConfigError(
-							"The 'project.readme.charset' key cannot be provided "
-							"when 'project.readme.text' is given."
-							)
+					msg = "The 'project.readme.charset' key cannot be provided when 'project.readme.text' is given."
+					raise BadConfigError(msg)
 
 				return Readme(text=readme["text"], content_type=readme["content-type"])
 
@@ -669,10 +660,8 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 		# Traditional PEP 621
 		if "text" in project_license and "file" in project_license:
-			raise BadConfigError(
-					"The 'project.license.file' and 'project.license.text' keys "
-					"are mutually exclusive."
-					)
+			msg = "The 'project.license.file' and 'project.license.text' keys are mutually exclusive."
+			raise BadConfigError(msg)
 		elif "text" in project_license:
 			return License(text=str(project_license["text"]))
 		elif "file" in project_license:
@@ -1047,15 +1036,13 @@ class PEP621Parser(RequiredKeysConfigParser):
 			if normalize(group) in "console-scripts":
 				name = construct_path(["project", "entry-points"])
 				suggested_name = construct_path(["project", "scripts"])
-				raise BadConfigError(
-						f"{name!r} may not contain a {group!r} sub-table. Use {suggested_name!r} instead."
-						)
+				msg = f"{name!r} may not contain a {group!r} sub-table. Use {suggested_name!r} instead."
+				raise BadConfigError(msg)
 			elif normalize(group) in "gui-scripts":
 				name = construct_path(["project", "entry-points"])
 				suggested_name = construct_path(["project", "gui-scripts"])
-				raise BadConfigError(
-						f"{name!r} may not contain a {group!r} sub-table. Use {suggested_name!r} instead."
-						)
+				msg = f"{name!r} may not contain a {group!r} sub-table. Use {suggested_name!r} instead."
+				raise BadConfigError(msg)
 
 			for name, func in sub_table.items():
 				self.assert_value_type(func, str, ["project", "entry-points", group, name])
@@ -1068,6 +1055,8 @@ class PEP621Parser(RequiredKeysConfigParser):
 		Function to normalize a requirement name per e.g. :pep:`503` (where underscores are replaced by hyphens).
 
 		.. versionadded:: 0.9.0
+
+		:param name:
 		"""
 
 		return normalize(name)
@@ -1220,10 +1209,8 @@ class PEP621Parser(RequiredKeysConfigParser):
 					# normalized_extra for part 2
 					parsed_optional_dependencies[extra].add(requirement)
 				else:
-					raise TypeError(
-							f"Invalid type for 'project.optional-dependencies.{extra}[{idx}]': "
-							f"expected {str!r}, got {type(dep)!r}"
-							)
+					msg = f"Invalid type for 'project.optional-dependencies.{extra}[{idx}]': expected {str!r}, got {type(dep)!r}"
+					raise TypeError(msg)
 
 		combined_requirements = {}
 		for extra, deps in parsed_optional_dependencies.items():

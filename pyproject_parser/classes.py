@@ -95,10 +95,8 @@ class Readme:
 		# Sanity checks the supplied arguments
 
 		if self.content_type and not (self.text or self.file):
-			raise ValueError(
-					"'content_type' cannot be provided on its own; "
-					"please provide either 'text' or 'file' or use the 'from_file' method."
-					)
+			msg = "'content_type' cannot be provided on its own; please provide either 'text' or 'file' or use the 'from_file' method."
+			raise ValueError(msg)
 
 		if self.text is None and self.file is None:
 			raise TypeError(f"At least one of 'text' and 'file' must be supplied to {self.__class__!r}")
@@ -259,9 +257,8 @@ class License:
 		# Sanity checks the supplied arguments
 		if self.expression:
 			if self.text is not None or self.file is not None:
-				raise TypeError(
-						f"Cannot supply a licence expression alongside 'text' and/or 'file' to {self.__class__!r}"
-						)
+				msg = f"Cannot supply a licence expression alongside 'text' and/or 'file' to {self.__class__!r}"
+				raise TypeError(msg)
 		else:
 			if self.text is None and self.file is None:
 				raise TypeError(f"At least one of 'text' and 'file' must be supplied to {self.__class__!r}")

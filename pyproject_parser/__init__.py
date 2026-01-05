@@ -108,7 +108,7 @@ def _dump_str(v: str) -> str:
 	return f"{quote_char}{v}{quote_char}"
 
 
-class PyProjectTomlEncoder(dom_toml.TomlEncoder):
+class PyProjectTomlEncoder(dom_toml.TomlEncoder):  # noqa: PRM002
 	"""
 	Custom TOML encoder supporting types in :mod:`pyproject_parser.classes` and packaging_.
 
@@ -130,6 +130,7 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):
 		"""
 		Serialise the given table.
 
+		:param table:
 		:param name: The table name.
 		:param inside_aot:
 
@@ -335,13 +336,15 @@ class PyProject:
 		with in_directory(project_dir):
 			if "build-system" in config:
 				build_system_table = cls.build_system_table_parser.parse(
-						config["build-system"], set_defaults=set_defaults
+						config["build-system"],
+						set_defaults=set_defaults,
 						)
 				keys.remove("build-system")
 
 			if "dependency-groups" in config:
 				dependency_groups_table = cls.dependency_groups_table_parser.parse(
-						config["dependency-groups"], set_defaults=set_defaults
+						config["dependency-groups"],
+						set_defaults=set_defaults,
 						)
 				keys.remove("dependency-groups")
 
@@ -406,7 +409,7 @@ class PyProject:
 				_license = toml_dict["project"]["license"].to_pep639()
 				toml_dict["project"] = {
 						**toml_dict["project"],
-						"license": _license  # type: ignore[typeddict-item]
+						"license": _license,  # type: ignore[typeddict-item]
 						}
 
 			if "readme" in toml_dict["project"] and toml_dict["project"]["readme"] is not None:

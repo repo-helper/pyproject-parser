@@ -45,14 +45,16 @@ typing-test = [{include-group = "typing"}, {include-group = "test"}, "useful-typ
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'LicenseRef-My-Custom-License'\n", id="pep639-custom"),
 				pytest.param(
-						f"{MINIMAL_CONFIG}\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\n", id="pep639-files-1"
+						f"{MINIMAL_CONFIG}\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\n",
+						id="pep639-files-1",
 						),
 				pytest.param(
 						f"{MINIMAL_CONFIG}\nlicense-files = ['licenses/LICENSE.MIT', 'licenses/LICENSE.CC0']\n",
-						id="pep639-files-2"
+						id="pep639-files-2",
 						),
 				pytest.param(
-						f"{MINIMAL_CONFIG}\nlicense-files = ['LICENSE.txt', 'licenses/*']\n", id="pep639-files-3"
+						f"{MINIMAL_CONFIG}\nlicense-files = ['LICENSE.txt', 'licenses/*']\n",
+						id="pep639-files-3",
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense-files = []\n", id="pep639-files-empty"),
 				pytest.param(COMPLETE_DEPENDENCY_GROUPS, id="complete-dependency-groups"),
@@ -100,14 +102,16 @@ def test_from_dict(toml_config: str, tmp_pathplus: PathPlus):
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'LicenseRef-My-Custom-License'\n", id="pep639-custom"),
 				pytest.param(
-						f"{MINIMAL_CONFIG}\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\n", id="pep639-files-1"
+						f"{MINIMAL_CONFIG}\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\n",
+						id="pep639-files-1",
 						),
 				pytest.param(
 						f"{MINIMAL_CONFIG}\nlicense-files = ['licenses/LICENSE.MIT', 'licenses/LICENSE.CC0']\n",
-						id="pep639-files-2"
+						id="pep639-files-2",
 						),
 				pytest.param(
-						f"{MINIMAL_CONFIG}\nlicense-files = ['LICENSE.txt', 'licenses/*']\n", id="pep639-files-3"
+						f"{MINIMAL_CONFIG}\nlicense-files = ['LICENSE.txt', 'licenses/*']\n",
+						id="pep639-files-3",
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense-files = []\n", id="pep639-files-empty"),
 				]
@@ -138,7 +142,7 @@ def test_valid_config_resolve_files(
 						'banana = "fruit"\n[project]\nname = "food"',
 						BadConfigError,
 						"Unexpected top-level key 'banana'. Only 'build-system', 'dependency-groups', 'project' and 'tool' are allowed.",
-						id="unexpected_top_level"
+						id="unexpected_top_level",
 						),
 				pytest.param(
 						"[coverage]\nomit = 'demo.py'\n[flake8]\nselect = ['F401']",

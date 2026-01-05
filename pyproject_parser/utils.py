@@ -50,7 +50,7 @@ __all__ = [
 		"content_type_from_filename",
 		"PyProjectDeprecationWarning",
 		"indent_join",
-		"indent_with_tab"
+		"indent_with_tab",
 		]
 
 
@@ -185,7 +185,7 @@ class PyProjectDeprecationWarning(Warning):
 	"""
 
 
-def _load_toml(filename: PathLike, ) -> Dict[str, Any]:
+def _load_toml(filename: PathLike) -> Dict[str, Any]:
 	r"""
 	Parse TOML from the given file.
 
