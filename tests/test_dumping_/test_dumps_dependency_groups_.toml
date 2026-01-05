@@ -1,0 +1,10 @@
+[project]
+name = "spam"
+version = "2020.0.0"
+dynamic = []
+
+[tool]
+
+[dependency-groups]
+docs = [ "sphinx",]
+test = [ "pytest>7", "coverage",]

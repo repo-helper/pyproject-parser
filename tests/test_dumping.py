@@ -127,8 +127,8 @@ package = "whey"
 						id="PEP639",
 						),
 				pytest.param(
-						f"[project]\nname = 'spam'\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\nversion = '2020.0.0'\n",
-						id="PEP639-FILES",
+						f"[project]\nname = 'spam'\nversion = '2020.0.0'\n[dependency-groups]\ndocs = ['sphinx']\ntest = ['pytest>7', 'coverage']\n",
+						id="dependency-groups",
 						),
 				]
 		)

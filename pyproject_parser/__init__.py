@@ -364,8 +364,6 @@ class PyProject:
 			allowed_top_level = ("build-system", "dependency-groups", "project", "tool")
 
 			for top_level_key in sorted(keys):
-				if top_level_key in allowed_top_level:
-					continue
 
 				if normalize(top_level_key) in allowed_top_level:
 					raise BadConfigError(

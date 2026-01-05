@@ -74,7 +74,14 @@ def test_valid_config(
 	advanced_data_regression.check(config.to_dict())
 
 
-@pytest.mark.parametrize("toml_config", [*valid_pep621_config, *valid_buildsystem_config])
+@pytest.mark.parametrize(
+		"toml_config",
+		[
+				*valid_pep621_config,
+				*valid_buildsystem_config,
+				pytest.param(COMPLETE_DEPENDENCY_GROUPS, id="complete-dependency-groups"),
+				]
+		)
 def test_from_dict(toml_config: str, tmp_pathplus: PathPlus):
 
 	(tmp_pathplus / "pyproject.toml").write_clean(toml_config)
