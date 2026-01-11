@@ -332,7 +332,7 @@ def test_pep621_class_valid_config_license(
 		):
 
 	(tmp_pathplus / "pyproject.toml").write_lines([
-			'[project]',
+			"[project]",
 			'name = "spam"',
 			'version = "2020.0.0"',
 			f'license = {{file = "{filename}"}}',
@@ -351,7 +351,7 @@ def test_pep621_class_valid_config_license_dict(
 		):
 
 	(tmp_pathplus / "pyproject.toml").write_lines([
-			'[project]',
+			"[project]",
 			'name = "spam"',
 			'version = "2020.0.0"',
 			'license = {text = "This is the MIT License"}',
@@ -385,7 +385,7 @@ def test_pep621_class_bad_config_license(
 		):
 
 	(tmp_pathplus / "pyproject.toml").write_lines([
-			'[project]',
+			"[project]",
 			'name = "spam"',
 			'version = "2020.0.0"',
 			license_key,
