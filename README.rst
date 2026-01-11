@@ -113,7 +113,7 @@ pyproject-parser
 	:alt: Maintenance
 
 .. |pypi-downloads| image:: https://img.shields.io/pypi/dm/pyproject-parser
-	:target: https://pypi.org/project/pyproject-parser/
+	:target: https://pypistats.org/packages/pyproject-parser
 	:alt: PyPI - Downloads
 
 .. end shields
