@@ -58,7 +58,7 @@ typing-test = [{include-group = "typing"}, {include-group = "test"}, "useful-typ
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense-files = []\n", id="pep639-files-empty"),
 				pytest.param(COMPLETE_DEPENDENCY_GROUPS, id="complete-dependency-groups"),
-				]
+				],
 		)
 def test_valid_config(
 		toml_config: str,
@@ -80,7 +80,7 @@ def test_valid_config(
 				*valid_pep621_config,
 				*valid_buildsystem_config,
 				pytest.param(COMPLETE_DEPENDENCY_GROUPS, id="complete-dependency-groups"),
-				]
+				],
 		)
 def test_from_dict(toml_config: str, tmp_pathplus: PathPlus):
 
@@ -121,7 +121,7 @@ def test_from_dict(toml_config: str, tmp_pathplus: PathPlus):
 						id="pep639-files-3",
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense-files = []\n", id="pep639-files-empty"),
-				]
+				],
 		)
 def test_valid_config_resolve_files(
 		toml_config: str,
@@ -314,7 +314,7 @@ def test_valid_config_resolve_files(
 				# 		"'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'",
 				# 		id="duplicate_extra_3",
 				# 		),
-				]
+				],
 		)
 def test_bad_config(
 		config: str,
@@ -343,7 +343,7 @@ class WheyPyProject(PyProject):
 				pytest.param(COMPLETE_PROJECT_A, id="COMPLETE_PROJECT_A"),
 				pytest.param(COMPLETE_A, id="COMPLETE_A"),
 				pytest.param(COMPLETE_B, id="COMPLETE_B"),
-				]
+				],
 		)
 def test_custom_pyproject_class(
 		toml_config: str,

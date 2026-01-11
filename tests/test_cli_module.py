@@ -31,7 +31,7 @@ exceptions = pytest.mark.parametrize(
 				pytest.param(SyntaxError("invalid syntax"), id="SyntaxError"),
 				pytest.param(BadConfigError("Expected a string value for 'name'"), id="BadConfigError"),
 				pytest.param(KeyError("name"), id="KeyError"),
-				]
+				],
 		)
 
 

@@ -48,14 +48,14 @@ typing-test = [{include-group = "typing"}, {include-group = "test"}, "useful-typ
 				pytest.param(COMPLETE_UNDERSCORE_NAME, id="COMPLETE_UNDERSCORE_NAME"),
 				pytest.param(COMPLETE_DEPENDENCY_GROUPS, id="COMPLETE_DEPENDENCY_GROUPS"),
 				pytest.param(
-						f"[project]\nname = 'spam'\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\nversion = '2020.0.0'\n",
+						"[project]\nname = 'spam'\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\nversion = '2020.0.0'\n",
 						id="PEP639",
 						),
 				pytest.param(
-						f"[project]\nname = 'spam'\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\nversion = '2020.0.0'\n",
+						"[project]\nname = 'spam'\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\nversion = '2020.0.0'\n",
 						id="PEP639-FILES",
 						),
-				]
+				],
 		)
 @pytest.mark.parametrize("show_diff", [True, False])
 def test_reformat(
@@ -103,7 +103,7 @@ def test_reformat(
 						id="PEP639-AND-OR",
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'LicenseRef-My-Custom-License'\n", id="PEP639-CUSTOM"),
-				]
+				],
 		)
 def test_check(
 		toml_string: str,
@@ -134,7 +134,7 @@ def test_check(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev.test" = []\n"dev_test" = []',
 						id="duplicate_extra_3",
 						),
-				]
+				],
 		)
 def test_check_extra_deprecation(
 		toml_string: str,
@@ -169,7 +169,7 @@ def test_check_extra_deprecation(
 						'[project]\nname = "foo"\nversion = "1.2.3"\n[project.optional-dependencies]\n"dev.test" = []\n"dev_test" = []',
 						id="duplicate_extra_3",
 						),
-				]
+				],
 		)
 def test_check_extra_deprecation_warning(
 		toml_string: str,
@@ -220,7 +220,7 @@ def test_check_extra_deprecation_warning(
 						"Unexpected top-level key 'Build-System'. Did you mean 'build-system'",
 						id="top_level_typo_caps",
 						),
-				]
+				],
 		)
 def test_check_error(
 		toml_string: str,
@@ -267,7 +267,7 @@ def test_check_error(
 						id="bad_requires_python",
 						),
 				pytest.param(f'{MINIMAL_CONFIG}\nauthors = [{{name = "Bob, Alice"}}]', id="author_comma"),
-				]
+				],
 		)
 def test_check_error_caught(
 		toml_string: str,
@@ -330,7 +330,7 @@ exceptions = pytest.mark.parametrize(
 				pytest.param(AttributeError("type object 'list' has no attribute 'foo'"), id="AttributeError"),
 				pytest.param(ImportError("No module named 'foo'"), id="ImportError"),
 				pytest.param(ModuleNotFoundError("No module named 'foo'"), id="ModuleNotFoundError"),
-				]
+				],
 		)
 
 
@@ -404,7 +404,7 @@ def test_handle_tracebacks_ignored_exceptions(exception: Type[Exception]):
 				pytest.param("project.keywords.[3]", id="fourth_keyword"),
 				"project.urls.Source Code",  # Written as `python3 -m pyproject_parser info project.urls."Source Code"`
 				"tool.whey.base-classifiers",
-				]
+				],
 		)
 @pytest.mark.parametrize("indent", [None, 0, 2, 4])
 def test_info(
@@ -471,7 +471,7 @@ def test_info(
 				"project.license",
 				"project.license.file",
 				"project.license.text",
-				]
+				],
 		)
 @pytest.mark.parametrize("check_readme", [0, 1])
 @pytest.mark.parametrize("indent", [None, 0, 2, 4])

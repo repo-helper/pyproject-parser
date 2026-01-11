@@ -25,7 +25,7 @@ from pyproject_parser.utils import content_type_from_filename, render_rst
 				(pathlib.Path("foo/bar.rst"), "text/x-rst"),
 				(pathlib.Path("foo.txt"), "text/plain"),
 				(pathlib.Path("foo/bar.txt"), "text/plain"),
-				]
+				],
 		)
 def test_content_type_from_filename(filename: Union[str, pathlib.Path], expected: str):
 	assert content_type_from_filename(filename) == expected

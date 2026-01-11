@@ -123,14 +123,14 @@ package = "whey"
 				pytest.param(COMPLETE_B, id="COMPLETE_B"),
 				pytest.param(COMPLETE_PROJECT_A, id="COMPLETE_PROJECT_A"),
 				pytest.param(
-						f"[project]\nname = 'spam'\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\nversion = '2020.0.0'\n",
+						"[project]\nname = 'spam'\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\nversion = '2020.0.0'\n",
 						id="PEP639",
 						),
 				pytest.param(
-						f"[project]\nname = 'spam'\nversion = '2020.0.0'\n[dependency-groups]\ndocs = ['sphinx']\ntest = ['pytest>7', 'coverage']\n",
+						"[project]\nname = 'spam'\nversion = '2020.0.0'\n[dependency-groups]\ndocs = ['sphinx']\ntest = ['pytest>7', 'coverage']\n",
 						id="dependency-groups",
 						),
-				]
+				],
 		)
 def test_dumps(
 		tmp_pathplus: PathPlus,
@@ -163,7 +163,7 @@ def _param(readme_block: str, **kwargs):  # noqa: MAN002
 						readme_block="[project.readme]\nfile = 'README.rst'\ncontent-type = 'text/x-rst'",
 						id="dict_file",
 						),
-				]
+				],
 		)
 def test_dumps_readme(
 		tmp_pathplus: PathPlus,
@@ -191,14 +191,14 @@ def test_dumps_readme(
 				pytest.param(UNORDERED, id="UNORDERED"),
 				pytest.param(COMPLETE_UNDERSCORE_NAME, id="COMPLETE_UNDERSCORE_NAME"),
 				pytest.param(
-						f"[project]\nname = 'spam'\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\nversion = '2020.0.0'\n",
+						"[project]\nname = 'spam'\nlicense = 'MIT AND (Apache-2.0 OR BSD-2-Clause)'\nversion = '2020.0.0'\n",
 						id="PEP639",
 						),
 				pytest.param(
-						f"[project]\nname = 'spam'\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\nversion = '2020.0.0'\n",
+						"[project]\nname = 'spam'\nlicense-files = ['LICEN[CS]E*', 'AUTHORS*']\nversion = '2020.0.0'\n",
 						id="PEP639-FILES",
 						),
-				]
+				],
 		)
 def test_reformat(
 		tmp_pathplus: PathPlus,

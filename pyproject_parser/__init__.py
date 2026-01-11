@@ -211,7 +211,7 @@ class PyProjectTomlEncoder(dom_toml.TomlEncoder):  # noqa: PRM002
 		closing_bracket_indent = "    " * nest_level
 		single_line = "[ " + ", ".join(
 				self.format_literal(item, nest_level=nest_level + 1) for item in obj
-				) + f",]"
+				) + ",]"
 
 		if len(single_line) <= self.max_width:
 			return single_line

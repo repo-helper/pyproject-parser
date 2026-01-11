@@ -237,7 +237,7 @@ class BuildSystemParser(RequiredKeysConfigParser):
 		self,
 		config: Dict[str, TOML_TYPES],
 		set_defaults: bool = False,
-		) -> BuildSystemDict:
+	) -> BuildSystemDict:
 		"""
 		Parse the TOML configuration.
 
@@ -261,7 +261,7 @@ class BuildSystemParser(RequiredKeysConfigParser):
 			raise BadConfigError(
 					f"{construct_path([self.table_name, 'backend-path'])!r} "
 					f"cannot be specified without also specifying "
-					f"{construct_path([self.table_name, 'build-backend'])!r}"
+					f"{construct_path([self.table_name, 'build-backend'])!r}",
 					)
 
 		return cast(BuildSystemDict, parsed_config)
@@ -1105,13 +1105,15 @@ class PEP621Parser(RequiredKeysConfigParser):
 
 			parsed_dependencies.add(requirement)
 
-		return sorted(combine_requirements(
-				parsed_dependencies,
-				normalize_func=self.normalize_requirement_name,
-				))
+		return sorted(
+				combine_requirements(
+						parsed_dependencies,
+						normalize_func=self.normalize_requirement_name,
+						),
+				)
 
 	@_documentation_url(
-			"https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.optional-dependencies"
+			"https://whey.readthedocs.io/en/latest/configuration.html#tconf-project.optional-dependencies",
 			)
 	def parse_optional_dependencies(
 			self,
@@ -1215,7 +1217,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		combined_requirements = {}
 		for extra, deps in parsed_optional_dependencies.items():
 			combined_requirements[extra] = sorted(
-					combine_requirements(deps, normalize_func=self.normalize_requirement_name)
+					combine_requirements(deps, normalize_func=self.normalize_requirement_name),
 					)
 
 		return combined_requirements
@@ -1224,7 +1226,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		self,
 		config: Dict[str, TOML_TYPES],
 		set_defaults: bool = False,
-		) -> ProjectDict:
+	) -> ProjectDict:
 		"""
 		Parse the TOML configuration.
 

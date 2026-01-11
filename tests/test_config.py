@@ -52,7 +52,7 @@ from pyproject_parser.utils import PyProjectDeprecationWarning, _load_toml
 						id="pep639-files-3",
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense-files = []\n", id="pep639-files-empty"),
-				]
+				],
 		)
 def test_pep621_class_valid_config(
 		toml_config: str,
@@ -86,7 +86,7 @@ class ReducedPEP621Parser(PEP621Parser, inherit_defaults=True):
 						id="pep639-and-or",
 						),
 				pytest.param(f"{MINIMAL_CONFIG}\nlicense = 'LicenseRef-My-Custom-License'\n", id="pep639-custom"),
-				]
+				],
 		)
 def test_pep621_subclass(
 		toml_config: str,
@@ -213,7 +213,7 @@ def test_pep621_class_valid_config_readme(
 						'readme = {text = "This is the inline README.", content-type = "text/plain"}',
 						id="text_content_type_plain",
 						),
-				]
+				],
 		)
 def test_pep621_class_valid_config_readme_dict(
 		readme: str,
@@ -304,7 +304,7 @@ def test_pep621_class_valid_config_readme_dict(
 						BadConfigError,
 						id="file_and_readme",
 						),
-				]
+				],
 		)
 def test_pep621_class_bad_config_readme(
 		readme: str,
@@ -332,9 +332,9 @@ def test_pep621_class_valid_config_license(
 		):
 
 	(tmp_pathplus / "pyproject.toml").write_lines([
-			f'[project]',
-			f'name = "spam"',
-			f'version = "2020.0.0"',
+			'[project]',
+			'name = "spam"',
+			'version = "2020.0.0"',
 			f'license = {{file = "{filename}"}}',
 			])
 	(tmp_pathplus / filename).write_text("This is the license.")
@@ -351,10 +351,10 @@ def test_pep621_class_valid_config_license_dict(
 		):
 
 	(tmp_pathplus / "pyproject.toml").write_lines([
-			f'[project]',
-			f'name = "spam"',
-			f'version = "2020.0.0"',
-			f'license = {{text = "This is the MIT License"}}',
+			'[project]',
+			'name = "spam"',
+			'version = "2020.0.0"',
+			'license = {text = "This is the MIT License"}',
 			])
 
 	with in_directory(tmp_pathplus):
@@ -376,7 +376,7 @@ def test_pep621_class_valid_config_license_dict(
 						"The 'project.license.file' and 'project.license.text' keys are mutually exclusive.",
 						id="double_license",
 						),
-				]
+				],
 		)
 def test_pep621_class_bad_config_license(
 		license_key: str,
@@ -385,9 +385,9 @@ def test_pep621_class_bad_config_license(
 		):
 
 	(tmp_pathplus / "pyproject.toml").write_lines([
-			f'[project]',
-			f'name = "spam"',
-			f'version = "2020.0.0"',
+			'[project]',
+			'name = "spam"',
+			'version = "2020.0.0"',
 			license_key,
 			])
 
@@ -459,7 +459,7 @@ def test_pep621_class_bad_config_license(
 						r"'project.license-files\[0\]': pattern cannot contain '\\'",
 						id="pep639-files-3",
 						),
-				]
+				],
 		)
 def test_pep621_class_bad_config(
 		config: str,
@@ -491,7 +491,7 @@ def test_pep621_class_bad_config(
 						"'project.optional-dependencies.dev_test': Multiple extras were defined with the same normalized name of 'dev-test'",
 						id="duplicate_extra_3",
 						),
-				]
+				],
 		)
 def test_extra_deprecation(
 		config: str,
@@ -595,7 +595,7 @@ def test_buildsystem_normalize_keep_dot(
 
 	with in_directory(tmp_pathplus):
 		config = NormalizingWithDotBuildSystemParser().parse(
-				_load_toml(tmp_pathplus / "pyproject.toml")["build-system"]
+				_load_toml(tmp_pathplus / "pyproject.toml")["build-system"],
 				)
 
 	advanced_data_regression.check(config)
@@ -613,7 +613,7 @@ def test_buildsystem_unnormalized(
 
 	with in_directory(tmp_pathplus):
 		config = UnNormalizingBuildSystemParser().parse(
-				_load_toml(tmp_pathplus / "pyproject.toml")["build-system"]
+				_load_toml(tmp_pathplus / "pyproject.toml")["build-system"],
 				)
 
 	advanced_data_regression.check(config)

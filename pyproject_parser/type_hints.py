@@ -56,7 +56,7 @@ BuildSystemDict = TypedDict(
 				"requires": List[ComparableRequirement],
 				"build-backend": Optional[str],
 				"backend-path": Optional[List[str]],
-				}
+				},
 		)
 
 IncludeGroupDict = TypedDict("IncludeGroupDict", {"include-group": str})
