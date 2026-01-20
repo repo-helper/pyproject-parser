@@ -61,12 +61,6 @@ all = [
     "sdjson>=0.3.1",
 ]
 
-[tool.mkrecipe]
-conda-channels = [ "conda-forge", "domdfcoding",]
-extras = "all"
-license-key = "MIT"
-package = "pyproject_parser"
-
 [tool.sphinx-pyproject]
 github_username = "repo-helper"
 github_repository = "pyproject-parser"
