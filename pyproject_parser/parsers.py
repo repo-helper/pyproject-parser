@@ -69,6 +69,12 @@ name_re = re.compile("^([A-Z0-9]|[A-Z0-9][A-Z0-9._-]*[A-Z0-9])$", flags=re.IGNOR
 extra_re = re.compile("^([a-z0-9]|[a-z0-9]([a-z0-9-](?!--))*[a-z0-9])$")
 
 
+def _handle_bad_requirement(exception: InvalidRequirement, dependency: str) -> None:
+	exception.args = (f"{dependency!r}\n    {str(exception)}", )
+	exception.note = "requirements must follow PEP 508"  # type: ignore[attr-defined]
+	exception.documentation = "https://peps.python.org/pep-0508/"  # type: ignore[attr-defined]
+
+
 def _documentation_url(__documentation_url: str) -> Callable:
 
 	def deco(f) -> Callable:  # noqa: MAN001
@@ -193,9 +199,7 @@ class BuildSystemParser(RequiredKeysConfigParser):
 			try:
 				requirement = ComparableRequirement(raw_requirement)
 			except InvalidRequirement as e:
-				e.args = (f"{raw_requirement!r}\n    {str(e)}", )
-				e.note = "requirements must follow PEP 508"  # type: ignore[attr-defined]
-				e.documentation = "https://peps.python.org/pep-0508/"  # type: ignore[attr-defined]
+				_handle_bad_requirement(e, raw_requirement)
 				raise
 
 			parsed_dependencies.add(requirement)
@@ -1098,9 +1102,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 			try:
 				requirement = ComparableRequirement(raw_requirement)
 			except InvalidRequirement as e:
-				e.args = (f"{raw_requirement!r}\n    {str(e)}", )
-				e.note = "requirements must follow PEP 508"  # type: ignore[attr-defined]
-				e.documentation = "https://peps.python.org/pep-0508/"  # type: ignore[attr-defined]
+				_handle_bad_requirement(e, raw_requirement)
 				raise
 
 			parsed_dependencies.add(requirement)
@@ -1158,7 +1160,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 			and write them to ``METADATA`` in this normalized form.
 		"""
 
-		parsed_optional_dependencies: Dict[str, Set[ComparableRequirement]] = dict()
+		parsed_optional_dependencies: Dict[str, Set[ComparableRequirement]] = {}
 		normalized_names: Set[str] = set()  # remove for part 2
 
 		optional_dependencies: Mapping[str, Any] = config["optional-dependencies"]
@@ -1203,9 +1205,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 					try:
 						requirement = ComparableRequirement(dep)
 					except InvalidRequirement as e:
-						e.args = (f"{dep!r}\n    {str(e)}", )
-						e.note = "requirements must follow PEP 508"  # type: ignore[attr-defined]
-						e.documentation = "https://peps.python.org/pep-0508/"  # type: ignore[attr-defined]
+						_handle_bad_requirement(e, dep)
 						raise
 
 					# normalized_extra for part 2

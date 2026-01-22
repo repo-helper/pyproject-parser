@@ -209,9 +209,8 @@ def indent_join(iterable: Iterable[str]) -> str:
 	"""
 
 	iterable = list(iterable)
-	if len(iterable) > 1:
-		if not iterable[0] == '':
-			iterable.insert(0, '')
+	if len(iterable) > 1 and iterable[0] != '':
+		iterable.insert(0, '')
 
 	return indent_with_tab(textwrap.dedent('\n'.join(iterable)))
 

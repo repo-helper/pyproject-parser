@@ -30,7 +30,7 @@ CLI entry point.
 
 # stdlib
 import sys
-from typing import TYPE_CHECKING, Any, Iterable, List, Optional, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Iterable, List, Optional, Type, TypeVar
 
 # 3rd party
 import click  # nodep
@@ -57,6 +57,9 @@ if TYPE_CHECKING:
 
 __all__ = ["main", "reformat", "check"]
 
+PYPROJECT_TOML = sys.intern("pyproject.toml")
+DEFAULT_PARSER = sys.intern("pyproject_parser:PyProject")
+
 
 @click_group()
 def main() -> None:  # pragma: no cover  # noqa: D103
@@ -66,14 +69,8 @@ def main() -> None:  # pragma: no cover  # noqa: D103
 _C = TypeVar("_C", bound=click.Command)
 
 
-def options(c: _C) -> _C:
-	pyproject_file_option = auto_default_argument(
-			"pyproject_file",
-			type=click.STRING,
-			description="The ``pyproject.toml`` file.",
-			cls=DescribedArgument,
-			)
-	parser_class_option = auto_default_option(
+def parser_class_option() -> Callable[[_C], _C]:
+	return auto_default_option(
 			"-P",
 			"--parser-class",
 			type=click.STRING,
@@ -81,8 +78,17 @@ def options(c: _C) -> _C:
 			show_default=True,
 			)
 
+
+def options(c: _C) -> _C:
+	pyproject_file_option = auto_default_argument(
+			"pyproject_file",
+			type=click.STRING,
+			description="The ``pyproject.toml`` file.",
+			cls=DescribedArgument,
+			)
+
 	pyproject_file_option(c)
-	parser_class_option(c)
+	parser_class_option()(c)
 	traceback_option()(c)
 
 	return c
@@ -91,8 +97,8 @@ def options(c: _C) -> _C:
 @options
 @main.command(cls=MarkdownHelpCommand)
 def check(
-		pyproject_file: "PathLike" = "pyproject.toml",
-		parser_class: str = "pyproject_parser:PyProject",
+		pyproject_file: "PathLike" = PYPROJECT_TOML,
+		parser_class: str = DEFAULT_PARSER,
 		show_traceback: bool = False,
 		) -> None:
 	"""
@@ -149,13 +155,7 @@ _resolve_help = "Resolve file key in project.readme and project.license (if pres
 
 
 @traceback_option()
-@auto_default_option(
-		"-P",
-		"--parser-class",
-		type=click.STRING,
-		help="The class to parse the 'pyproject.toml' file with.",
-		show_default=True,
-		)
+@parser_class_option()
 @auto_default_option(
 		"-f",
 		"--file",
@@ -184,8 +184,8 @@ _resolve_help = "Resolve file key in project.readme and project.license (if pres
 @main.command(cls=MarkdownHelpCommand)
 def info(
 		field: Optional[str] = None,
-		pyproject_file: "PathLike" = "pyproject.toml",
-		parser_class: str = "pyproject_parser:PyProject",
+		pyproject_file: "PathLike" = PYPROJECT_TOML,
+		parser_class: str = DEFAULT_PARSER,
 		resolve: bool = False,
 		show_traceback: bool = False,
 		indent: Optional[int] = None,
@@ -280,9 +280,9 @@ def info(
 		)
 @main.command(cls=MarkdownHelpCommand)
 def reformat(
-		pyproject_file: "PathLike" = "pyproject.toml",
+		pyproject_file: "PathLike" = PYPROJECT_TOML,
 		encoder_class: str = "pyproject_parser:PyProjectTomlEncoder",
-		parser_class: str = "pyproject_parser:PyProject",
+		parser_class: str = DEFAULT_PARSER,
 		show_traceback: bool = False,
 		show_diff: bool = False,
 		colour: "ColourTrilean" = None,
@@ -339,4 +339,4 @@ def reformat(
 
 
 if __name__ == "__main__":
-	sys.exit(main())
+	main()
