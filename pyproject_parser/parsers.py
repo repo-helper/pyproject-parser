@@ -692,7 +692,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		.. code-block:: TOML
 
 			[project]
-			license-files = ["LICEN[CS]E*", "vendored/licenses/*.txt", "AUTHORS.md"]
+			license-files = [ "LICEN[CS]E*", "vendored/licenses/*.txt", "AUTHORS.md",]
 
 		.. latex:vspace:: -5px
 
@@ -836,7 +836,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		.. code-block:: TOML
 
 			[project]
-			keywords = ["egg", "bacon", "sausage", "tomatoes", "Lobster Thermidor"]
+			keywords = [ "egg", "bacon", "sausage", "tomatoes", "Lobster Thermidor",]
 
 		.. latex:vspace:: -5px
 
@@ -869,10 +869,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		.. code-block:: TOML
 
 			[project]
-			classifiers = [
-				"Development Status :: 4 - Beta",
-				"Programming Language :: Python"
-			]
+			classifiers = [ "Development Status :: 4 - Beta", "Programming Language :: Python",]
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 
@@ -1022,7 +1019,6 @@ class PEP621Parser(RequiredKeysConfigParser):
 			[project.entry-points."spam.magical"]
 			tomatoes = "spam:main_tomatoes"
 
-			# pytest plugins refer to a module, so there is no ':obj'
 			[project.entry-points.pytest11]
 			nbval = "nbval.plugin"
 
@@ -1080,12 +1076,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		.. code-block:: TOML
 
 			[project]
-			dependencies = [
-				"httpx",
-				"gidgethub[httpx]>4.0.0",
-				"django>2.1; os_name != 'nt'",
-				"django>2.0; os_name == 'nt'"
-			]
+			dependencies = [ "httpx", "gidgethub[httpx]>4.0.0", "django>2.1; os_name != 'nt'", "django>2.0; os_name == 'nt'",]
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 		"""
@@ -1139,10 +1130,7 @@ class PEP621Parser(RequiredKeysConfigParser):
 		.. code-block:: TOML
 
 			[project.optional-dependencies]
-			test = [
-			  "pytest < 5.0.0",
-			  "pytest-cov[all]"
-			]
+			test = [ "pytest < 5.0.0", "pytest-cov[all]",]
 
 		:param config: The unparsed TOML config for the :pep621:`project table <table-name>`.
 
