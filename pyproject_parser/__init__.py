@@ -253,7 +253,6 @@ class PyProject:
 
 	.. autoclasssumm:: PyProject
 		:autosummary-sections: Attributes
-
 	"""
 
 	#: Represents the :pep:`build-system table <518#build-system-table>` defined in :pep:`517` and :pep:`518`.
@@ -460,7 +459,6 @@ class PyProject:
 			* Added the ``encoder`` argument.
 			* The parser configured as :attr:`~.project_table_parser` is now used to parse
 			  the :pep621:`project table <table-name>`, rather than always using :class:`~.PEP621Parser`.
-
 		"""
 
 		config = cls.load(filename, set_defaults=False)
