@@ -213,8 +213,9 @@ exclude = [
     "doc-source",
 ]
 
-[tool.hatch.build.sdist]
-include = [ "pyproject_parser", "requirements.txt",]
+[tool.hatch.build.targets.sdist]
+include = [ "pyproject_parser", "requirements.txt", "tests", "tox.ini",]
+exclude = []
 
 [tool.hatch.build.wheel]
 include = [ "pyproject_parser",]
